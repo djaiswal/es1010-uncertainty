@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Monte Carlo, One Tree</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column of stacked panels, max 1100px; the "stage" panel is a 3-step strip (dice -> formula -> histogram). */
+:root{
+  --bg:#f2f5f0; --surface:#ffffff; --surface-2:#e9efe7; --fg:#1d2a21; --muted:#5a6a5e; --line:#cfd9cd;
+  --accent:#2f6b3a; --accent-soft:#dbeadd; --point:#b8690b; --point-soft:#fbe9d2;
+  --hist:#6ea379; --hist-dim:#b9d2bf; --band:rgba(47,107,58,0.13); --marker:#1d2a21;
+  --warn-bg:#fff6e5; --warn-fg:#6b4408;
+  --font-display:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body:"IBM Plex Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono:"IBM Plex Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#121a15; --surface:#1a241d; --surface-2:#22302a; --fg:#e4ebe3; --muted:#9db09f; --line:#33423a;
+  --accent:#86c58f; --accent-soft:#25402c; --point:#eaa44d; --point-soft:#4a3414;
+  --hist:#4f8c5e; --hist-dim:#2f5438; --band:rgba(134,197,143,0.16); --marker:#f1f6f0;
+  --warn-bg:#3a2d14; --warn-fg:#f6d9a6; color-scheme:dark; } }
+:root[data-theme="dark"]{
+  --bg:#121a15; --surface:#1a241d; --surface-2:#22302a; --fg:#e4ebe3; --muted:#9db09f; --line:#33423a;
+  --accent:#86c58f; --accent-soft:#25402c; --point:#eaa44d; --point-soft:#4a3414;
+  --hist:#4f8c5e; --hist-dim:#2f5438; --band:rgba(134,197,143,0.16); --marker:#f1f6f0;
+  --warn-bg:#3a2d14; --warn-fg:#f6d9a6; color-scheme:dark; }
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg); color:var(--fg); font-family:var(--font-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:20px 32px;}
+.wrap{max-width:1100px; margin:0 auto; display:grid; gap:20px}
+h1,h2,h3{font-family:var(--font-display); font-weight:600; line-height:1.2; margin:0; text-wrap:balance}
+h1{font-size:clamp(28px,4vw,40px)}
+h2{font-size:22px}
+h3{font-size:17px}
+p{margin:0}
+.eyebrow{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.lede{max-width:70ch; color:var(--fg)}
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:18px; display:grid; gap:14px; min-width:0}
+.caption{font-size:13.5px; color:var(--muted); max-width:80ch}
+.mono,.num{font-family:var(--font-mono); font-variant-numeric:tabular-nums}
+button{font:inherit; font-weight:600; font-size:14px; border:1px solid var(--line); background:var(--surface-2); color:var(--fg); border-radius:7px; padding:8px 14px; cursor:pointer}
+button.primary{background:var(--accent); border-color:var(--accent); color:#fff}
+:root[data-theme="dark"] button.primary{color:#0f1a12}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) button.primary{color:#0f1a12} }
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+button:disabled{opacity:.5; cursor:default}
+input[type=number]{font:inherit; font-family:var(--font-mono); font-size:14px; width:6.5em; padding:5px 7px; border:1px solid var(--line); border-radius:6px; background:var(--surface); color:var(--fg)}
+input[type=range]{width:100%; accent-color:var(--accent)}
+label{font-size:14px}
+
+/* controls */
+.controls{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px}
+.ctl-group{display:grid; gap:8px; align-content:start}
+.ctl-row{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+.ctl-row .lab{display:flex; align-items:center; gap:8px; min-width:0}
+.ctl-row .lab input[type=checkbox]{width:17px; height:17px; accent-color:var(--accent); margin:0}
+.ctl-row .val{display:flex; align-items:center; gap:6px; color:var(--muted); font-size:13px}
+.buttons{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.speed{display:grid; gap:4px; min-width:180px; flex:1}
+.speed label{font-size:13px; color:var(--muted)}
+
+/* stage */
+.stage{display:grid; gap:12px}
+.dice{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px}
+@media (max-width:760px){ .dice{grid-template-columns:repeat(3,minmax(0,1fr))} }
+@media (max-width:460px){ .dice{grid-template-columns:repeat(2,minmax(0,1fr))} }
+.die{border:1px solid var(--line); border-radius:8px; padding:8px 8px 6px; background:var(--surface-2); display:grid; gap:4px; min-width:0}
+.die.off{opacity:.45}
+.die .name{font-size:12.5px; font-weight:600; color:var(--muted); display:flex; justify-content:space-between; gap:6px}
+.die .name .sd{font-weight:400}
+.die svg{width:100%; height:auto; display:block}
+.die .drawn{font-family:var(--font-mono); font-size:13.5px; font-weight:500; min-height:1.4em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.die .drawn.flash{color:var(--accent)}
+.arrow{display:flex; justify-content:center; color:var(--muted)}
+.formula{border:1px solid var(--line); border-radius:8px; padding:12px 14px; font-family:var(--font-mono); font-size:14.5px; display:flex; flex-wrap:wrap; gap:4px 8px; align-items:baseline; line-height:1.7}
+.formula .k{color:var(--muted)}
+.formula .v{font-weight:500}
+.formula .vH{color:var(--accent)} .formula .vD{color:var(--accent)} .formula .vR{color:var(--accent)} .formula .vP{color:var(--accent)} .formula .vE{color:var(--accent)}
+.formula .res{font-weight:600; font-size:16px}
+.formula .res.flash{color:var(--point)}
+.formula sup{font-size:.72em}
+.hist-wrap{display:grid; gap:6px; min-width:0}
+.hist-wrap svg{width:100%; height:auto; display:block; overflow:visible}
+.legend{display:flex; gap:14px; flex-wrap:wrap; font-size:13px; color:var(--muted)}
+.legend span::before{content:""; display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px; vertical-align:-2px; background:var(--sw)}
+.counter{font-size:13.5px; color:var(--muted)}
+.counter b{color:var(--fg); font-family:var(--font-mono)}
+
+/* readouts */
+.readouts{overflow-x:auto}
+table{border-collapse:collapse; width:100%; font-size:14px}
+th,td{padding:7px 10px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap}
+th{font-weight:600; color:var(--muted); font-size:12.5px; letter-spacing:.04em; text-transform:uppercase}
+td:first-child,th:first-child{text-align:left}
+td.num{font-family:var(--font-mono)}
+tr.agb td{font-weight:600}
+
+.two{display:grid; grid-template-columns:1fr 1fr; gap:20px}
+@media (max-width:840px){ .two{grid-template-columns:1fr} }
+.bars svg{width:100%; height:auto; display:block}
+.note{background:var(--surface-2); border-radius:8px; padding:12px 14px; font-size:14px}
+.report{border-left:4px solid var(--point); background:var(--point-soft); border-radius:0 8px 8px 0; padding:12px 14px; font-size:15px}
+.report .q{font-family:var(--font-display); font-size:17px; font-weight:500}
+.notice{background:var(--accent-soft); border-radius:10px; padding:16px 18px; display:grid; gap:8px}
+.notice ul{margin:0; padding-left:20px; display:grid; gap:6px}
+.notice li{max-width:80ch}
+footer{color:var(--muted); font-size:13px; text-align:center; padding-top:8px}
+@media (prefers-reduced-motion: reduce){ .falling,.marker{transition:none !important} }
+.marker{transition:transform .35s cubic-bezier(.3,1.3,.5,1)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header style="display:grid;gap:10px">
+  <div class="eyebrow">Quantifying uncertainty in tree biomass · page 3</div>
+  <h1>Monte Carlo, One Tree</h1>
+  <p class="lede"><strong>What you are looking at.</strong> We measured one <em>Pongamia pinnata</em> tree (#406): diameter D = 8.0 cm, height H = 6.0 m, wood density ρ = 0.60 g/cm³. The Chave equation turns these into a biomass of 13.6 kg. But every number going in is a little uncertain, and the equation itself is only approximately right. A <strong>Monte Carlo</strong> simulation handles this by rolling dice: each "draw" picks a slightly different H, D, ρ, equation and scatter, computes the biomass, and adds it to a pile. After thousands of draws the pile shows the range of answers we should believe.</p>
+</header>
+
+<section class="panel" aria-label="Controls">
+  <div class="controls">
+    <div class="ctl-group">
+      <h3>The tree (point values)</h3>
+      <div class="ctl-row"><span class="lab">Diameter D</span><span class="val"><input type="number" id="inD" value="8.0" step="0.1" min="0.5"> cm</span></div>
+      <div class="ctl-row"><span class="lab">Height H</span><span class="val"><input type="number" id="inH" value="6.0" step="0.1" min="0.5"> m</span></div>
+      <div class="ctl-row"><span class="lab">Wood density ρ</span><span class="val"><input type="number" id="inR" value="0.60" step="0.01" min="0.1" max="1.3"> g/cm³</span></div>
+      <p class="caption">Point estimate: AGB = <b class="num" id="ptAGB">13.6</b> kg · C = <b class="num" id="ptC">6.4</b> kg · CO₂ = <b class="num" id="ptCO2">23.5</b> kg</p>
+    </div>
+    <div class="ctl-group">
+      <h3>Sources of uncertainty (SD = standard deviation)</h3>
+      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onH" checked> Height H</label><span class="val">SD <input type="number" id="sdH" value="10" step="0.5" min="0"> % of H</span></div>
+      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onD" checked> Diameter D</label><span class="val">SD <input type="number" id="sdD" value="2.5" step="0.5" min="0"> % of D</span></div>
+      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onR" checked> Density ρ (log-normal)</label><span class="val">SD <input type="number" id="sdR" value="10" step="0.5" min="0"> %</span></div>
+      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onP" checked> Equation parameters a·b</label><span class="val">SD <input type="number" id="sdP" value="1" step="0.5" min="0"> %</span></div>
+      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onE" checked> Model scatter ε</label><span class="val">σ <input type="number" id="sdE" value="0.357" step="0.01" min="0"> (log scale)</span></div>
+      <p class="caption">Changing any value resets the pile of draws. The defaults are the "educated guesses" from the class notes.</p>
+    </div>
+  </div>
+  <div class="buttons">
+    <button id="btnStep">Step (1 draw)</button>
+    <button id="btnPlay" class="primary">Play</button>
+    <button id="btnFast">Fast-forward to 20,000</button>
+    <button id="btnReset">Reset</button>
+    <button id="btnSeed" title="Use a different random sequence">New seed</button>
+    <div class="speed"><label for="speed">Speed: <span id="speedLab">1.0 s per draw</span></label><input type="range" id="speed" min="0.3" max="3" step="0.1" value="1"></div>
+  </div>
+</section>
+
+<section class="panel stage" aria-label="One draw at a time">
+  <div>
+    <h2>One draw at a time</h2>
+    <p class="caption">Each card is a die. The curve is the bell-shaped spread we assume for that input (the shaded middle covers ±2 SD, about 95 % of draws). Press <b>Step</b>: a marker lands on each curve at the value we drew, the drawn values go into the formula, and the answer drops into the pile below.</p>
+  </div>
+  <div class="dice" id="dice"></div>
+  <div class="arrow" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 3v18M6 14l8 8 8-8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="formula" id="formula" aria-live="polite">
+    <span class="k">AGB =</span><span class="v">0.0673</span><span class="k">×</span><span class="k">(</span><span class="v vR" id="fR">0.600</span><span class="k">×</span><span class="v"><span class="vD" id="fD">8.0</span>²</span><span class="k">×</span><span class="v vH" id="fH">6.0</span><span class="k">)<sup class="v">0.976</sup></span>
+    <span class="k">×</span><span class="v vP" id="fP">1.000</span><span class="k" title="parameter factor">(params)</span>
+    <span class="k">×</span><span class="v vE" id="fE">e<sup>0.00</sup></span><span class="k">(scatter)</span>
+    <span class="k">=</span><span class="res" id="fRes">13.6 kg</span>
+  </div>
+  <div class="arrow" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 3v18M6 14l8 8 8-8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="hist-wrap">
+    <div class="counter">Draws so far: <b id="nDraws">0</b> of 20,000</div>
+    <div id="hist"></div>
+    <div class="legend">
+      <span style="--sw:var(--hist)">Pile of AGB results (histogram)</span>
+      <span style="--sw:var(--band)">Middle 95 % of draws</span>
+      <span style="--sw:var(--point)">Deterministic point value</span>
+      <span style="--sw:var(--marker)">Median of draws</span>
+    </div>
+    <p class="caption">x-axis: above-ground biomass in kg. The pile is lopsided: a long tail to the right and a wall on the left, because the scatter is multiplicative (a tree can easily be twice as heavy as predicted, but never less than zero).</p>
+  </div>
+</section>
+
+<section class="panel" aria-label="Read-outs">
+  <h2>Live read-outs</h2>
+  <div class="readouts">
+    <table>
+      <thead><tr><th>Quantity</th><th>Point value</th><th>Median</th><th>Mean</th><th>SD</th><th>CV %</th><th>95 % interval</th></tr></thead>
+      <tbody id="readTable">
+        <tr class="agb"><td>AGB (kg)</td><td class="num">13.6</td><td class="num">–</td><td class="num">–</td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr>
+        <tr><td>Carbon = 0.47 × AGB (kg)</td><td class="num">6.4</td><td class="num">–</td><td class="num">–</td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr>
+        <tr><td>CO₂ = 3.67 × C (kg)</td><td class="num">23.5</td><td class="num">–</td><td class="num">–</td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="caption"><b>Median</b>: the middle draw (half the draws are smaller). <b>Mean</b>: the average. <b>SD</b>: standard deviation, the typical distance from the mean. <b>CV %</b> = SD ÷ mean × 100, the "relative error". <b>95 % interval</b>: from the 2.5th to the 97.5th percentile; 95 % of draws fall inside it. Numbers need a few hundred draws to settle; by 20,000 they barely move.</p>
+</section>
+
+<div class="two">
+<section class="panel" aria-label="One die at a time">
+  <div>
+    <h2>One die at a time</h2>
+    <p class="caption">Which source matters most? This button repeats the experiment with only <em>one</em> source switched on (5,000 draws each), then all of them together.</p>
+  </div>
+  <div class="buttons"><button id="btnOne" class="primary">Run one die at a time</button><span class="counter" id="oneStatus"></span></div>
+  <div class="bars" id="bars"></div>
+  <div class="note" id="quadNote">Errors from independent sources add "in quadrature" (square, add, square-root), not by simple addition: √(37² + 10² + 10² + 5² + 1²) ≈ 40 %. The biggest source dominates; shrinking a small one hardly helps.</div>
+</section>
+
+<section class="panel" aria-label="How to report">
+  <div>
+    <h2>How to report it</h2>
+    <p class="caption">A single number hides the uncertainty. Report the middle, the range, and how you got them.</p>
+  </div>
+  <div class="report">
+    <div class="q" id="reportText">"AGB ≈ 14 kg (95 % interval 6.4–29 kg) from 20,000 Monte Carlo draws; dominated by the model's own scatter."</div>
+  </div>
+  <div class="note">
+    <p><b>Why 14 and not 13.6?</b> The point value (13.6 kg) and the median of the draws (≈13.5 kg) agree, but writing "13.6" would suggest we know the answer to 0.1 kg. With a 95 % interval of about 6 to 29 kg, two significant figures are already generous. Round to what you actually know.</p>
+  </div>
+  <div class="note">
+    <p><b>Why a 95 % interval and not "± SD"?</b> The pile is not symmetric. "13.6 ± 5.4 kg" would claim the tree could weigh 8 kg as easily as 19 kg, but the true spread runs from 6 to 29. Quoting the 2.5th and 97.5th percentiles respects the lopsided shape.</p>
+  </div>
+</section>
+</div>
+
+<section class="notice" aria-label="What to notice">
+  <h2>What to notice</h2>
+  <ul>
+    <li><b>The equation's own scatter dominates.</b> Even with perfect measurements, the Chave equation is only right to within about ±37 % for a single tree, because real trees of the same D, H and ρ differ in shape and branching. Measuring height more carefully (10 % → 5 %) barely changes the total.</li>
+    <li><b>Errors combine in quadrature.</b> 37 and 10 and 10 and 5 and 1 do not add to 63; they combine to about 40. Only the biggest terms matter.</li>
+    <li><b>The pile is lopsided.</b> The mean sits a little above the median and the point value, because a multiplicative error e<sup>ε</sup> can double a tree but can only halve it. Report the median and the percentile interval, not mean ± SD.</li>
+    <li><b>Monte Carlo is just counting.</b> No calculus, no formulas for error propagation: roll the dice many times and look at the pile. The histogram <em>is</em> the answer.</li>
+  </ul>
+</section>
+
+<footer>Ecology &amp; Environment 2026 · Quantifying uncertainty in tree biomass · built for teaching; numbers are illustrative</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+// ---------- maths helpers ----------
+function mulberry32(seed){ let a = seed >>> 0; return function(){ a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+function makeNormal(rand){ let spare = null; return function(){ if (spare !== null){ const s = spare; spare = null; return s; } let u, v, s; do { u = rand()*2-1; v = rand()*2-1; s = u*u+v*v; } while (s >= 1 || s === 0); const m = Math.sqrt(-2*Math.log(s)/s); spare = v*m; return u*m; }; }
+function quantileSorted(a, q){ if (!a.length) return NaN; const pos = (a.length-1)*q, lo = Math.floor(pos), hi = Math.ceil(pos); return a[lo] + (a[hi]-a[lo])*(pos-lo); }
+function stats(arr){ const n = arr.length; if (!n) return null; const s = Float64Array.from(arr).sort(); let sum=0; for (let i=0;i<n;i++) sum+=s[i]; const mean=sum/n; let ss=0; for (let i=0;i<n;i++){ const d=s[i]-mean; ss+=d*d; } const sd = n>1 ? Math.sqrt(ss/(n-1)) : 0; return { n, mean, sd, cv: sd/mean, median: quantileSorted(s,0.5), lo: quantileSorted(s,0.025), hi: quantileSorted(s,0.975), sorted: s }; }
+const fmt = (x, d) => Number.isFinite(x) ? x.toLocaleString('en-US', {minimumFractionDigits:d, maximumFractionDigits:d}) : '–';
+const fmtKg = x => fmt(x, x < 10 ? 2 : 1);
+
+// ---------- model ----------
+const A = 0.0673, B = 0.976, CF = 0.47, CO2F = 3.67;
+function agbPoint(D, H, rho){ return A * Math.pow(rho*D*D*H, B); }
+const $ = id => document.getElementById(id);
+function cfg(){
+  const num = (id, def) => { const v = parseFloat($(id).value); return Number.isFinite(v) ? v : def; };
+  return { D: Math.max(0.1, num('inD', 8)), H: Math.max(0.1, num('inH', 6)), rho: Math.max(0.05, num('inR', 0.6)),
+    onH: $('onH').checked, onD: $('onD').checked, onR: $('onR').checked, onP: $('onP').checked, onE: $('onE').checked,
+    sdH: Math.max(0, num('sdH',10))/100, sdD: Math.max(0, num('sdD',2.5))/100, sdR: Math.max(0, num('sdR',10))/100, sdP: Math.max(0, num('sdP',1))/100, sdE: Math.max(0, num('sdE',0.357)) };
+}
+// One Monte Carlo draw. Returns the drawn inputs and the resulting AGB.
+function drawOne(c, normal){
+  const zH = normal(), zD = normal(), zR = normal(), zP = normal(), zE = normal();
+  const H   = c.onH ? Math.max(0.05*c.H, c.H*(1 + c.sdH*zH)) : c.H;
+  const D   = c.onD ? Math.max(0.05*c.D, c.D*(1 + c.sdD*zD)) : c.D;
+  const rho = c.onR ? c.rho*Math.exp(c.sdR*zR) : c.rho;          // log-normal, median preserved
+  const pf  = c.onP ? Math.max(0.05, 1 + c.sdP*zP) : 1;             // shared multiplicative factor on a·b
+  const eps = c.onE ? c.sdE*zE : 0;                                 // model residual on log scale
+  const agb = A*Math.pow(rho*D*D*H, B)*pf*Math.exp(eps);
+  return { zH, zD, zR, zP, zE, H, D, rho, pf, eps, agb };
+}
+function runMany(c, n, seed){ const normal = makeNormal(mulberry32(seed)); const out = new Float64Array(n); for (let i=0;i<n;i++) out[i] = drawOne(c, normal).agb; return out; }
+
+// ---------- state ----------
+const NMAX = 20000;
+let seed = 20260406;
+let normal = makeNormal(mulberry32(seed));
+let samples = new Float64Array(NMAX); let n = 0;
+let playing = false, playTimer = null, fastRunning = false;
+let C = cfg();
+
+// ---------- dice cards ----------
+const DICE = [
+  { key:'H', name:'Height H', unit:'m',   isOn:c=>c.onH, sdText:c=>`SD ${fmt(c.sdH*100,1)} %`, centre:c=>c.H,   sdAbs:c=>c.H*c.sdH, log:false, z:d=>d.zH, val:d=>d.H,   fmtV:v=>fmt(v,1) },
+  { key:'D', name:'Diameter D', unit:'cm', isOn:c=>c.onD, sdText:c=>`SD ${fmt(c.sdD*100,1)} %`, centre:c=>c.D,   sdAbs:c=>c.D*c.sdD, log:false, z:d=>d.zD, val:d=>d.D,   fmtV:v=>fmt(v,2) },
+  { key:'R', name:'Density ρ', unit:'g/cm³', isOn:c=>c.onR, sdText:c=>`SD ${fmt(c.sdR*100,1)} % (log)`, centre:c=>c.rho, sdAbs:c=>c.sdR, log:true, z:d=>d.zR, val:d=>d.rho, fmtV:v=>fmt(v,3) },
+  { key:'P', name:'Parameters a·b', unit:'×', isOn:c=>c.onP, sdText:c=>`SD ${fmt(c.sdP*100,1)} %`, centre:c=>1,     sdAbs:c=>c.sdP, log:false, z:d=>d.zP, val:d=>d.pf,  fmtV:v=>fmt(v,3) },
+  { key:'E', name:'Model scatter ε', unit:'', isOn:c=>c.onE, sdText:c=>`σ ${fmt(c.sdE,3)}`, centre:c=>0,     sdAbs:c=>c.sdE, log:false, z:d=>d.zE, val:d=>d.eps, fmtV:v=>(v>=0?'+':'')+fmt(v,2) },
+];
+const W = 160, HH = 78, PAD = 8, BASE = 60;
+function bellPath(){ // standard normal from -3.3 to 3.3 sigma across the card
+  const pts = []; for (let i=0;i<=60;i++){ const z = -3.3 + 6.6*i/60; const x = PAD + (W-2*PAD)*(z+3.3)/6.6; const y = BASE - 44*Math.exp(-z*z/2); pts.push((i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)); }
+  return pts.join(' ');
+}
+function zToX(z){ z = Math.max(-3.3, Math.min(3.3, z)); return PAD + (W-2*PAD)*(z+3.3)/6.6; }
+function buildDice(){
+  const bell = bellPath();
+  $('dice').innerHTML = DICE.map(d => `
+    <div class="die" id="die${d.key}">
+      <div class="name"><span>${d.name}</span><span class="sd" id="sd${d.key}"></span></div>
+      <svg viewBox="0 0 ${W} ${HH}" role="img" aria-label="${d.name} distribution">
+        <defs><clipPath id="clip${d.key}"><rect x="${zToX(-2)}" y="0" width="${zToX(2)-zToX(-2)}" height="${BASE}"/></clipPath></defs>
+        <path d="${bell} L ${W-PAD} ${BASE} L ${PAD} ${BASE} Z" fill="var(--band)" clip-path="url(#clip${d.key})"/>
+        <path d="${bell}" fill="none" stroke="var(--muted)" stroke-width="1.3"/>
+        <line x1="${PAD}" y1="${BASE}" x2="${W-PAD}" y2="${BASE}" stroke="var(--line)" stroke-width="1"/>
+        <text x="${zToX(-2)}" y="${BASE+12}" font-size="9.5" text-anchor="middle" fill="var(--muted)" id="lo${d.key}"></text>
+        <text x="${zToX(0)}" y="${BASE+12}" font-size="9.5" text-anchor="middle" fill="var(--fg)" id="mid${d.key}"></text>
+        <text x="${zToX(2)}" y="${BASE+12}" font-size="9.5" text-anchor="middle" fill="var(--muted)" id="hi${d.key}"></text>
+        <g class="marker" id="mk${d.key}" transform="translate(${zToX(0)} 0)">
+          <line x1="0" y1="${BASE-50}" x2="0" y2="${BASE}" stroke="var(--point)" stroke-width="1.5" stroke-dasharray="3 2"/>
+          <circle cx="0" cy="${BASE}" r="4.5" fill="var(--point)" stroke="var(--surface)" stroke-width="1.5"/>
+        </g>
+      </svg>
+      <div class="drawn" id="dr${d.key}">${d.key==='E' ? 'ε = 0.00' : d.key==='P' ? '× 1.000' : d.key.replace('R','ρ')+' = '+d.fmtV(d.centre(C))+' '+d.unit}</div>
+    </div>`).join('');
+  updateDiceLabels();
+}
+function updateDiceLabels(){
+  DICE.forEach(d => {
+    const on = d.isOn(C); $('die'+d.key).classList.toggle('off', !on);
+    $('sd'+d.key).textContent = on ? d.sdText(C) : 'fixed';
+    const c = d.centre(C), s = d.sdAbs(C);
+    const lo = d.log ? c*Math.exp(-2*s) : c-2*s, hi = d.log ? c*Math.exp(2*s) : c+2*s;
+    $('lo'+d.key).textContent = d.fmtV(lo); $('mid'+d.key).textContent = d.fmtV(c); $('hi'+d.key).textContent = d.fmtV(hi);
+    if (d.key==='E'){ $('lo'+d.key).textContent = fmt(-2*s,2); $('hi'+d.key).textContent = '+'+fmt(2*s,2); }
+  });
+}
+function showDraw(dr){
+  DICE.forEach(d => {
+    const on = d.isOn(C); const z = on ? d.z(dr) : 0;
+    $('mk'+d.key).setAttribute('transform', `translate(${zToX(z).toFixed(1)} 0)`);
+    const v = d.val(dr); const el = $('dr'+d.key);
+    el.textContent = d.key==='E' ? `ε = ${d.fmtV(v)}` : d.key==='P' ? `× ${d.fmtV(v)}` : `${d.key.replace('R','ρ')} = ${d.fmtV(v)} ${d.unit}`;
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+  });
+}
+function showFormula(dr){
+  $('fR').textContent = fmt(dr.rho,3); $('fD').textContent = fmt(dr.D,2); $('fH').textContent = fmt(dr.H,1); $('fP').textContent = fmt(dr.pf,3);
+  $('fE').innerHTML = `e<sup>${(dr.eps>=0?'+':'')+fmt(dr.eps,2)}</sup>`;
+  const r = $('fRes'); r.textContent = fmtKg(dr.agb)+' kg'; r.classList.remove('flash'); void r.offsetWidth; r.classList.add('flash');
+}
+function resetFormula(){ const p = agbPoint(C.D, C.H, C.rho); showFormula({rho:C.rho, D:C.D, H:C.H, pf:1, eps:0, agb:p}); $('fRes').classList.remove('flash'); }
+
+// ---------- histogram ----------
+const NB = 60;
+let histEl = $('hist');
+function histRange(){ return [0, Math.max(1, agbPoint(C.D, C.H, C.rho)*3.2)]; }
+let lastSt = null;
+function drawHist(st){
+  const width = Math.max(300, histEl.clientWidth || 600), height = 270;
+  const mL = 44, mR = 14, mT = 14, mB = 58;
+  const [x0, x1] = histRange(); const bw = (x1-x0)/NB;
+  const counts = new Uint32Array(NB); let over = 0;
+  for (let i=0;i<n;i++){ const b = Math.floor((samples[i]-x0)/bw); if (b>=NB) over++; else if (b>=0) counts[b]++; }
+  const cmax = Math.max(1, ...counts);
+  const px = v => mL + (width-mL-mR)*(v-x0)/(x1-x0);
+  const py = c => mT + (height-mT-mB)*(1 - c/cmax);
+  let s = `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="Histogram of simulated above-ground biomass">`;
+  // 95% band
+  if (st && n >= 20){ s += `<rect x="${px(st.lo)}" y="${mT}" width="${Math.max(0,px(st.hi)-px(st.lo))}" height="${height-mT-mB}" fill="var(--band)"/>`; }
+  // gridlines
+  const yticks = niceTicks(0, cmax, 4);
+  yticks.forEach(t => { s += `<line x1="${mL}" x2="${width-mR}" y1="${py(t)}" y2="${py(t)}" stroke="var(--line)" stroke-width="1"/><text x="${mL-6}" y="${py(t)+4}" font-size="12" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)">${t}</text>`; });
+  // bars
+  for (let b=0;b<NB;b++){ if (!counts[b]) continue; const x = px(x0+b*bw), w = px(x0+(b+1)*bw)-x; s += `<rect x="${x+0.5}" y="${py(counts[b])}" width="${Math.max(0.5,w-1)}" height="${py(0)-py(counts[b])}" fill="var(--hist)"/>`; }
+  // axes
+  s += `<line x1="${mL}" x2="${width-mR}" y1="${py(0)}" y2="${py(0)}" stroke="var(--fg)" stroke-width="1"/>`;
+  niceTicks(x0, x1, 8).forEach(t => { if (t<x0||t>x1) return; s += `<line x1="${px(t)}" x2="${px(t)}" y1="${py(0)}" y2="${py(0)+5}" stroke="var(--fg)"/><text x="${px(t)}" y="${py(0)+19}" font-size="12" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)">${t}</text>`; });
+  s += `<text x="${(mL+width-mR)/2}" y="${height-6}" font-size="13" text-anchor="middle" fill="var(--fg)">Above-ground biomass AGB (kg)</text>`;
+  s += `<text transform="translate(13 ${(mT+py(0))/2}) rotate(-90)" font-size="13" text-anchor="middle" fill="var(--fg)">Number of draws</text>`;
+  // point value & median
+  const p = agbPoint(C.D, C.H, C.rho);
+  s += `<line x1="${px(p)}" x2="${px(p)}" y1="${mT}" y2="${py(0)}" stroke="var(--point)" stroke-width="2"/><text x="${px(p)+5}" y="${mT+12}" font-size="12" fill="var(--point)" font-weight="600">point ${fmtKg(p)} kg</text>`;
+  if (st && n >= 20){ s += `<line x1="${px(st.median)}" x2="${px(st.median)}" y1="${mT}" y2="${py(0)}" stroke="var(--marker)" stroke-width="1.5" stroke-dasharray="5 3"/><text x="${px(st.median)+5}" y="${mT+28}" font-size="12" fill="var(--fg)">median ${fmtKg(st.median)} kg</text>`;
+    s += `<text x="${px(st.lo)}" y="${py(0)+34}" font-size="11.5" text-anchor="middle" fill="var(--accent)" font-weight="600">2.5 %: ${fmtKg(st.lo)}</text><text x="${px(st.hi)}" y="${py(0)+34}" font-size="11.5" text-anchor="middle" fill="var(--accent)" font-weight="600">97.5 %: ${fmtKg(st.hi)}</text>`; }
+  if (over) s += `<text x="${width-mR}" y="${py(0)-8}" font-size="11.5" text-anchor="end" fill="var(--muted)">${over} draws beyond ${fmt(x1,0)} kg →</text>`;
+  s += `<circle id="fallDot" cx="0" cy="0" r="5" fill="var(--point)" stroke="var(--surface)" stroke-width="1.5" visibility="hidden"/>`;
+  s += `</svg>`;
+  histEl.innerHTML = s;
+  histEl._geom = { px, py, mT, counts, bw, x0, x1, NB };
+}
+function niceTicks(a, b, want){ const span = b-a; if (span <= 0) return [a]; const raw = span/want; const mag = Math.pow(10, Math.floor(Math.log10(raw))); const steps=[1,2,2.5,5,10]; let step = mag*10; for (const s of steps){ if (raw <= s*mag){ step = s*mag; break; } } const out=[]; for (let t = Math.ceil(a/step)*step; t <= b+1e-9; t += step) out.push(Math.round(t*1000)/1000); return out; }
+
+// ---------- read-outs ----------
+function updateReadouts(){
+  const st = n ? stats(samples.subarray(0,n)) : null; lastSt = st;
+  $('nDraws').textContent = n.toLocaleString('en-US');
+  const p = agbPoint(C.D, C.H, C.rho);
+  const rows = [ ['AGB (kg)', 1], ['Carbon = 0.47 × AGB (kg)', CF], ['CO₂ = 3.67 × C (kg)', CF*CO2F] ];
+  const tb = $('readTable'); tb.innerHTML = rows.map(([name,f],i) => `<tr${i===0?' class="agb"':''}><td>${name}</td><td class="num">${fmtKg(p*f)}</td>` +
+    (st && n>=2 ? `<td class="num">${fmtKg(st.median*f)}</td><td class="num">${fmtKg(st.mean*f)}</td><td class="num">${fmtKg(st.sd*f)}</td><td class="num">${fmt(st.cv*100,1)}</td><td class="num">${fmtKg(st.lo*f)} – ${fmtKg(st.hi*f)}</td>`
+      : `<td class="num">–</td><td class="num">–</td><td class="num">–</td><td class="num">–</td><td class="num">–</td>`) + `</tr>`).join('');
+  if (st && n >= 1000){
+    const sig2 = x => x >= 10 ? fmt(Math.round(x),0) : fmt(x,1);
+    $('reportText').textContent = `"AGB ≈ ${sig2(st.median)} kg (95 % interval ${sig2(st.lo)}–${sig2(st.hi)} kg) from ${n.toLocaleString('en-US')} Monte Carlo draws; dominated by the model's own scatter."`;
+  }
+  drawHist(st);
+}
+
+// ---------- animation ----------
+function speedSec(){ return parseFloat($('speed').value); }
+function animateDrop(agb, done){
+  const g = histEl._geom; if (!g){ done(); return; }
+  const dot = $('fallDot'); if (!dot){ done(); return; }
+  const b = Math.min(g.NB-1, Math.max(0, Math.floor((agb-g.x0)/g.bw)));
+  const x = g.px(g.x0 + (b+0.5)*g.bw); const yTop = g.mT; const yEnd = g.py(g.counts[b]) - 5;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dur = reduce ? 0 : Math.min(500, speedSec()*1000*0.35); const t0 = performance.now();
+  dot.setAttribute('visibility','visible'); dot.setAttribute('cx', x);
+  function frame(now){ const t = Math.min(1, dur ? (now-t0)/dur : 1); const e = t*t; dot.setAttribute('cy', yTop + (yEnd-yTop)*e); if (t<1) requestAnimationFrame(frame); else { dot.setAttribute('visibility','hidden'); done(); } }
+  requestAnimationFrame(frame);
+}
+function addSample(agb){ if (n < NMAX) samples[n++] = agb; }
+let stepBusy = false;
+function stepOnce(cb){
+  if (n >= NMAX){ stopPlay(); if (cb) cb(); return; }
+  stepBusy = true;
+  const dr = drawOne(C, normal);
+  showDraw(dr);
+  const sec = speedSec()*1000;
+  setTimeout(() => { showFormula(dr); }, Math.min(300, sec*0.3));
+  setTimeout(() => { animateDrop(dr.agb, () => { addSample(dr.agb); updateReadouts(); stepBusy = false; if (cb) cb(); }); }, Math.min(600, sec*0.5));
+}
+function startPlay(){ if (fastRunning) return; playing = true; $('btnPlay').textContent = 'Pause'; loop(); }
+function loop(){ if (!playing) return; stepOnce(() => { if (playing && n < NMAX) playTimer = setTimeout(loop, Math.max(50, speedSec()*1000*0.4)); else stopPlay(); }); }
+function stopPlay(){ playing = false; clearTimeout(playTimer); $('btnPlay').textContent = 'Play'; }
+function fastForward(){
+  if (fastRunning) return; stopPlay(); fastRunning = true; setButtons(false);
+  function chunk(){ const target = Math.min(NMAX, n + 1500); for (;n<target;){ samples[n++] = drawOne(C, normal).agb; } updateReadouts(); if (n < NMAX) requestAnimationFrame(chunk); else { const dr = drawOne(C, normal); showDraw(dr); showFormula(dr); fastRunning = false; setButtons(true); } }
+  requestAnimationFrame(chunk);
+}
+function setButtons(en){ ['btnStep','btnPlay','btnFast','btnReset','btnSeed','btnOne'].forEach(id => $(id).disabled = !en); }
+function reset(){ stopPlay(); n = 0; normal = makeNormal(mulberry32(seed)); C = cfg(); const p = agbPoint(C.D, C.H, C.rho); $('ptAGB').textContent = fmtKg(p); $('ptC').textContent = fmtKg(p*CF); $('ptCO2').textContent = fmtKg(p*CF*CO2F); updateDiceLabels(); DICE.forEach(d => $('mk'+d.key).setAttribute('transform', `translate(${zToX(0)} 0)`)); resetFormula(); DICE.forEach(d => { $('dr'+d.key).classList.remove('flash'); }); buildDiceText(); updateReadouts(); $('bars').innerHTML = ''; $('oneStatus').textContent = ''; }
+function buildDiceText(){ DICE.forEach(d => { const v = d.centre(C); $('dr'+d.key).textContent = d.key==='E' ? 'ε = 0.00' : d.key==='P' ? '× 1.000' : `${d.key.replace('R','ρ')} = ${d.fmtV(v)} ${d.unit}`; }); }
+
+// ---------- one die at a time ----------
+function oneDie(){
+  const base = cfg(); const N1 = 5000;
+  const configs = [
+    ['Height H only',      {...base, onH:true,  onD:false, onR:false, onP:false, onE:false}],
+    ['Diameter D only',    {...base, onH:false, onD:true,  onR:false, onP:false, onE:false}],
+    ['Density ρ only',     {...base, onH:false, onD:false, onR:true,  onP:false, onE:false}],
+    ['Parameters only',    {...base, onH:false, onD:false, onR:false, onP:true,  onE:false}],
+    ['Model scatter only', {...base, onH:false, onD:false, onR:false, onP:false, onE:true }],
+    ['All together',       {...base, onH:true,  onD:true,  onR:true,  onP:true,  onE:true }],
+  ];
+  const res = configs.map(([name, c], i) => { const st = stats(runMany(c, N1, seed + 101*(i+1))); return { name, cv: st.cv*100, lo: st.lo, hi: st.hi }; });
+  const width = Math.max(280, $('bars').clientWidth || 480), rowH = 34, mL = 128, mR = 60, mT = 8;
+  const height = mT + rowH*res.length + 28; const vmax = Math.max(45, Math.ceil(Math.max(...res.map(r=>r.cv))/10)*10);
+  const px = v => mL + (width-mL-mR)*v/vmax;
+  let s = `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="CV per source">`;
+  niceTicks(0, vmax, 5).forEach(t => { s += `<line x1="${px(t)}" x2="${px(t)}" y1="${mT}" y2="${mT+rowH*res.length}" stroke="var(--line)"/><text x="${px(t)}" y="${mT+rowH*res.length+16}" font-size="12" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)">${t}</text>`; });
+  res.forEach((r, i) => { const y = mT + i*rowH; const all = i === res.length-1;
+    s += `<text x="${mL-8}" y="${y+rowH/2+4}" font-size="13" text-anchor="end" fill="var(--fg)" font-weight="${all?600:400}">${r.name}</text>`;
+    s += `<rect x="${px(0)}" y="${y+7}" width="${Math.max(1, px(r.cv)-px(0))}" height="${rowH-14}" rx="3" fill="${all ? 'var(--point)' : 'var(--hist)'}"/>`;
+    s += `<text x="${px(r.cv)+6}" y="${y+rowH/2+4}" font-size="13" fill="var(--fg)" font-family="var(--font-mono)" font-weight="600">${fmt(r.cv,1)} %</text>`; });
+  s += `<text x="${(mL+width-mR)/2}" y="${height-2}" font-size="12.5" text-anchor="middle" fill="var(--fg)">CV % of AGB (5,000 draws each)</text></svg>`;
+  $('bars').innerHTML = s;
+  const q = Math.sqrt(res.slice(0,5).reduce((a,r)=>a+r.cv*r.cv,0));
+  const parts = res.slice(0,5).map(r=>fmt(r.cv,0)+'²').sort((a,b)=>parseFloat(b)-parseFloat(a)).join(' + ');
+  $('quadNote').innerHTML = `Errors from independent sources add "in quadrature" (square, add, square-root), not by simple addition: √(${parts}) ≈ <b>${fmt(q,0)} %</b>, which matches "all together" (${fmt(res[5].cv,0)} %). The biggest source dominates; shrinking a small one hardly helps. All-together 95 % interval: ${fmtKg(res[5].lo)}–${fmtKg(res[5].hi)} kg.`;
+  $('oneStatus').textContent = `Done: 6 × ${N1.toLocaleString('en-US')} draws.`;
+}
+
+// ---------- wiring ----------
+buildDice(); reset();
+$('btnStep').addEventListener('click', () => { if (stepBusy || fastRunning) return; stopPlay(); stepOnce(); });
+$('btnPlay').addEventListener('click', () => { if (playing) stopPlay(); else startPlay(); });
+$('btnFast').addEventListener('click', fastForward);
+$('btnReset').addEventListener('click', reset);
+$('btnSeed').addEventListener('click', () => { seed = (Math.random()*4294967295)>>>0; reset(); });
+$('btnOne').addEventListener('click', () => { $('oneStatus').textContent = 'Running…'; setTimeout(oneDie, 20); });
+$('speed').addEventListener('input', () => { $('speedLab').textContent = fmt(speedSec(),1)+' s per draw'; });
+['inD','inH','inR','onH','onD','onR','onP','onE','sdH','sdD','sdR','sdP','sdE'].forEach(id => $(id).addEventListener('change', reset));
+let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { drawHist(lastSt); if ($('bars').innerHTML) oneDie(); }, 150); });
+// expose for testing
+window.__mc = { fastForward, oneDie, getStats: () => lastSt, getN: () => n, cfg };
+})();
+</script>
+</body>
+</html>

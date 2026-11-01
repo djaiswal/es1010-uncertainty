@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>From 25 Trees to a Plot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: stacked panels A–D under one control bar, max 1100px; panel B is the animated centre (dot strip -> sum -> histogram). */
+:root{
+  --bg:#f2f5f0; --surface:#ffffff; --surface-2:#e9efe7; --fg:#1d2a21; --muted:#5a6a5e; --line:#cfd9cd;
+  --accent:#2f6b3a; --accent-soft:#dbeadd; --point:#b8690b; --point-soft:#fbe9d2;
+  --hist:#6ea379; --hist-dim:#b9d2bf; --band:rgba(47,107,58,0.13); --marker:#1d2a21; --indep:#5b6fb5;
+  --warn-bg:#fff6e5; --warn-fg:#6b4408; --warn-line:#e4b86a;
+  --font-display:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body:"IBM Plex Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono:"IBM Plex Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#121a15; --surface:#1a241d; --surface-2:#22302a; --fg:#e4ebe3; --muted:#9db09f; --line:#33423a;
+  --accent:#86c58f; --accent-soft:#25402c; --point:#eaa44d; --point-soft:#4a3414;
+  --hist:#4f8c5e; --hist-dim:#2f5438; --band:rgba(134,197,143,0.16); --marker:#f1f6f0; --indep:#9aa9e6;
+  --warn-bg:#3a2d14; --warn-fg:#f6d9a6; --warn-line:#8a6a2a; color-scheme:dark; } }
+:root[data-theme="dark"]{
+  --bg:#121a15; --surface:#1a241d; --surface-2:#22302a; --fg:#e4ebe3; --muted:#9db09f; --line:#33423a;
+  --accent:#86c58f; --accent-soft:#25402c; --point:#eaa44d; --point-soft:#4a3414;
+  --hist:#4f8c5e; --hist-dim:#2f5438; --band:rgba(134,197,143,0.16); --marker:#f1f6f0; --indep:#9aa9e6;
+  --warn-bg:#3a2d14; --warn-fg:#f6d9a6; --warn-line:#8a6a2a; color-scheme:dark; }
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg); color:var(--fg); font-family:var(--font-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:20px 32px;}
+.wrap{max-width:1100px; margin:0 auto; display:grid; gap:20px}
+h1,h2,h3{font-family:var(--font-display); font-weight:600; line-height:1.2; margin:0; text-wrap:balance}
+h1{font-size:clamp(28px,4vw,40px)}
+h2{font-size:22px}
+h3{font-size:17px}
+p{margin:0}
+.eyebrow{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.lede{max-width:70ch}
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:18px; display:grid; gap:14px; min-width:0}
+.panel-tag{font-family:var(--font-mono); font-size:12px; color:var(--accent); font-weight:500; letter-spacing:.06em}
+.caption{font-size:13.5px; color:var(--muted); max-width:80ch}
+.mono,.num{font-family:var(--font-mono); font-variant-numeric:tabular-nums}
+button{font:inherit; font-weight:600; font-size:14px; border:1px solid var(--line); background:var(--surface-2); color:var(--fg); border-radius:7px; padding:8px 14px; cursor:pointer}
+button.primary{background:var(--accent); border-color:var(--accent); color:#fff}
+:root[data-theme="dark"] button.primary{color:#0f1a12}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) button.primary{color:#0f1a12} }
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+button:disabled{opacity:.5; cursor:default}
+input[type=number]{font:inherit; font-family:var(--font-mono); font-size:14px; width:6.5em; padding:5px 7px; border:1px solid var(--line); border-radius:6px; background:var(--surface); color:var(--fg)}
+input[type=range]{width:100%; accent-color:var(--accent)}
+input[type=checkbox]{width:17px; height:17px; accent-color:var(--accent); margin:0; flex:none}
+label{font-size:14px}
+
+.controls{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px}
+.ctl-group{display:grid; gap:8px; align-content:start}
+.ctl-row{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+.ctl-row .lab{display:flex; align-items:center; gap:8px; min-width:0}
+.ctl-row .val{display:flex; align-items:center; gap:6px; color:var(--muted); font-size:13px}
+.buttons{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.speed{display:grid; gap:4px; min-width:180px; flex:1}
+.speed label{font-size:13px; color:var(--muted)}
+.toggle-box{display:flex; gap:10px; align-items:flex-start; background:var(--surface-2); border-radius:8px; padding:10px 12px}
+.toggle-box input{margin-top:3px}
+.toggle-box .caption{max-width:none}
+
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse; width:100%; font-size:14px}
+th,td{padding:6px 10px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap}
+th{font-weight:600; color:var(--muted); font-size:12.5px; letter-spacing:.04em; text-transform:uppercase}
+td:first-child,th:first-child,td.sp,th.sp{text-align:left}
+td.num{font-family:var(--font-mono)}
+details summary{cursor:pointer; font-weight:600; font-size:14px; color:var(--accent)}
+
+.chart svg{width:100%; height:auto; display:block; overflow:visible}
+.legend{display:flex; gap:14px; flex-wrap:wrap; font-size:13px; color:var(--muted)}
+.legend span::before{content:""; display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px; vertical-align:-2px; background:var(--sw)}
+.legend span.ln::before{height:3px; border-radius:2px; vertical-align:3px}
+.counter{font-size:13.5px; color:var(--muted)}
+.counter b{color:var(--fg); font-family:var(--font-mono)}
+.sumline{display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; font-family:var(--font-mono); font-size:17px; padding:4px 0}
+.sumline .big{font-size:22px; font-weight:600; color:var(--point)}
+.arrow{display:flex; justify-content:center; color:var(--muted)}
+
+.bigstats{display:grid; grid-template-columns:1fr auto 1fr; gap:12px; align-items:center; background:var(--surface-2); border-radius:10px; padding:14px 16px}
+.bigstats .cell{display:grid; gap:2px; text-align:center}
+.bigstats .v{font-family:var(--font-mono); font-size:clamp(30px,6vw,44px); font-weight:600; line-height:1.1}
+.bigstats .l{font-size:13px; color:var(--muted)}
+.bigstats .vs{font-family:var(--font-display); font-size:18px; color:var(--muted)}
+@media (max-width:420px){ .bigstats{grid-template-columns:1fr; } .bigstats .vs{display:none} }
+.note{background:var(--surface-2); border-radius:8px; padding:12px 14px; font-size:14px}
+.caution{background:var(--warn-bg); color:var(--warn-fg); border:1px solid var(--warn-line); border-radius:8px; padding:12px 14px; font-size:14px; display:grid; gap:6px}
+.caution b{color:inherit}
+.kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px}
+.kpi{border:1px solid var(--line); border-radius:8px; padding:10px 12px; display:grid; gap:2px}
+.kpi .l{font-size:12.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em}
+.kpi .v{font-family:var(--font-mono); font-size:20px; font-weight:600}
+.kpi .r{font-family:var(--font-mono); font-size:13px; color:var(--muted)}
+.notice{background:var(--accent-soft); border-radius:10px; padding:16px 18px; display:grid; gap:8px}
+.notice ul{margin:0; padding-left:20px; display:grid; gap:6px}
+.notice li{max-width:80ch}
+footer{color:var(--muted); font-size:13px; text-align:center; padding-top:8px}
+.mv{transition:transform .35s cubic-bezier(.3,1.3,.5,1)}
+@media (prefers-reduced-motion: reduce){ .mv{transition:none !important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header style="display:grid;gap:10px">
+  <div class="eyebrow">Quantifying uncertainty in tree biomass · page 4</div>
+  <h1>From 25 Trees to a Plot</h1>
+  <p class="lede"><strong>What you are looking at.</strong> On page 3 one tree had a biomass uncertainty of about ±40 %. Here we add up 25 measured trees from a Miyawaki plot. Each tree is still ±40 %, yet the total is known to about ±12 %. Why? Random errors partly cancel when you add many trees: one tree comes out high, another low. But some errors are <em>shared</em> (the same wood-density table, the same equation for every tree), and those do not cancel. This page lets you watch both effects.</p>
+</header>
+
+<section class="panel" aria-label="Controls">
+  <div class="controls">
+    <div class="ctl-group">
+      <h3>Sources of uncertainty (SD = standard deviation)</h3>
+      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onH" checked> Height H (per tree)</label><span class="val">SD <input type="number" id="sdH" value="10" step="0.5" min="0"> %</span></div>
+      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onD" checked> Diameter D (per tree)</label><span class="val">SD <input type="number" id="sdD" value="2.5" step="0.5" min="0"> %</span></div>
+      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onR" checked> Density ρ (per species)</label><span class="val">SD <input type="number" id="sdR" value="10" step="0.5" min="0"> %</span></div>
+      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onP" checked> Equation parameters (all trees)</label><span class="val">SD <input type="number" id="sdP" value="1" step="0.5" min="0"> %</span></div>
+      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onE" checked> Model scatter ε (per tree)</label><span class="val">σ <input type="number" id="sdE" value="0.357" step="0.01" min="0"> log</span></div>
+    </div>
+    <div class="ctl-group">
+      <h3>How the errors are shared</h3>
+      <label class="toggle-box"><input type="checkbox" id="indep"><span><b>Treat ρ and parameter errors as independent per tree</b><br><span class="caption">Off (realistic): in each iteration, one ρ error per <em>species</em> moves all trees of that species together, and one parameter error moves all 25 trees together. On (wrong but instructive): every tree gets its own private ρ and parameter errors, so they cancel like the others.</span></span></label>
+      <p class="caption">Changing any control resets the animation and recomputes panels A, C and D.</p>
+    </div>
+  </div>
+  <div class="buttons">
+    <button id="btnStep">Step (1 iteration)</button>
+    <button id="btnPlay" class="primary">Play</button>
+    <button id="btnFast">Fast-forward to 20,000</button>
+    <button id="btnReset">Reset</button>
+    <button id="btnSeed" title="Use a different random sequence">New seed</button>
+    <div class="speed"><label for="speed">Speed: <span id="speedLab">1.0 s per iteration</span></label><input type="range" id="speed" min="0.3" max="3" step="0.1" value="1"></div>
+  </div>
+  <details>
+    <summary>Show the 25 measured trees</summary>
+    <div class="tbl-wrap" style="margin-top:8px"><table id="treeTable"><thead><tr><th>#</th><th class="sp">Species</th><th>D (cm)</th><th>H (m)</th><th>ρ (g/cm³)</th><th>AGB point (kg)</th></tr></thead><tbody></tbody></table></div>
+  </details>
+</section>
+
+<section class="panel" aria-label="Panel A">
+  <div>
+    <div class="panel-tag">PANEL A</div>
+    <h2>Each tree alone</h2>
+    <p class="caption">Each tree simulated on its own, 5,000 draws, sorted by size. Dot = point estimate from the equation; whisker = 95 % interval; right column = CV %. Every tree sits near 40 %, big or small: the relative error of one tree does not depend on its size.</p>
+  </div>
+  <div class="buttons"><label><input type="checkbox" id="logA" checked> Log-scale x-axis</label><span class="caption">(on a log axis every whisker has the same length: same <em>relative</em> error)</span></div>
+  <div class="chart" id="chartA"></div>
+</section>
+
+<section class="panel" aria-label="Panel B">
+  <div>
+    <div class="panel-tag">PANEL B</div>
+    <h2>Adding them up</h2>
+    <p class="caption">One iteration = one possible "world": all 25 trees get their drawn values at once (dots jiggle to the new positions; the grey tick is each tree's point value), the 25 values are summed, and the sum drops into the histogram of plot totals. Trees of the same species share their ρ error, so watch them move together.</p>
+  </div>
+  <div class="counter">Iterations so far: <b id="nIter">0</b> of 20,000</div>
+  <div class="chart" id="strip"></div>
+  <div class="sumline"><span>Σ of 25 trees =</span><span class="big" id="sumVal">286 kg</span></div>
+  <div class="arrow" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 3v18M6 14l8 8 8-8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="chart" id="histB"></div>
+  <div class="legend">
+    <span style="--sw:var(--hist)">Pile of plot totals</span>
+    <span style="--sw:var(--band)">Middle 95 %</span>
+    <span style="--sw:var(--point)">Point total</span>
+    <span style="--sw:var(--marker)">Median</span>
+  </div>
+  <div class="kpis" id="kpisB"></div>
+  <div class="bigstats">
+    <div class="cell"><div class="v" id="bigTree">40 %</div><div class="l">average CV of one tree</div></div>
+    <div class="vs">versus</div>
+    <div class="cell"><div class="v" id="bigTotal" style="color:var(--accent)">– %</div><div class="l">CV of the 25-tree total</div></div>
+  </div>
+  <div class="note" id="noteMean">
+    <b>Why is the mean above the point total?</b> The point total is 286 kg, but the mean of the draws comes out near 306 kg. The equation gives the <em>median</em> tree; the real tree is median × e<sup>ε</sup>. With σ = 0.357, e<sup>ε</sup> averages e<sup>σ²/2</sup> = e<sup>0.064</sup> ≈ 1.066, so on average each tree is 6.6 % heavier than the equation says (a log-normal effect: doubling adds more than halving removes). The median of the draws is the fairer "middle" to report; it stays near the point total.
+  </div>
+</section>
+
+<section class="panel" aria-label="Panel C">
+  <div>
+    <div class="panel-tag">PANEL C</div>
+    <h2>Why the error shrinks</h2>
+    <p class="caption">Add the trees one at a time, in table order, and watch the CV % of the running total fall. The dashed reference is 40 %/√n, the textbook rule for n <em>equal</em> and <em>independent</em> trees.</p>
+  </div>
+  <div class="chart" id="chartC"></div>
+  <div class="legend">
+    <span class="ln" style="--sw:var(--accent)">ρ shared per species, parameters shared by all (realistic)</span>
+    <span class="ln" style="--sw:var(--indep)">All errors independent per tree</span>
+    <span class="ln" style="--sw:var(--muted)">40 % / √n reference</span>
+  </div>
+  <div class="note" id="noteC"></div>
+</section>
+
+<section class="panel" aria-label="Panel D">
+  <div>
+    <div class="panel-tag">PANEL D</div>
+    <h2>Per hectare</h2>
+    <p class="caption">Field plots are small; reports are "per hectare". Dividing by the plot area and multiplying by 10,000 m² keeps the same <em>percentage</em> uncertainty, so the interval scales with the number.</p>
+  </div>
+  <div class="controls">
+    <div class="ctl-group">
+      <div class="ctl-row"><span class="lab">Trees in the plot</span><span class="val"><input type="number" id="nTrees" value="25" step="1" min="1"> trees</span></div>
+      <div class="ctl-row"><span class="lab">Planting density</span><span class="val"><input type="number" id="dens" value="3" step="0.1" min="0.05"> trees / m²</span></div>
+      <div class="ctl-row"><span class="lab">… or plot area directly</span><span class="val"><input type="number" id="area" value="8.33" step="0.1" min="0.1"> m²</span></div>
+      <p class="caption" id="areaNote">Area = trees ÷ density. Edit either density or area; the other follows. If you change the number of trees away from 25, the total is scaled by (trees ÷ 25), assuming the 25 measured trees are typical.</p>
+    </div>
+    <div class="kpis" id="kpisD"></div>
+  </div>
+  <div class="caution">
+    <b>Caution: this is an extrapolation.</b>
+    <span>Scaling about 8 m² up to 10,000 m² multiplies by roughly 1,200. The interval shown is only the measurement + model uncertainty of <em>these</em> 25 trees. It says nothing about the <em>sampling</em> uncertainty: had you measured a different 8 m² of the same planting, you would have got a different total. Chave et al. (2004) found that sampling error alone is about 10 % for a 0.25 ha plot and about 5 % for a 1 ha plot; for a plot of a few square metres it is far larger. A per-hectare number from one tiny plot should be reported with that warning attached. <b>Sanity check:</b> at 3 trees per m² these 25 illustrative trees give roughly 340 t/ha, which is what a mature tropical rainforest carries, not a 5-year-old planting. Either the density is lower, the illustrative D and H are too generous, or the equation (tested on natural forest, D ≥ 5 cm) overestimates small crowded planted trees. A result that fails a sanity check is a finding to report, with the suspects named.</span>
+  </div>
+</section>
+
+<section class="notice" aria-label="What to notice">
+  <h2>What to notice</h2>
+  <ul>
+    <li><b>Adding shrinks random error.</b> Each tree is ±40 %, the 25-tree total is about ±12 %. High and low draws cancel. This is why foresters measure many trees instead of measuring one tree very carefully.</li>
+    <li><b>But not as fast as 1/√n.</b> With 25 equal trees the CV would be 40/√25 = 8 %. Our trees are very unequal (the two biggest are a third of the total), so the "effective" number of trees is smaller than 25, and the curve in panel C sits above the dashed line.</li>
+    <li><b>Shared errors do not shrink.</b> Flip the "independent per tree" switch: the curve drops further. In reality every tree of a species uses the same density value and every tree uses the same equation, so that part of the error is systematic and stays, however many trees you add. This becomes a floor when n is large.</li>
+    <li><b>Mean ≠ median for lopsided piles.</b> The log-normal scatter pushes the mean about 6–7 % above the point total. Report the median and the 95 % interval.</li>
+    <li><b>Per-hectare numbers from tiny plots are extrapolations.</b> The interval covers measurement and model error only; the sampling error of "which 8 m² did we pick" is extra and probably bigger.</li>
+  </ul>
+</section>
+
+<footer>Ecology &amp; Environment 2026 · Quantifying uncertainty in tree biomass · built for teaching; numbers are illustrative</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+// ---------- data ----------
+const TREES = [
+ {id:1,species:"Terminalia bellirica",D:4.9,H:4.4,rho:0.62},{id:2,species:"Phyllanthus emblica",D:3.0,H:3.3,rho:0.70},
+ {id:3,species:"Azadirachta indica",D:7.8,H:6.1,rho:0.69},{id:4,species:"Terminalia bellirica",D:5.9,H:5.2,rho:0.62},
+ {id:5,species:"Prosopis cineraria",D:6.0,H:4.9,rho:0.75},{id:6,species:"Simarouba glauca",D:7.9,H:6.8,rho:0.39},
+ {id:7,species:"Syzygium cumini",D:6.4,H:5.3,rho:0.70},{id:8,species:"Psidium gujava",D:6.8,H:5.2,rho:0.70},
+ {id:9,species:"Terminalia arjuna",D:5.7,H:5.1,rho:0.73},{id:10,species:"Simarouba glauca",D:6.2,H:4.3,rho:0.39},
+ {id:11,species:"Terminalia arjuna",D:5.5,H:5.1,rho:0.73},{id:12,species:"Syzygium cumini",D:6.0,H:5.0,rho:0.70},
+ {id:13,species:"Azadirachta indica",D:7.8,H:7.7,rho:0.69},{id:14,species:"Prosopis cineraria",D:5.1,H:5.1,rho:0.75},
+ {id:15,species:"Bombax ceiba",D:4.0,H:3.6,rho:0.33},{id:16,species:"Terminalia bellirica",D:4.2,H:4.3,rho:0.62},
+ {id:17,species:"Cleistanthus collinus",D:8.2,H:7.5,rho:0.80},{id:18,species:"Swietenia Mahogany",D:4.7,H:4.4,rho:0.60},
+ {id:19,species:"Terminalia bellirica",D:5.5,H:4.4,rho:0.62},{id:20,species:"Terminalia bellirica",D:7.5,H:6.7,rho:0.62},
+ {id:21,species:"Terminalia arjuna",D:6.9,H:5.3,rho:0.73},{id:22,species:"Pongamia pinnata",D:4.8,H:4.9,rho:0.60},
+ {id:23,species:"Terminalia bellirica",D:7.7,H:6.8,rho:0.62},{id:24,species:"Azadirachta indica",D:10.9,H:7.6,rho:0.69},
+ {id:25,species:"Cassia fistula",D:11.6,H:10.0,rho:0.73}
+];
+const NT = TREES.length;
+const SPECIES = [...new Set(TREES.map(t=>t.species))];
+TREES.forEach(t => { t.sp = SPECIES.indexOf(t.species); });
+const A = 0.0673, B = 0.976, CF = 0.47, CO2F = 3.67;
+const agbPoint = t => A*Math.pow(t.rho*t.D*t.D*t.H, B);
+TREES.forEach(t => { t.point = agbPoint(t); });
+const POINT_TOTAL = TREES.reduce((a,t)=>a+t.point,0);
+const abbrev = s => { const p = s.split(' '); return p.length > 1 ? p[0][0]+'. '+p.slice(1).join(' ') : s; };
+
+// ---------- maths ----------
+function mulberry32(seed){ let a = seed >>> 0; return function(){ a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+function makeNormal(rand){ let spare = null; return function(){ if (spare !== null){ const s = spare; spare = null; return s; } let u, v, s; do { u = rand()*2-1; v = rand()*2-1; s = u*u+v*v; } while (s >= 1 || s === 0); const m = Math.sqrt(-2*Math.log(s)/s); spare = v*m; return u*m; }; }
+function quantileSorted(a, q){ const pos = (a.length-1)*q, lo = Math.floor(pos), hi = Math.ceil(pos); return a[lo] + (a[hi]-a[lo])*(pos-lo); }
+function stats(arr){ const n = arr.length; if (!n) return null; const s = Float64Array.from(arr).sort(); let sum=0; for (let i=0;i<n;i++) sum+=s[i]; const mean=sum/n; let ss=0; for (let i=0;i<n;i++){ const d=s[i]-mean; ss+=d*d; } const sd = n>1 ? Math.sqrt(ss/(n-1)) : 0; return { n, mean, sd, cv: sd/mean, median: quantileSorted(s,0.5), lo: quantileSorted(s,0.025), hi: quantileSorted(s,0.975) }; }
+function cvOf(arr){ let s=0; for (const v of arr) s+=v; const m=s/arr.length; let ss=0; for (const v of arr){ const d=v-m; ss+=d*d; } return Math.sqrt(ss/(arr.length-1))/m; }
+const fmt = (x, d) => Number.isFinite(x) ? x.toLocaleString('en-US', {minimumFractionDigits:d, maximumFractionDigits:d}) : '–';
+const fmtKg = x => fmt(x, x < 10 ? 2 : x < 100 ? 1 : 0);
+function niceTicks(a, b, want){ const span = b-a; if (span <= 0) return [a]; const raw = span/want; const mag = Math.pow(10, Math.floor(Math.log10(raw))); const steps=[1,2,2.5,5,10]; let step = mag*10; for (const s of steps){ if (raw <= s*mag){ step = s*mag; break; } } const out=[]; for (let t = Math.ceil(a/step)*step; t <= b+1e-9; t += step) out.push(Math.round(t*1000)/1000); return out; }
+const $ = id => document.getElementById(id);
+
+// ---------- model ----------
+function cfg(){
+  const num = (id, def) => { const v = parseFloat($(id).value); return Number.isFinite(v) ? v : def; };
+  return { onH: $('onH').checked, onD: $('onD').checked, onR: $('onR').checked, onP: $('onP').checked, onE: $('onE').checked,
+    sdH: Math.max(0,num('sdH',10))/100, sdD: Math.max(0,num('sdD',2.5))/100, sdR: Math.max(0,num('sdR',10))/100, sdP: Math.max(0,num('sdP',1))/100, sdE: Math.max(0,num('sdE',0.357)),
+    indep: $('indep').checked };
+}
+// One iteration = one "world": returns the AGB of each of the 25 trees.
+// Systematic structure: one parameter error shared by all trees; one rho error shared by all trees of a species.
+function drawIteration(c, normal, indep, out){
+  out = out || new Float64Array(NT);
+  const zP = normal(); const pfShared = c.onP ? Math.max(0.05, 1 + c.sdP*zP) : 1;
+  const zSp = new Float64Array(SPECIES.length); for (let s=0;s<SPECIES.length;s++) zSp[s] = normal();
+  for (let i=0;i<NT;i++){ const t = TREES[i];
+    const H = c.onH ? Math.max(0.05*t.H, t.H*(1 + c.sdH*normal())) : t.H;
+    const D = c.onD ? Math.max(0.05*t.D, t.D*(1 + c.sdD*normal())) : t.D;
+    const rho = c.onR ? t.rho*Math.exp(c.sdR*(indep ? normal() : zSp[t.sp])) : t.rho;
+    const pf = c.onP ? (indep ? Math.max(0.05, 1 + c.sdP*normal()) : pfShared) : 1;
+    const eps = c.onE ? c.sdE*normal() : 0;
+    out[i] = A*Math.pow(rho*D*D*H, B)*pf*Math.exp(eps);
+  }
+  return out;
+}
+// Matrix run: n iterations x 25 trees (row-major)
+function runMatrix(c, n, seed, indep){ const normal = makeNormal(mulberry32(seed)); const M = new Float64Array(n*NT); const row = new Float64Array(NT); for (let k=0;k<n;k++){ drawIteration(c, normal, indep, row); M.set(row, k*NT); } return M; }
+
+// ---------- state ----------
+const NMAX = 20000, NPRE = 5000;
+let seed = 20260406;
+let normal = makeNormal(mulberry32(seed));
+let C = cfg();
+let totals = new Float64Array(NMAX), n = 0, lastSt = null;
+let playing = false, playTimer = null, fastRunning = false, stepBusy = false;
+let perTree = null;   // Panel A results
+let curveSys = null, curveInd = null, nEff = 1, floorPct = 0; // Panel C
+let lastRow = new Float64Array(NT);
+
+// ---------- tree table ----------
+$('treeTable').querySelector('tbody').innerHTML = TREES.map(t => `<tr><td class="num">${t.id}</td><td class="sp"><em>${t.species}</em></td><td class="num">${fmt(t.D,1)}</td><td class="num">${fmt(t.H,1)}</td><td class="num">${fmt(t.rho,2)}</td><td class="num">${fmtKg(t.point)}</td></tr>`).join('') + `<tr><td></td><td class="sp"><b>Total of 25 trees</b></td><td></td><td></td><td></td><td class="num"><b>${fmt(POINT_TOTAL,0)}</b></td></tr>`;
+
+// ---------- Panel A ----------
+function computeA(){
+  const M = runMatrix(C, NPRE, seed+7, true);
+  perTree = TREES.map((t,i) => { const col = new Float64Array(NPRE); for (let k=0;k<NPRE;k++) col[k] = M[k*NT+i]; const st = stats(col); return { ...t, i, st }; });
+}
+function drawA(){
+  const el = $('chartA'); const width = Math.max(300, el.clientWidth || 700); const narrow = width < 620;
+  const log = $('logA').checked; const rowH = 22, mL = narrow ? 118 : 190, mR = 56, mT = 10, mB = 44;
+  const height = mT + rowH*NT + mB;
+  const sorted = [...perTree].sort((a,b)=>b.point-a.point);
+  const vmin = log ? 0.4 : 0, vmax = log ? 160 : 130;
+  const px = log ? (v => mL + (width-mL-mR)*(Math.log10(v)-Math.log10(vmin))/(Math.log10(vmax)-Math.log10(vmin))) : (v => mL + (width-mL-mR)*(v-vmin)/(vmax-vmin));
+  let s = `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="Per-tree biomass with 95 percent intervals">`;
+  const ticks = log ? [0.5,1,2,5,10,20,50,100] : niceTicks(0, vmax, narrow ? 4 : 6);
+  const labelled = log && narrow ? [1,10,100] : ticks;
+  ticks.forEach(t => { s += `<line x1="${px(t)}" x2="${px(t)}" y1="${mT}" y2="${mT+rowH*NT}" stroke="var(--line)"/>`; if (labelled.includes(t)) s += `<text x="${px(t)}" y="${mT+rowH*NT+16}" font-size="12" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)">${t}</text>`; });
+  s += `<text x="${mL-8}" y="${mT-1}" font-size="11" text-anchor="end" fill="var(--muted)">tree · species</text><text x="${width-mR+8}" y="${mT-1}" font-size="11" fill="var(--muted)">CV %</text>`;
+  sorted.forEach((t, r) => { const y = mT + r*rowH + rowH/2; const st = t.st;
+    s += `<text x="${mL-8}" y="${y+4}" font-size="${narrow?11.5:12.5}" text-anchor="end" fill="var(--fg)" font-family="var(--font-body)"><tspan fill="var(--muted)" font-family="var(--font-mono)">#${t.id}</tspan> <tspan font-style="italic">${narrow ? abbrev(t.species) : t.species}</tspan></text>`;
+    s += `<line x1="${px(st.lo)}" x2="${px(st.hi)}" y1="${y}" y2="${y}" stroke="var(--hist)" stroke-width="3" stroke-linecap="round"/>`;
+    s += `<line x1="${px(st.lo)}" x2="${px(st.lo)}" y1="${y-5}" y2="${y+5}" stroke="var(--hist)" stroke-width="1.5"/><line x1="${px(st.hi)}" x2="${px(st.hi)}" y1="${y-5}" y2="${y+5}" stroke="var(--hist)" stroke-width="1.5"/>`;
+    s += `<circle cx="${px(t.point)}" cy="${y}" r="4.5" fill="var(--point)" stroke="var(--surface)" stroke-width="1.5"/>`;
+    s += `<text x="${width-mR+8}" y="${y+4}" font-size="12.5" fill="var(--fg)" font-family="var(--font-mono)">${fmt(st.cv*100,0)}</text>`; });
+  s += `<line x1="${mL}" x2="${width-mR}" y1="${mT+rowH*NT}" y2="${mT+rowH*NT}" stroke="var(--fg)"/>`;
+  s += `<text x="${(mL+width-mR)/2}" y="${height-6}" font-size="13" text-anchor="middle" fill="var(--fg)">AGB of one tree (kg)${log?' — log scale':''}</text></svg>`;
+  el.innerHTML = s;
+  const avg = perTree.reduce((a,t)=>a+t.st.cv,0)/NT; $('bigTree').textContent = fmt(avg*100,0)+' %';
+  return avg;
+}
+
+// ---------- Panel B: strip + histogram ----------
+let stripGeom = null;
+function buildStrip(){
+  const el = $('strip'); const width = Math.max(300, el.clientWidth || 700); const narrow = width < 620;
+  const rowH = 13, mL = narrow ? 76 : 150, mR = 14, mT = 6, mB = 36; const height = mT + rowH*NT + mB;
+  const vmin = 0.3, vmax = 200; const px = v => mL + (width-mL-mR)*(Math.log10(Math.max(vmin,Math.min(vmax,v)))-Math.log10(vmin))/(Math.log10(vmax)-Math.log10(vmin));
+  let s = `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="Drawn biomass of each tree in this iteration">`;
+  [0.5,1,2,5,10,20,50,100].forEach(t => { s += `<line x1="${px(t)}" x2="${px(t)}" y1="${mT}" y2="${mT+rowH*NT}" stroke="var(--line)"/>`; if (!narrow || [1,10,100].includes(t)) s += `<text x="${px(t)}" y="${mT+rowH*NT+15}" font-size="11.5" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)">${t}</text>`; });
+  TREES.forEach((t,i) => { const y = mT + i*rowH + rowH/2;
+    s += `<text x="${mL-6}" y="${y+3.5}" font-size="10.5" text-anchor="end" fill="var(--muted)"><tspan font-family="var(--font-mono)">#${t.id}</tspan>${narrow ? '' : ' <tspan font-style="italic">'+abbrev(t.species)+'</tspan>'}</text>`;
+    s += `<line x1="${px(t.point)}" x2="${px(t.point)}" y1="${y-5}" y2="${y+5}" stroke="var(--muted)" stroke-width="1.5"/>`;
+    s += `<g class="mv" id="dot${i}" transform="translate(${px(t.point)} ${y})"><circle r="4" fill="var(--hist)" stroke="var(--surface)" stroke-width="1"/></g>`; });
+  s += `<text x="${(mL+width-mR)/2}" y="${height-4}" font-size="12.5" text-anchor="middle" fill="var(--fg)">AGB drawn for each tree (kg, log scale)</text></svg>`;
+  el.innerHTML = s; stripGeom = { px };
+}
+function showRow(row){ for (let i=0;i<NT;i++){ const g = $('dot'+i); const tr = g.getAttribute('transform').match(/translate\(([-\d.]+) ([-\d.]+)\)/); g.setAttribute('transform', `translate(${stripGeom.px(row[i]).toFixed(1)} ${tr[2]})`); } }
+function resetStrip(){ TREES.forEach((t,i) => { const g = $('dot'+i); const tr = g.getAttribute('transform').match(/translate\(([-\d.]+) ([-\d.]+)\)/); g.setAttribute('transform', `translate(${stripGeom.px(t.point).toFixed(1)} ${tr[2]})`); }); $('sumVal').textContent = fmt(POINT_TOTAL,0)+' kg'; $('sumVal').style.color = 'var(--fg)'; }
+
+const NB = 60; const histEl = $('histB');
+function histRange(){ return [POINT_TOTAL*0.45, POINT_TOTAL*1.75]; }
+function drawHist(st){
+  const width = Math.max(300, histEl.clientWidth || 600), height = 250, mL = 46, mR = 14, mT = 14, mB = 58;
+  const [x0, x1] = histRange(); const bw = (x1-x0)/NB; const counts = new Uint32Array(NB); let out = 0;
+  for (let i=0;i<n;i++){ const b = Math.floor((totals[i]-x0)/bw); if (b<0||b>=NB) out++; else counts[b]++; }
+  const cmax = Math.max(1, ...counts);
+  const px = v => mL + (width-mL-mR)*(v-x0)/(x1-x0), py = c => mT + (height-mT-mB)*(1-c/cmax);
+  let s = `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="Histogram of simulated plot totals">`;
+  if (st && n>=20) s += `<rect x="${px(st.lo)}" y="${mT}" width="${Math.max(0,px(st.hi)-px(st.lo))}" height="${height-mT-mB}" fill="var(--band)"/>`;
+  niceTicks(0, cmax, 4).forEach(t => { s += `<line x1="${mL}" x2="${width-mR}" y1="${py(t)}" y2="${py(t)}" stroke="var(--line)"/><text x="${mL-6}" y="${py(t)+4}" font-size="12" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)">${t}</text>`; });
+  for (let b=0;b<NB;b++){ if (!counts[b]) continue; const x = px(x0+b*bw), w = px(x0+(b+1)*bw)-x; s += `<rect x="${x+0.5}" y="${py(counts[b])}" width="${Math.max(0.5,w-1)}" height="${py(0)-py(counts[b])}" fill="var(--hist)"/>`; }
+  s += `<line x1="${mL}" x2="${width-mR}" y1="${py(0)}" y2="${py(0)}" stroke="var(--fg)"/>`;
+  niceTicks(x0, x1, 7).forEach(t => { if (t<x0||t>x1) return; s += `<line x1="${px(t)}" x2="${px(t)}" y1="${py(0)}" y2="${py(0)+5}" stroke="var(--fg)"/><text x="${px(t)}" y="${py(0)+19}" font-size="12" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)">${t}</text>`; });
+  s += `<text x="${(mL+width-mR)/2}" y="${height-6}" font-size="13" text-anchor="middle" fill="var(--fg)">Total AGB of the 25 trees (kg)</text>`;
+  s += `<text transform="translate(13 ${(mT+py(0))/2}) rotate(-90)" font-size="13" text-anchor="middle" fill="var(--fg)">Iterations</text>`;
+  s += `<line x1="${px(POINT_TOTAL)}" x2="${px(POINT_TOTAL)}" y1="${mT}" y2="${py(0)}" stroke="var(--point)" stroke-width="2"/><text x="${px(POINT_TOTAL)-5}" y="${mT+12}" font-size="12" text-anchor="end" fill="var(--point)" font-weight="600">point ${fmt(POINT_TOTAL,0)} kg</text>`;
+  if (st && n>=20){ s += `<line x1="${px(st.median)}" x2="${px(st.median)}" y1="${mT}" y2="${py(0)}" stroke="var(--marker)" stroke-width="1.5" stroke-dasharray="5 3"/><text x="${px(st.median)+5}" y="${mT+12}" font-size="12" fill="var(--fg)">median ${fmt(st.median,0)} kg</text>`;
+    s += `<text x="${px(st.lo)}" y="${py(0)+34}" font-size="11.5" text-anchor="middle" fill="var(--accent)" font-weight="600">2.5 %: ${fmt(st.lo,0)}</text><text x="${px(st.hi)}" y="${py(0)+34}" font-size="11.5" text-anchor="middle" fill="var(--accent)" font-weight="600">97.5 %: ${fmt(st.hi,0)}</text>`; }
+  if (out) s += `<text x="${width-mR}" y="${py(0)-8}" font-size="11.5" text-anchor="end" fill="var(--muted)">${out} outside the axis</text>`;
+  s += `<circle id="fallDot" r="5" fill="var(--point)" stroke="var(--surface)" stroke-width="1.5" visibility="hidden"/></svg>`;
+  histEl.innerHTML = s; histEl._geom = { px, py, mT, counts, bw, x0, NB };
+}
+function kpi(l, v, r){ return `<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div>${r ? `<div class="r">${r}</div>` : ''}</div>`; }
+function updateB(){
+  const st = n >= 2 ? stats(totals.subarray(0,n)) : null; lastSt = st;
+  $('nIter').textContent = n.toLocaleString('en-US');
+  $('kpisB').innerHTML = kpi('Point total', fmt(POINT_TOTAL,0)+' kg', 'sum of the 25 equation values')
+    + kpi('Median of draws', st ? fmt(st.median,0)+' kg' : '–', 'report this')
+    + kpi('Mean of draws', st ? fmt(st.mean,0)+' kg' : '–', st ? `+${fmt((st.mean/POINT_TOTAL-1)*100,1)} % above point` : '')
+    + kpi('95 % interval', st ? `${fmt(st.lo,0)}–${fmt(st.hi,0)} kg` : '–', st ? `−${fmt((1-st.lo/st.median)*100,0)} % / +${fmt((st.hi/st.median-1)*100,0)} % of median` : '')
+    + kpi('CV % of total', st ? fmt(st.cv*100,1)+' %' : '–', st ? `SD ${fmt(st.sd,0)} kg` : '');
+  $('bigTotal').textContent = st ? fmt(st.cv*100,0)+' %' : '– %';
+  drawHist(st); updateD();
+}
+
+// ---------- animation ----------
+function speedSec(){ return parseFloat($('speed').value); }
+function animateDrop(v, done){
+  const g = histEl._geom, dot = $('fallDot'); if (!g || !dot){ done(); return; }
+  const b = Math.min(g.NB-1, Math.max(0, Math.floor((v-g.x0)/g.bw))); const x = g.px(g.x0+(b+0.5)*g.bw), y0 = g.mT, y1 = g.py(g.counts[b])-5;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; const dur = reduce ? 0 : Math.min(500, speedSec()*1000*0.35); const t0 = performance.now();
+  dot.setAttribute('visibility','visible'); dot.setAttribute('cx', x);
+  (function frame(now){ const t = Math.min(1, dur ? (now-t0)/dur : 1); dot.setAttribute('cy', y0+(y1-y0)*t*t); if (t<1) requestAnimationFrame(frame); else { dot.setAttribute('visibility','hidden'); done(); } })(t0);
+}
+function stepOnce(cb){
+  if (n >= NMAX){ stopPlay(); if (cb) cb(); return; }
+  stepBusy = true; const row = drawIteration(C, normal, C.indep, lastRow); let sum = 0; for (let i=0;i<NT;i++) sum += row[i];
+  showRow(row); const sec = speedSec()*1000;
+  setTimeout(() => { $('sumVal').textContent = fmt(sum,0)+' kg'; $('sumVal').style.color = 'var(--point)'; }, Math.min(300, sec*0.3));
+  setTimeout(() => { animateDrop(sum, () => { totals[n++] = sum; updateB(); stepBusy = false; if (cb) cb(); }); }, Math.min(600, sec*0.5));
+}
+function startPlay(){ if (fastRunning) return; playing = true; $('btnPlay').textContent = 'Pause'; loop(); }
+function loop(){ if (!playing) return; stepOnce(() => { if (playing && n < NMAX) playTimer = setTimeout(loop, Math.max(50, speedSec()*1000*0.4)); else stopPlay(); }); }
+function stopPlay(){ playing = false; clearTimeout(playTimer); $('btnPlay').textContent = 'Play'; }
+function fastForward(){
+  if (fastRunning) return; stopPlay(); fastRunning = true; setButtons(false);
+  const row = new Float64Array(NT);
+  (function chunk(){ const target = Math.min(NMAX, n+800); for (;n<target;){ drawIteration(C, normal, C.indep, row); let s=0; for (let i=0;i<NT;i++) s+=row[i]; totals[n++] = s; } updateB(); if (n < NMAX) requestAnimationFrame(chunk); else { showRow(row); let s=0; for (let i=0;i<NT;i++) s+=row[i]; $('sumVal').textContent = fmt(s,0)+' kg'; fastRunning = false; setButtons(true); } })();
+}
+function setButtons(en){ ['btnStep','btnPlay','btnFast','btnReset','btnSeed'].forEach(id => $(id).disabled = !en); }
+
+// ---------- Panel C ----------
+function computeC(){
+  const Ms = runMatrix(C, NPRE, seed+13, false), Mi = runMatrix(C, NPRE, seed+13, true);
+  const curve = M => { const cum = new Float64Array(NPRE); const out = []; for (let i=0;i<NT;i++){ for (let k=0;k<NPRE;k++) cum[k] += M[k*NT+i]; out.push(cvOf(cum)*100); } return out; };
+  curveSys = curve(Ms); curveInd = curve(Mi);
+  const sw = TREES.reduce((a,t)=>a+t.point,0), sw2 = TREES.reduce((a,t)=>a+t.point*t.point,0); nEff = sw*sw/sw2;
+  // systematic floor: species-shared rho errors weighted by each species' share of the total, plus the shared parameter error
+  const share = new Float64Array(SPECIES.length); TREES.forEach(t => { share[t.sp] += t.point/sw; });
+  let s2 = 0; for (const f of share) s2 += f*f;
+  floorPct = 100*Math.sqrt((C.onR ? C.sdR*C.sdR*s2 : 0) + (C.onP ? C.sdP*C.sdP : 0));
+}
+function drawC(avgCv){
+  const el = $('chartC'); const width = Math.max(300, el.clientWidth || 700), height = 300, mL = 46, mR = 58, mT = 14, mB = 44;
+  const ymax = Math.max(45, Math.ceil(Math.max(curveSys[0], curveInd[0])/10)*10);
+  const px = i => mL + (width-mL-mR)*(i-1)/(NT-1), py = v => mT + (height-mT-mB)*(1-v/ymax);
+  const path = arr => arr.map((v,i) => (i?'L':'M')+px(i+1).toFixed(1)+' '+py(v).toFixed(1)).join(' ');
+  const ref = []; for (let i=1;i<=NT;i++) ref.push(avgCv*100/Math.sqrt(i));
+  let s = `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="CV of the running total versus number of trees">`;
+  niceTicks(0, ymax, 5).forEach(t => { s += `<line x1="${mL}" x2="${width-mR}" y1="${py(t)}" y2="${py(t)}" stroke="var(--line)"/><text x="${mL-6}" y="${py(t)+4}" font-size="12" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)">${t}</text>`; });
+  for (let i=1;i<=NT;i++){ if (i===1 || i%5===0) s += `<text x="${px(i)}" y="${py(0)+18}" font-size="12" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)">${i}</text>`; }
+  s += `<line x1="${mL}" x2="${width-mR}" y1="${py(0)}" y2="${py(0)}" stroke="var(--fg)"/>`;
+  s += `<path d="${path(ref)}" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="6 4"/>`;
+  const sysW = C.indep ? 1.5 : 3, indW = C.indep ? 3 : 1.5;
+  s += `<path d="${path(curveSys)}" fill="none" stroke="var(--accent)" stroke-width="${sysW}" stroke-linejoin="round"/>`;
+  s += `<path d="${path(curveInd)}" fill="none" stroke="var(--indep)" stroke-width="${indW}" stroke-linejoin="round"/>`;
+  [curveSys, curveInd].forEach((arr, k) => { arr.forEach((v,i) => { s += `<circle cx="${px(i+1)}" cy="${py(v)}" r="2.5" fill="${k ? 'var(--indep)' : 'var(--accent)'}"/>`; }); });
+  // end labels, pushed apart so they never overlap
+  const labs = [ {v:curveSys[NT-1], col:'var(--accent)', w:600}, {v:curveInd[NT-1], col:'var(--indep)', w:600}, {v:ref[NT-1], col:'var(--muted)', w:400} ].sort((a,b)=>b.v-a.v);
+  labs.forEach(l => { l.y = py(l.v)+4; }); for (let i=1;i<labs.length;i++){ if (labs[i].y - labs[i-1].y < 14) labs[i].y = labs[i-1].y + 14; }
+  labs.forEach(l => { s += `<text x="${px(NT)+8}" y="${l.y}" font-size="12" fill="${l.col}" font-weight="${l.w}" font-family="var(--font-mono)">${fmt(l.v,1)} %</text>`; });
+  s += `<text x="${(mL+width-mR)/2}" y="${height-6}" font-size="13" text-anchor="middle" fill="var(--fg)">Number of trees added (table order)</text>`;
+  s += `<text transform="translate(13 ${(mT+py(0))/2}) rotate(-90)" font-size="13" text-anchor="middle" fill="var(--fg)">CV % of running total</text></svg>`;
+  el.innerHTML = s;
+  const biggest = Math.max(...TREES.map(t=>t.point));
+  $('noteC').innerHTML = `<b>Reading the curves.</b> For 25 equal, independent trees the CV would be ${fmt(avgCv*100,0)}/√25 = ${fmt(avgCv*100/5,1)} %. Our trees are unequal: the biggest (#25, ${fmt(biggest,0)} kg) is ${fmt(biggest/POINT_TOTAL*100,0)} % of the total, so it dominates the sum. The "effective" number of trees, n<sub>eff</sub> = (Σw)² / Σw², is only <b>${fmt(nEff,1)}</b>, and ${fmt(avgCv*100,0)}/√${fmt(nEff,1)} ≈ ${fmt(avgCv*100/Math.sqrt(nEff),1)} % is close to the independent curve (${fmt(curveInd[NT-1],1)} %). The realistic curve ends higher (${fmt(curveSys[NT-1],1)} %) because the shared ρ and parameter errors never cancel: add 1,000 more trees of the same species mix and it would flatten towards a floor of about ${fmt(floorPct,0)} %, set by the systematic sources alone (each species' shared ρ error, weighted by its share of the total, plus the shared parameter error).`;
+}
+
+// ---------- Panel D ----------
+let areaMode = 'density';
+function updateD(){
+  const nTrees = Math.max(1, parseFloat($('nTrees').value) || 25); let dens = Math.max(0.01, parseFloat($('dens').value) || 3); let area = Math.max(0.01, parseFloat($('area').value) || 8.33);
+  if (areaMode === 'density'){ area = nTrees/dens; $('area').value = fmt(area,2).replace(/,/g,''); } else { dens = nTrees/area; $('dens').value = fmt(dens,2).replace(/,/g,''); }
+  const st = lastSt && n >= 200 ? lastSt : null;
+  const scale = nTrees/NT;
+  const med = (st ? st.median : POINT_TOTAL)*scale, lo = st ? st.lo*scale : NaN, hi = st ? st.hi*scale : NaN;
+  const perM2 = med/area, loM2 = lo/area, hiM2 = hi/area; const ha = 10000/area; const tHa = perM2*10000/1000, tLo = loM2*10000/1000, tHi = hiM2*10000/1000;
+  const rng = (a,b,d,u) => st ? `95 %: ${fmt(a,d)}–${fmt(b,d)} ${u}` : 'run the simulation for an interval';
+  $('kpisD').innerHTML = kpi('Plot area', fmt(area,2)+' m²', `× ${fmt(ha,0)} to reach one hectare`)
+    + kpi(st ? 'Biomass per m² (median)' : 'Biomass per m² (point)', fmt(perM2,2)+' kg/m²', rng(loM2, hiM2, 2, 'kg/m²'))
+    + kpi('Biomass per hectare', fmt(tHa,1)+' t/ha', rng(tLo, tHi, 1, 't/ha'))
+    + kpi('Carbon per hectare', fmt(tHa*CF,1)+' t C/ha', rng(tLo*CF, tHi*CF, 1, 't C/ha'))
+    + kpi('CO₂ per hectare', fmt(tHa*CF*CO2F,1)+' t CO₂/ha', rng(tLo*CF*CO2F, tHi*CF*CO2F, 1, 't CO₂/ha'));
+}
+
+// ---------- reset / wiring ----------
+function recompute(){ C = cfg(); computeA(); const avg = drawA(); computeC(); drawC(avg); }
+function reset(){ stopPlay(); n = 0; lastSt = null; normal = makeNormal(mulberry32(seed)); recompute(); resetStrip(); updateB(); }
+buildStrip(); reset();
+$('btnStep').addEventListener('click', () => { if (stepBusy || fastRunning) return; stopPlay(); stepOnce(); });
+$('btnPlay').addEventListener('click', () => { if (playing) stopPlay(); else startPlay(); });
+$('btnFast').addEventListener('click', fastForward);
+$('btnReset').addEventListener('click', reset);
+$('btnSeed').addEventListener('click', () => { seed = (Math.random()*4294967295)>>>0; reset(); });
+$('speed').addEventListener('input', () => { $('speedLab').textContent = fmt(speedSec(),1)+' s per iteration'; });
+['onH','onD','onR','onP','onE','sdH','sdD','sdR','sdP','sdE','indep'].forEach(id => $(id).addEventListener('change', reset));
+$('logA').addEventListener('change', drawA);
+$('nTrees').addEventListener('input', updateD); $('dens').addEventListener('input', () => { areaMode = 'density'; updateD(); }); $('area').addEventListener('input', () => { areaMode = 'area'; updateD(); });
+let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { drawA(); buildStrip(); if (n) showRow(lastRow); drawHist(lastSt); drawC(perTree.reduce((a,t)=>a+t.st.cv,0)/NT); }, 150); });
+window.__mc = { fastForward, getN: () => n, summary: () => ({ n, point_total: POINT_TOTAL, median: lastSt.median, mean: lastSt.mean, lo: lastSt.lo, hi: lastSt.hi, cv: lastSt.cv, mean_single_cv: perTree.reduce((a,t)=>a+t.st.cv,0)/NT, curveSys_end: curveSys[NT-1], curveInd_end: curveInd[NT-1], nEff }) };
+})();
+</script>
+</body>
+</html>

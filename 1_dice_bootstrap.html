@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dice to Bootstrap</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: one column of stacked panels, each panel = picture(s) + a side column of live numbers + controls; chalkboard-and-paper feel */
+:root{
+  --bg:#f6f4ee;        /* warm paper */
+  --panel:#ffffff;
+  --fg:#1f2a24;        /* deep green-black ink */
+  --muted:#5c6a62;
+  --line:#d8d4c8;
+  --accent:#1f6f5f;    /* forest green */
+  --accent-soft:#cfe6df;
+  --orange:#c2622b;    /* second series / highlight */
+  --orange-soft:#f3d9c6;
+  --grey:#b8b4aa;
+  --band:rgba(31,111,95,.14);
+  --focus:#1f6f5f;
+  --display:"Fraunces", Georgia, "Times New Roman", serif;
+  --body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono:ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15201b; --panel:#1d2a24; --fg:#ecefe9; --muted:#a3b0a8; --line:#34443c;
+    --accent:#6fc7b1; --accent-soft:#2a4d43; --orange:#f0a06a; --orange-soft:#5a3a26; --grey:#6a756e;
+    --band:rgba(111,199,177,.18); --focus:#6fc7b1; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15201b; --panel:#1d2a24; --fg:#ecefe9; --muted:#a3b0a8; --line:#34443c;
+  --accent:#6fc7b1; --accent-soft:#2a4d43; --orange:#f0a06a; --orange-soft:#5a3a26; --grey:#6a756e;
+  --band:rgba(111,199,177,.18); --focus:#6fc7b1; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 32px}
+.wrap{max-width:1080px;margin:0 auto}
+header{padding:28px 0 8px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,5vw,44px);line-height:1.1;margin:0 0 6px;text-wrap:balance}
+.sub{color:var(--muted);margin:0 0 14px;font-size:15px}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(21px,3vw,27px);line-height:1.2;margin:0;text-wrap:balance}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:4px}
+p{margin:0 0 10px;max-width:70ch}
+.intro{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--accent);padding:14px 16px;margin:12px 0 22px}
+.intro h3,.notice h3{margin:0 0 6px;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.toprow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 6px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px 18px 14px;margin:0 0 26px}
+.panel>p.lead{color:var(--muted);margin:6px 0 12px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 12px;padding:10px;border:1px dashed var(--line);border-radius:6px}
+button{font:inherit;font-size:14px;font-weight:700;padding:7px 13px;border-radius:5px;border:1.5px solid var(--accent);background:var(--panel);color:var(--accent);cursor:pointer}
+button.primary{background:var(--accent);color:var(--bg)}
+button:hover{filter:brightness(1.05)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+button[disabled]{opacity:.45;cursor:default}
+label.ctl{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
+input[type=range]{width:120px;accent-color:var(--accent)}
+select,input[type=number]{font:inherit;font-size:14px;padding:5px 7px;border:1px solid var(--line);border-radius:5px;background:var(--bg);color:var(--fg)}
+.counter{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14px;color:var(--fg);margin-left:auto}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.grid3{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px}
+@media (max-width:760px){.grid,.grid3{grid-template-columns:minmax(0,1fr)}}
+figure{margin:0;min-width:0}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+figcaption{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.4}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:12px 0 4px}
+.stat{border:1px solid var(--line);border-radius:5px;padding:8px 10px;min-width:0}
+.stat .k{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:19px;font-weight:700}
+.stat .v small{font-size:12px;font-weight:400;color:var(--muted)}
+.stat.hi{border-color:var(--accent);background:var(--accent-soft)}
+.stat.or{border-color:var(--orange);background:var(--orange-soft)}
+.why{margin-top:14px;border:1px solid var(--line);border-left:5px solid var(--orange);padding:12px 14px;border-radius:0 6px 6px 0}
+.why h4{margin:0 0 6px;font-size:16px;font-family:var(--display)}
+.notice{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--accent);padding:14px 16px;margin:8px 0 22px}
+.notice ol{margin:0;padding-left:20px}
+.notice li{margin-bottom:6px}
+footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:12px}
+/* die */
+.die{width:72px;height:72px;border:2px solid var(--fg);border-radius:12px;background:var(--panel);display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:9px;gap:3px;flex:none}
+.die i{border-radius:50%;background:var(--fg);visibility:hidden}
+.die.f1 i:nth-child(5),.die.f3 i:nth-child(5),.die.f5 i:nth-child(5){visibility:visible}
+.die.f2 i:nth-child(3),.die.f2 i:nth-child(7),.die.f3 i:nth-child(3),.die.f3 i:nth-child(7){visibility:visible}
+.die.f4 i:nth-child(1),.die.f4 i:nth-child(3),.die.f4 i:nth-child(7),.die.f4 i:nth-child(9),
+.die.f5 i:nth-child(1),.die.f5 i:nth-child(3),.die.f5 i:nth-child(7),.die.f5 i:nth-child(9),
+.die.f6 i:nth-child(1),.die.f6 i:nth-child(3),.die.f6 i:nth-child(7),.die.f6 i:nth-child(9),
+.die.f6 i:nth-child(4),.die.f6 i:nth-child(6){visibility:visible}
+.dierow{display:flex;gap:14px;align-items:center;margin:0 0 10px;flex-wrap:wrap}
+.dierow .say{font-size:15px;color:var(--muted)}
+/* bag chips */
+.bag{border:2px solid var(--fg);border-radius:14px 14px 40px 40px/14px 14px 26px 26px;padding:12px 12px 16px;background:var(--bg);position:relative}
+.bag .lbl,.row .lbl{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.chips{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.chip{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;text-align:center;padding:6px 2px;border-radius:999px;border:1.5px solid var(--accent);background:var(--panel);color:var(--fg);transition:transform .15s,background .15s;position:relative;min-width:0}
+.chip .n{position:absolute;top:-7px;right:-4px;font-size:9px;background:var(--orange);color:#fff;border-radius:999px;padding:0 4px;line-height:1.3;font-weight:700}
+.chip.lit{background:var(--orange);border-color:var(--orange);color:#fff;transform:scale(1.18)}
+.chip.never{opacity:.35;border-style:dashed}
+.chip.dup{border-color:var(--orange);border-width:2px}
+.row{border:1px dashed var(--line);border-radius:6px;padding:10px 12px;margin-top:12px;min-height:60px}
+.sample{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;min-height:28px}
+.sample .chip{font-size:12px;padding:4px 1px;border-color:var(--grey)}
+.sample .chip.lit{border-color:var(--orange)}
+.meanline{margin-top:8px;font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums}
+.meanline b{color:var(--orange)}
+.toggle{display:inline-flex;border:1.5px solid var(--accent);border-radius:5px;overflow:hidden}
+.toggle button{border:0;border-radius:0;padding:6px 12px}
+.toggle button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+.small{font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion: reduce){.chip{transition:none}}
+@media (max-width:420px){.chips{grid-template-columns:repeat(6,minmax(0,1fr))}.chip{font-size:12px}.sample{grid-template-columns:repeat(6,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">Quantifying uncertainty · page 1 of 2</div>
+  <h1>Dice to Bootstrap</h1>
+  <p class="sub">From a single die to the uncertainty of a tree measurement, in three steps.</p>
+  <div class="toprow">
+    <button id="newseed" class="primary" title="Use a different random sequence">New seed</button>
+    <span class="small" id="seedlabel">seed 2026 (same story every time you open the page)</span>
+  </div>
+  <div class="intro">
+    <h3>What you are looking at</h3>
+    <p>Three experiments, each with its own Play, Step and Reset. Panel A rolls one die and shows that a probability is simply what happens in the long run. Panel B averages several dice at once and shows that averages wobble less than single rolls, by a predictable amount. Panel C replaces the die by a bag of 24 real height readings of tree #406 and uses the same idea, called the <b>bootstrap</b>, to find out how uncertain the average of those 24 readings is. Press Play at slow speed first; press Fast-forward when you have understood one step.</p>
+  </div>
+</header>
+
+<!-- ============ PANEL A ============ -->
+<section class="panel" id="pA">
+  <div class="eyebrow">Panel A</div>
+  <h2>Probability is a long-run frequency</h2>
+  <p class="lead">A fair die shows each face with probability 1/6. You cannot see 1/6 in one roll. You see it after thousands of rolls, when every bar settles near the dashed line and the running mean settles at 3.5.</p>
+  <div class="controls">
+    <button id="aPlay" class="primary">Play</button>
+    <button id="aStep">Step</button>
+    <button id="aFF">Fast-forward to 10,000</button>
+    <button id="aReset">Reset</button>
+    <label class="ctl">Speed <input type="range" id="aSpeed" min="1" max="100" value="20"></label>
+    <span class="counter" id="aCount">rolls: 0</span>
+  </div>
+  <div class="dierow">
+    <div class="die f1" id="aDie" aria-label="die face"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="say" id="aSay">Press Play or Step to roll.</div>
+  </div>
+  <div class="grid">
+    <figure><svg id="aHist" viewBox="0 0 400 280" role="img" aria-label="Histogram of die faces"></svg>
+      <figcaption>How often each face came up, as a share of all rolls. Dashed line: the probability 1/6 ≈ 16.7 %.</figcaption></figure>
+    <figure><svg id="aMean" viewBox="0 0 400 280" role="img" aria-label="Running mean of die rolls"></svg>
+      <figcaption>Running mean after n rolls (log axis for n). Shaded band: 3.5 ± 1.71/√n, the typical wobble expected after n rolls (1.71 is the SD of one roll). The mean settles down roughly as 1/√n: 100× more rolls, 10× less wobble.</figcaption></figure>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="k">Running mean</div><div class="v" id="aM">–</div></div>
+    <div class="stat"><div class="k">Expected</div><div class="v">3.500</div></div>
+    <div class="stat"><div class="k">SD of the faces so far</div><div class="v" id="aSD">–</div></div>
+    <div class="stat"><div class="k">Theory SD of one roll</div><div class="v">1.708</div></div>
+    <div class="stat"><div class="k">Largest gap to 16.7 %</div><div class="v" id="aGap">–</div></div>
+  </div>
+</section>
+
+<!-- ============ PANEL B ============ -->
+<section class="panel" id="pB">
+  <div class="eyebrow">Panel B</div>
+  <h2>Averages behave better than single rolls</h2>
+  <p class="lead">Now roll k dice at once and record only their <b>average</b>. One die gives a flat spread from 1 to 6. The average of 25 dice almost never leaves 3 to 4. The spread (SD) shrinks as 1/√k. This is the single most useful fact in this course.</p>
+  <div class="controls">
+    <label class="ctl">Dice per roll, k
+      <select id="bK"><option value="1">1</option><option value="2">2</option><option value="5" selected>5</option><option value="10">10</option><option value="25">25</option></select></label>
+    <button id="bPlay" class="primary">Play</button>
+    <button id="bStep">Step</button>
+    <button id="bFF">Fast-forward to 10,000</button>
+    <button id="bReset">Reset</button>
+    <label class="ctl">Speed <input type="range" id="bSpeed" min="1" max="100" value="20"></label>
+    <span class="counter" id="bCount">rolls: 0</span>
+  </div>
+  <div class="dierow" id="bDice"></div>
+  <div class="grid3">
+    <figure><svg id="bHist" viewBox="0 0 420 300" role="img" aria-label="Histogram of the average of k dice"></svg>
+      <figcaption>Histogram of the average of k dice. The faint grey outline is the k = 1 case (one die, flat) for comparison. Orange line: the mean of all averages so far.</figcaption></figure>
+    <div>
+      <div class="stats" style="grid-template-columns:1fr 1fr">
+        <div class="stat"><div class="k">Mean of averages</div><div class="v" id="bM">–</div></div>
+        <div class="stat"><div class="k">Expected</div><div class="v">3.500</div></div>
+        <div class="stat hi"><div class="k">SD of the histogram</div><div class="v" id="bSD">–</div></div>
+        <div class="stat hi"><div class="k">Formula 1.71/√k</div><div class="v" id="bF">–</div></div>
+        <div class="stat"><div class="k">95 % of averages lie in</div><div class="v" id="bPI">–</div></div>
+        <div class="stat"><div class="k">CV = SD / mean</div><div class="v" id="bCV">–</div></div>
+      </div>
+      <p class="small" style="margin-top:8px">SD = standard deviation, the typical distance from the mean. CV = coefficient of variation, the SD as a percentage of the mean. "95 % interval" = from the 2.5th to the 97.5th percentile: 95 out of 100 rolls land inside it.</p>
+      <p class="small">Try each k with Fast-forward. The two highlighted numbers agree to about two decimals every time. The formula is not a coincidence: averaging k independent things divides the SD by √k.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PANEL C ============ -->
+<section class="panel" id="pC">
+  <div class="eyebrow">Panel C</div>
+  <h2>The bootstrap: pull from the bag, with replacement</h2>
+  <p class="lead">Twenty-four students each measured the height of tree #406. Their 24 readings sit in the bag. The average is 6.14 m. How sure can we be of that average? We cannot re-measure 10,000 times. So we <b>pretend</b>: draw 24 chips from the bag <b>with replacement</b> (put each chip back before the next draw), compute the mean of this pretend sample, and repeat. The spread of all those pretend means tells us the uncertainty of the real mean.</p>
+  <div class="controls">
+    <span class="toggle" role="group" aria-label="Which readings">
+      <button id="cH" aria-pressed="true">Height, m</button><button id="cD" aria-pressed="false">Diameter, cm</button></span>
+    <button id="cPlay" class="primary">Play</button>
+    <button id="cStep">Step (one draw)</button>
+    <button id="cFF">Fast-forward to 10,000</button>
+    <button id="cReset">Reset</button>
+    <label class="ctl">Speed <input type="range" id="cSpeed" min="1" max="100" value="25"></label>
+    <span class="counter" id="cCount">resamples: 0</span>
+  </div>
+  <div class="grid">
+    <div>
+      <div class="bag">
+        <div class="lbl" id="cBagLbl">The bag: 24 real height readings of tree #406 (m)</div>
+        <div class="chips" id="cChips"></div>
+        <p class="small" style="margin:10px 0 0">A lit chip is being drawn now. A small orange number counts how many times a chip was drawn in this resample. Dashed, faded chips were never drawn this time.</p>
+      </div>
+      <div class="row">
+        <div class="lbl">Pretend sample (24 draws, with replacement)</div>
+        <div class="sample" id="cSample"></div>
+        <div class="meanline" id="cMeanLine">mean of pretend sample = –</div>
+      </div>
+    </div>
+    <div>
+      <figure><svg id="cHist" viewBox="0 0 420 300" role="img" aria-label="Histogram of bootstrap means"></svg>
+        <figcaption>Each dot/bar is the mean of one pretend sample. Dashed green line: mean of the real 24 readings. Orange brackets: 2.5th and 97.5th percentiles of the pretend means.</figcaption></figure>
+      <div class="stats">
+        <div class="stat"><div class="k">Mean of the 24 readings</div><div class="v" id="cM">–</div></div>
+        <div class="stat"><div class="k">SD of the 24 readings, s</div><div class="v" id="cS">–</div></div>
+        <div class="stat hi"><div class="k">SD of the bootstrap means</div><div class="v" id="cBSD">–</div></div>
+        <div class="stat hi"><div class="k">Formula SE = s/√24</div><div class="v" id="cSE">–</div></div>
+        <div class="stat or"><div class="k">95 % interval of the mean (2.5th–97.5th pct)</div><div class="v" id="cPI">–</div></div>
+        <div class="stat"><div class="k">CV of the mean</div><div class="v" id="cCV">–</div></div>
+      </div>
+      <p class="small">The SD of the bootstrap means is called the <b>standard error</b> (SE) of the mean. It says how much the average of 24 readings would move if 24 other students measured the same tree. After a few thousand resamples it matches the textbook formula s/√24 closely.</p>
+    </div>
+  </div>
+  <div class="why">
+    <h4>Why with replacement?</h4>
+    <p>In Panel A the die has six faces and we rolled it as often as we liked. In the bootstrap the 24 chips stand in for the die: they are our best picture of "what a height reading of this tree can be". A die can show the same face twice in a row, so a chip must be allowed to come out twice too. Putting each chip back keeps all 24 faces available for every draw. Without replacement, every pretend sample would be exactly the original 24 readings in a different order, with exactly the same mean, and the histogram would be one single bar: no information about uncertainty at all.</p>
+  </div>
+</section>
+
+<div class="notice">
+  <h3>What to notice</h3>
+  <ol>
+    <li><b>Probability needs many trials.</b> After 10 rolls the bars in Panel A are a mess. After 10,000 they are flat. "1/6" describes the long run, not the next roll.</li>
+    <li><b>The 1/√n rule.</b> In Panel A the running mean wobbles by about 1.71/√n. In Panel B the SD of an average of k dice is 1.71/√k. In Panel C the SE of the mean of 24 readings is s/√24. Same rule, three disguises.</li>
+    <li><b>The bootstrap gives the SE without any formula.</b> It works for means, for medians, for a biomass equation, for anything. We will use it for the whole tree in later pages.</li>
+    <li><b>Height vs diameter.</b> Switch the bag. The 24 diameter readings agree much better (CV of the mean below 1 %) than the heights (about 2 %). Measuring height with a clinometer is the shakier job.</li>
+  </ol>
+</div>
+<footer>Ecology &amp; Environment 2026 · Quantifying uncertainty in tree biomass · built for teaching; numbers are illustrative</footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+// ---------- data ----------
+const DATA={
+  H:{vals:[7.0,5.3,5.5,5.0,5.1,7.0,6.6,6.1,5.6,6.4,6.5,5.2,6.1,5.5,7.0,7.0,5.9,6.4,6.5,5.6,7.3,6.6,6.0,6.2],unit:'m',name:'height',dec:2,lo:5.6,hi:6.7},
+  D:{vals:[7.5,8.0,7.8,7.9,7.9,8.1,8.5,7.8,7.9,7.7,8.0,8.0,7.5,8.1,8.0,8.1,8.0,8.1,8.5,8.1,7.6,7.9,8.1,8.3],unit:'cm',name:'diameter',dec:3,lo:7.78,hi:8.18}
+};
+// ---------- PRNG ----------
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+let seed=2026;
+const rngs={a:null,b:null,c:null};
+function reseed(){rngs.a=mulberry32(seed);rngs.b=mulberry32(seed+1);rngs.c=mulberry32(seed+2);}
+reseed();
+const $=id=>document.getElementById(id);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function mean(a){let s=0;for(const v of a)s+=v;return s/a.length;}
+function sd(a){if(a.length<2)return NaN;const m=mean(a);let s=0;for(const v of a)s+=(v-m)*(v-m);return Math.sqrt(s/(a.length-1));}
+function pct(sorted,p){if(!sorted.length)return NaN;const i=(sorted.length-1)*p,lo=Math.floor(i),hi=Math.ceil(i);return sorted[lo]+(sorted[hi]-sorted[lo])*(i-lo);}
+function f(x,d){return isFinite(x)?x.toFixed(d):'–';}
+const SVGNS='http://www.w3.org/2000/svg';
+function el(tag,attrs,text){const e=document.createElementNS(SVGNS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;return e;}
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+// interval from speed slider: 1 → 1000 ms per event; 100 → ~many per frame
+function stepsPerTick(speed){ // returns {delay ms, n events per tick}
+  if(speed<=30)return {delay:Math.round(1000-(speed-1)*31),n:1};        // 1000 → ~100 ms
+  if(speed<=70)return {delay:40,n:Math.round(1+(speed-30)*0.5)};         // 1..21 per 40 ms
+  return {delay:16,n:Math.round(20+(speed-70)*8)};                        // up to 260 per frame
+}
+function makeLoop(tickFn,speedEl){ // tickFn(n) performs n events; returns false when done
+  let timer=null,playing=false;
+  function tick(){ if(!playing)return; const sp=stepsPerTick(+speedEl.value); const ok=tickFn(sp.n); if(ok===false){stop();return;} timer=setTimeout(tick,sp.delay); }
+  function start(){ if(playing)return; playing=true; tick(); }
+  function stop(){ playing=false; clearTimeout(timer); timer=null; }
+  return {start,stop,get playing(){return playing;}};
+}
+function setPlayLabel(btn,loop){btn.textContent=loop.playing?'Pause':'Play';}
+
+// ============================ PANEL A ============================
+const A={counts:[0,0,0,0,0,0],n:0,sum:0,sumsq:0,hist:[],last:0};
+function aRoll(animate){
+  const face=1+Math.floor(rngs.a()*6);
+  A.counts[face-1]++;A.n++;A.sum+=face;A.sumsq+=face*face;A.last=face;
+  // store running mean at selected n for the line chart (every n up to 100, then log-spaced)
+  if(A.n<=100||A.n%Math.pow(10,Math.floor(Math.log10(A.n))-2)===0)A.hist.push([A.n,A.sum/A.n]);
+}
+function aDraw(){
+  const die=$('aDie');die.className='die f'+(A.last||1);
+  $('aSay').textContent=A.n?`Roll ${A.n.toLocaleString()}: the die shows ${A.last}.`:'Press Play or Step to roll.';
+  $('aCount').textContent='rolls: '+A.n.toLocaleString();
+  const m=A.n?A.sum/A.n:NaN;
+  $('aM').textContent=f(m,3);
+  $('aSD').textContent=A.n>1?f(Math.sqrt((A.sumsq-A.n*m*m)/(A.n-1)),3):'–';
+  let gap=0;for(const c of A.counts)gap=Math.max(gap,Math.abs(c/(A.n||1)-1/6));
+  $('aGap').textContent=A.n?(gap*100).toFixed(1)+' %':'–';
+  // histogram
+  const svg=$('aHist');svg.textContent='';
+  const W=400,H=280,L=62,R=12,T=16,B=48,pw=W-L-R,ph=H-T-B;
+  const fg=css('--fg'),mu=css('--muted'),ln=css('--line'),ac=css('--accent'),or=css('--orange');
+  const ymax=A.n<30?0.6:A.n<300?0.4:0.3;
+  for(let y=0;y<=ymax+1e-9;y+=0.1){const yy=T+ph-(y/ymax)*ph;svg.appendChild(el('line',{x1:L,x2:L+pw,y1:yy,y2:yy,stroke:ln,'stroke-width':1}));svg.appendChild(el('text',{x:L-6,y:yy+4,'text-anchor':'end',fill:mu,'font-size':15},Math.round(y*100)+' %'));}
+  const bw=pw/6;
+  for(let i=0;i<6;i++){const p=A.n?A.counts[i]/A.n:0;const h=Math.min(ph,(p/ymax)*ph);
+    svg.appendChild(el('rect',{x:L+i*bw+8,y:T+ph-h,width:bw-16,height:h,fill:A.last===i+1&&A.n?or:ac,rx:2}));
+    svg.appendChild(el('text',{x:L+i*bw+bw/2,y:T+ph+18,'text-anchor':'middle',fill:fg,'font-size':16,'font-weight':700},i+1));
+    if(A.n&&h>26)svg.appendChild(el('text',{x:L+i*bw+bw/2,y:T+ph-h+17,'text-anchor':'middle',fill:css('--bg'),'font-size':13},A.counts[i]));}
+  const yexp=T+ph-((1/6)/ymax)*ph;
+  svg.appendChild(el('line',{x1:L,x2:L+pw,y1:yexp,y2:yexp,stroke:fg,'stroke-dasharray':'5 4','stroke-width':1.5}));
+  svg.appendChild(el('text',{x:L-6,y:yexp+5,'text-anchor':'end',fill:fg,'font-size':14,'font-weight':700},'1/6'));
+  svg.appendChild(el('text',{x:L+pw/2,y:H-6,'text-anchor':'middle',fill:mu,'font-size':15},'face of the die'));
+  svg.appendChild(el('text',{x:14,y:T+ph/2,transform:`rotate(-90 14 ${T+ph/2})`,'text-anchor':'middle',fill:mu,'font-size':15},'share of rolls'));
+  // running mean
+  const s2=$('aMean');s2.textContent='';
+  const L2=44,B2=44,pw2=W-L2-30,ph2=H-T-B2;
+  const xmin=1,xmax=10000,ymin=1,ymax2=6;
+  const X=n=>L2+(Math.log10(n)-Math.log10(xmin))/(Math.log10(xmax)-Math.log10(xmin))*pw2, Y=v=>T+ph2-(v-ymin)/(ymax2-ymin)*ph2;
+  for(let v=1;v<=6;v++){s2.appendChild(el('line',{x1:L2,x2:L2+pw2,y1:Y(v),y2:Y(v),stroke:ln}));s2.appendChild(el('text',{x:L2-6,y:Y(v)+4,'text-anchor':'end',fill:mu,'font-size':15},v));}
+  for(const n of [1,10,100,1000,10000]){s2.appendChild(el('line',{x1:X(n),x2:X(n),y1:T,y2:T+ph2,stroke:ln}));s2.appendChild(el('text',{x:X(n),y:T+ph2+16,'text-anchor':'middle',fill:mu,'font-size':15},n.toLocaleString()));}
+  // band
+  let up='',lo='';const pts=[];for(let e=0;e<=4;e+=0.05)pts.push(Math.pow(10,e));
+  pts.forEach((n,i)=>{const w=1.708/Math.sqrt(n);up+=(i?'L':'M')+X(n)+','+Math.max(T,Y(3.5+w))+' ';lo=('L'+X(n)+','+Math.min(T+ph2,Y(3.5-w))+' ')+lo;});
+  s2.appendChild(el('path',{d:up+lo+'Z',fill:css('--band'),stroke:'none'}));
+  s2.appendChild(el('line',{x1:L2,x2:L2+pw2,y1:Y(3.5),y2:Y(3.5),stroke:fg,'stroke-dasharray':'5 4','stroke-width':1.5}));
+  s2.appendChild(el('text',{x:L2+pw2,y:Y(3.5)-5,'text-anchor':'end',fill:fg,'font-size':15},'3.5'));
+  if(A.hist.length){let d='';A.hist.forEach((p,i)=>{d+=(i?'L':'M')+X(p[0])+','+Y(p[1])+' ';});
+    s2.appendChild(el('path',{d,fill:'none',stroke:or,'stroke-width':2}));
+    const lp=A.hist[A.hist.length-1];s2.appendChild(el('circle',{cx:X(lp[0]),cy:Y(lp[1]),r:4,fill:or}));}
+  s2.appendChild(el('text',{x:L2+pw2/2,y:H-6,'text-anchor':'middle',fill:mu,'font-size':15},'number of rolls, n (log scale)'));
+  s2.appendChild(el('text',{x:14,y:T+ph2/2,transform:`rotate(-90 14 ${T+ph2/2})`,'text-anchor':'middle',fill:mu,'font-size':15},'running mean'));
+}
+const aLoop=makeLoop(n=>{for(let i=0;i<n&&A.n<10000;i++)aRoll();aDraw();return A.n<10000;},$('aSpeed'));
+function aReset(){A.counts=[0,0,0,0,0,0];A.n=0;A.sum=0;A.sumsq=0;A.hist=[];A.last=0;aLoop.stop();setPlayLabel($('aPlay'),aLoop);aDraw();}
+$('aPlay').onclick=()=>{if(aLoop.playing)aLoop.stop();else if(A.n<10000)aLoop.start();setPlayLabel($('aPlay'),aLoop);};
+$('aStep').onclick=()=>{aLoop.stop();setPlayLabel($('aPlay'),aLoop);if(A.n<10000){aRoll();aDraw();}};
+$('aFF').onclick=()=>{aLoop.stop();setPlayLabel($('aPlay'),aLoop);while(A.n<10000)aRoll();aDraw();};
+$('aReset').onclick=aReset;
+
+// ============================ PANEL B ============================
+const B={k:5,vals:[],last:[],bins:null,n:0};
+const NB=50;
+function bRoll(){const k=B.k;let s=0;const faces=[];for(let i=0;i<k;i++){const fc=1+Math.floor(rngs.b()*6);faces.push(fc);s+=fc;}const avg=s/k;B.vals.push(avg);B.last=faces;B.n++;}
+function bDrawDice(){const box=$('bDice');box.textContent='';const k=B.k;const show=Math.min(k,25);
+  for(let i=0;i<show;i++){const d=document.createElement('div');d.className='die f'+(B.last[i]||1);d.style.width=d.style.height=(k>10?'34px':k>5?'44px':'56px');d.style.padding=k>10?'4px':'7px';d.style.borderRadius=k>10?'6px':'9px';d.innerHTML='<i></i>'.repeat(9);if(!B.last.length)d.style.opacity='.35';box.appendChild(d);}
+  const say=document.createElement('div');say.className='say';say.textContent=B.last.length?`Roll ${B.n.toLocaleString()}: faces ${B.last.join(' ')} → average ${f(B.vals[B.n-1],2)}`:`Press Play or Step to roll ${k} ${k>1?'dice':'die'} together.`;box.appendChild(say);}
+function bDraw(){
+  bDrawDice();
+  $('bCount').textContent='rolls: '+B.n.toLocaleString();
+  const m=B.n?mean(B.vals):NaN,s=sd(B.vals);const sorted=B.vals.slice().sort((a,b)=>a-b);
+  $('bM').textContent=f(m,3);$('bSD').textContent=f(s,3);$('bF').textContent=f(1.7078/Math.sqrt(B.k),3);
+  $('bPI').textContent=B.n>20?f(pct(sorted,.025),2)+' – '+f(pct(sorted,.975),2):'–';
+  $('bCV').textContent=B.n>1?(100*s/m).toFixed(1)+' %':'–';
+  const svg=$('bHist');svg.textContent='';
+  const W=420,H=300,L=62,R=12,T=16,Bm=48,pw=W-L-R,ph=H-T-Bm;
+  const fg=css('--fg'),mu=css('--muted'),ln=css('--line'),ac=css('--accent'),or=css('--orange'),gr=css('--grey');
+  const bins=new Array(NB).fill(0);const bwv=5/NB;
+  for(const v of B.vals){let i=Math.floor((v-1)/bwv);if(i>=NB)i=NB-1;bins[i]++;}
+  const refmax=Math.max(1,...bins)/(B.n||1);
+  const flat=(1/6)/(1/bwv)*(1/bwv>1?1:1); // density share of k=1 per bin: each face occupies 1 bin of width .1 → share 1/6 in that bin
+  const ymax=Math.max(refmax,1/6)*1.12;
+  const X=v=>L+(v-1)/5*pw,Y=p=>T+ph-p/ymax*ph;
+  const stp=[0.01,0.02,0.05,0.1,0.2].find(t=>ymax/t<=6)||0.2;
+  for(let p=0;p<=ymax+1e-9;p+=stp){svg.appendChild(el('line',{x1:L,x2:L+pw,y1:Y(p),y2:Y(p),stroke:ln}));svg.appendChild(el('text',{x:L-6,y:Y(p)+4,'text-anchor':'end',fill:mu,'font-size':15},Math.round(p*100)+' %'));}
+  for(let v=1;v<=6;v++){svg.appendChild(el('text',{x:X(v),y:T+ph+18,'text-anchor':'middle',fill:fg,'font-size':16},v));svg.appendChild(el('line',{x1:X(v),x2:X(v),y1:T+ph,y2:T+ph+4,stroke:fg}));}
+  // reference k=1 outline: faces 1..6 each in its own bin (centered)
+  for(let v=1;v<=6;v++){const x0=X(v)-pw/NB/2;svg.appendChild(el('rect',{x:x0,y:Y(1/6),width:pw/NB,height:ph-(Y(1/6)-T),fill:'none',stroke:gr,'stroke-dasharray':'3 3',opacity:.6}));}
+  const bwpx=pw/NB;
+  for(let i=0;i<NB;i++){if(!bins[i])continue;const p=bins[i]/B.n;svg.appendChild(el('rect',{x:L+i*bwpx+0.5,y:Y(p),width:bwpx-1,height:ph-(Y(p)-T),fill:ac}));}
+  if(B.n){svg.appendChild(el('line',{x1:X(m),x2:X(m),y1:T,y2:T+ph,stroke:or,'stroke-width':2}));
+    if(B.n>1){const x1=X(m-s),x2=X(m+s);svg.appendChild(el('line',{x1,x2,y1:T+12,y2:T+12,stroke:or,'stroke-width':2}));svg.appendChild(el('line',{x1,x2:x1,y1:T+6,y2:T+18,stroke:or,'stroke-width':2}));svg.appendChild(el('line',{x1:x2,x2,y1:T+6,y2:T+18,stroke:or,'stroke-width':2}));
+      svg.appendChild(el('text',{x:X(m),y:T+36,'text-anchor':'middle',fill:or,'font-size':15,'font-weight':700},'± 1 SD = ± '+f(s,2)));}}
+  svg.appendChild(el('text',{x:L+pw/2,y:H-8,'text-anchor':'middle',fill:mu,'font-size':15},`average of ${B.k} ${B.k>1?'dice':'die'}`));
+  svg.appendChild(el('text',{x:14,y:T+ph/2,transform:`rotate(-90 14 ${T+ph/2})`,'text-anchor':'middle',fill:mu,'font-size':15},'share of rolls'));
+}
+const bLoop=makeLoop(n=>{for(let i=0;i<n&&B.n<10000;i++)bRoll();bDraw();return B.n<10000;},$('bSpeed'));
+function bReset(){B.vals=[];B.last=[];B.n=0;bLoop.stop();setPlayLabel($('bPlay'),bLoop);bDraw();}
+$('bK').onchange=e=>{B.k=+e.target.value;bReset();};
+$('bPlay').onclick=()=>{if(bLoop.playing)bLoop.stop();else if(B.n<10000)bLoop.start();setPlayLabel($('bPlay'),bLoop);};
+$('bStep').onclick=()=>{bLoop.stop();setPlayLabel($('bPlay'),bLoop);if(B.n<10000){bRoll();bDraw();}};
+$('bFF').onclick=()=>{bLoop.stop();setPlayLabel($('bPlay'),bLoop);while(B.n<10000)bRoll();bDraw();};
+$('bReset').onclick=bReset;
+
+// ============================ PANEL C ============================
+const C={key:'H',means:[],draws:[],counts:new Array(24).fill(0),lit:-1,n:0,finished:false};
+const MAXC=10000;
+function cData(){return DATA[C.key];}
+function cDrawOne(){ // one draw of the current resample; returns true if resample complete
+  if(C.finished){C.draws=[];C.counts.fill(0);C.finished=false;}
+  const i=Math.floor(rngs.c()*24);C.draws.push(i);C.counts[i]++;C.lit=i;
+  if(C.draws.length===24){const d=cData();let s=0;for(const j of C.draws)s+=d.vals[j];C.means.push(s/24);C.n++;C.finished=true;return true;}
+  return false;
+}
+function cFastResample(){const d=cData();let s=0;for(let k=0;k<24;k++)s+=d.vals[Math.floor(rngs.c()*24)];C.means.push(s/24);C.n++;}
+function cDrawBag(){
+  const d=cData();const box=$('cChips');box.textContent='';
+  for(let i=0;i<24;i++){const c=document.createElement('div');c.className='chip';c.textContent=d.vals[i].toFixed(1);
+    if(C.lit===i&&!C.finished)c.classList.add('lit');
+    if(C.counts[i]>1)c.classList.add('dup');
+    if(C.finished&&C.counts[i]===0)c.classList.add('never');
+    if(C.counts[i]>0){const n=document.createElement('span');n.className='n';n.textContent='×'+C.counts[i];c.appendChild(n);}
+    box.appendChild(c);}
+  const sm=$('cSample');sm.textContent='';
+  C.draws.forEach((j,idx)=>{const c=document.createElement('div');c.className='chip';c.textContent=d.vals[j].toFixed(1);if(idx===C.draws.length-1&&!C.finished)c.classList.add('lit');sm.appendChild(c);});
+  for(let i=C.draws.length;i<24;i++){const c=document.createElement('div');c.className='chip';c.style.opacity='.25';c.textContent='·';sm.appendChild(c);}
+  const ml=$('cMeanLine');
+  if(C.finished)ml.innerHTML=`mean of pretend sample = <b>${C.means[C.means.length-1].toFixed(d.dec)} ${d.unit}</b> → dropped into the histogram`;
+  else if(C.draws.length){let s=0;for(const j of C.draws)s+=d.vals[j];ml.textContent=`${C.draws.length} of 24 drawn, running mean = ${(s/C.draws.length).toFixed(d.dec)} ${d.unit}`;}
+  else if(C.n)ml.innerHTML=`last pretend mean = <b>${C.means[C.means.length-1].toFixed(d.dec)} ${d.unit}</b> (fast mode skips the chip animation)`;
+  else ml.textContent='mean of pretend sample = –';
+}
+function cDrawHist(){
+  const d=cData();const svg=$('cHist');svg.textContent='';
+  const W=420,H=300,L=56,R=12,T=18,Bm=48,pw=W-L-R,ph=H-T-Bm;
+  const fg=css('--fg'),mu=css('--muted'),ln=css('--line'),ac=css('--accent'),or=css('--orange');
+  const lo=d.lo,hi=d.hi,NBc=44,bw=(hi-lo)/NBc;
+  const bins=new Array(NBc).fill(0);for(const v of C.means){let i=Math.floor((v-lo)/bw);if(i<0)i=0;if(i>=NBc)i=NBc-1;bins[i]++;}
+  const mx=Math.max(1,...bins);
+  const dotMode=C.n<=60; // early on, show dots stacking
+  function niceStep(v){const e=Math.pow(10,Math.floor(Math.log10(v/4)));return [1,2,2.5,5,10].map(m=>m*e).find(t=>v/t<=5);}
+  let ymax=dotMode?Math.max(8,mx+2):mx*1.4;const ystep=niceStep(ymax);ymax=Math.ceil(ymax/ystep)*ystep;
+  const X=v=>L+(v-lo)/(hi-lo)*pw,Y=c=>T+ph-c/ymax*ph;
+  const ticks=C.key==='H'?[5.6,5.8,6.0,6.2,6.4,6.6]:[7.8,7.9,8.0,8.1];
+  for(const t of ticks){svg.appendChild(el('line',{x1:X(t),x2:X(t),y1:T,y2:T+ph,stroke:ln}));svg.appendChild(el('text',{x:X(t),y:T+ph+18,'text-anchor':'middle',fill:fg,'font-size':16},t.toFixed(1)));}
+  for(let t=0;t<=ymax+1e-9;t+=ystep){svg.appendChild(el('line',{x1:L,x2:L+pw,y1:Y(t),y2:Y(t),stroke:ln}));svg.appendChild(el('text',{x:L-6,y:Y(t)+4,'text-anchor':'end',fill:mu,'font-size':15},t));}
+  const bwpx=pw/NBc;
+  if(dotMode){const per=new Array(NBc).fill(0);C.means.forEach((v,idx)=>{let i=Math.floor((v-lo)/bw);if(i<0)i=0;if(i>=NBc)i=NBc-1;per[i]++;const r=Math.min(5,bwpx/2-0.5);svg.appendChild(el('circle',{cx:L+i*bwpx+bwpx/2,cy:Y(per[i]-0.5),r,fill:idx===C.means.length-1?or:ac}));});}
+  else for(let i=0;i<NBc;i++){if(!bins[i])continue;svg.appendChild(el('rect',{x:L+i*bwpx+0.5,y:Y(bins[i]),width:bwpx-1,height:ph-(Y(bins[i])-T),fill:ac}));}
+  const m0=mean(d.vals);svg.appendChild(el('line',{x1:X(m0),x2:X(m0),y1:T,y2:T+ph,stroke:ac,'stroke-dasharray':'5 4','stroke-width':2}));
+  svg.appendChild(el('text',{x:X(m0)+4,y:T+12,fill:ac,'font-size':15,'font-weight':700},'real mean '+m0.toFixed(2)));
+  if(C.n>=40){const srt=C.means.slice().sort((a,b)=>a-b);const p1=pct(srt,.025),p2=pct(srt,.975);
+    const yb=T+ph*0.2;
+    for(const p of [p1,p2]){svg.appendChild(el('line',{x1:X(p),x2:X(p),y1:yb,y2:T+ph,stroke:or,'stroke-width':2.5}));}
+    svg.appendChild(el('line',{x1:X(p1),x2:X(p2),y1:yb,y2:yb,stroke:or,'stroke-width':2}));
+    svg.appendChild(el('text',{x:X((p1+p2)/2),y:yb+18,'text-anchor':'middle',fill:or,'font-size':15,'font-weight':700},'95 % of means'));}
+  svg.appendChild(el('text',{x:L+pw/2,y:H-8,'text-anchor':'middle',fill:mu,'font-size':15},`mean of a pretend sample of 24 ${d.name} readings, ${d.unit}`));
+  svg.appendChild(el('text',{x:14,y:T+ph/2,transform:`rotate(-90 14 ${T+ph/2})`,'text-anchor':'middle',fill:mu,'font-size':15},'number of pretend samples'));
+}
+function cDrawStats(){
+  const d=cData();const m0=mean(d.vals),s0=sd(d.vals);
+  $('cM').innerHTML=f(m0,d.dec)+' <small>'+d.unit+'</small>';$('cS').innerHTML=f(s0,3)+' <small>'+d.unit+'</small>';
+  $('cSE').innerHTML=f(s0/Math.sqrt(24),3)+' <small>'+d.unit+'</small>';
+  const bs=sd(C.means);$('cBSD').innerHTML=(C.n>1?f(bs,3):'–')+' <small>'+(C.n>1?d.unit:'')+'</small>';
+  const srt=C.means.slice().sort((a,b)=>a-b);
+  $('cPI').innerHTML=C.n>=40?f(pct(srt,.025),d.dec)+' – '+f(pct(srt,.975),d.dec)+' <small>'+d.unit+'</small>':'<small>needs ≥ 40 resamples</small>';
+  $('cCV').textContent=C.n>1?(100*bs/m0).toFixed(2)+' %':'–';
+  $('cCount').textContent='resamples: '+C.n.toLocaleString();
+  $('cBagLbl').textContent=`The bag: 24 real ${d.name} readings of tree #406 (${d.unit})`;
+}
+function cDrawAll(){cDrawBag();cDrawHist();cDrawStats();}
+// loop: slow speeds animate draws one by one; fast speeds do whole resamples
+const cLoop=makeLoop(n=>{
+  const sp=+$('cSpeed').value;
+  if(sp<=30){cDrawOne();}                      // one chip per tick
+  else if(sp<=70){for(let i=0;i<24&&!cDrawOne();i++);} // one full resample per tick (animated end state)
+  else {for(let i=0;i<n&&C.n<MAXC;i++)cFastResample();C.finished=false;C.draws=[];C.counts.fill(0);C.lit=-1;}
+  cDrawAll();return C.n<MAXC;},$('cSpeed'));
+function cReset(){C.means=[];C.draws=[];C.counts.fill(0);C.lit=-1;C.n=0;C.finished=false;cLoop.stop();setPlayLabel($('cPlay'),cLoop);cDrawAll();}
+$('cPlay').onclick=()=>{if(cLoop.playing)cLoop.stop();else if(C.n<MAXC)cLoop.start();setPlayLabel($('cPlay'),cLoop);};
+$('cStep').onclick=()=>{cLoop.stop();setPlayLabel($('cPlay'),cLoop);if(C.n<MAXC){cDrawOne();cDrawAll();}};
+$('cFF').onclick=()=>{cLoop.stop();setPlayLabel($('cPlay'),cLoop);while(C.n<MAXC)cFastResample();C.finished=false;C.draws=[];C.counts.fill(0);C.lit=-1;cDrawAll();};
+$('cReset').onclick=cReset;
+$('cH').onclick=()=>{C.key='H';$('cH').setAttribute('aria-pressed','true');$('cD').setAttribute('aria-pressed','false');cReset();};
+$('cD').onclick=()=>{C.key='D';$('cD').setAttribute('aria-pressed','true');$('cH').setAttribute('aria-pressed','false');cReset();};
+
+// ---------- seed ----------
+$('newseed').onclick=()=>{seed=(seed*7919+13)%100000;reseed();$('seedlabel').textContent='seed '+seed+' (press Reset in a panel to restart it with this seed)';aReset();bReset();cReset();};
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{aDraw();bDraw();cDrawAll();});
+aDraw();bDraw();cDrawAll();
+})();
+</script>
+</body>
+</html>
