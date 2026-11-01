@@ -158,7 +158,7 @@ select,input[type=number]{font:inherit;font-size:14px;padding:5px 7px;border:1px
       <dt>D</dt><dd>The thickness of the trunk, in cm, measured 1.3 m above the ground. Its full name is DBH, diameter at breast height.</dd>
       <dt>H</dt><dd>The height of the tree, in m.</dd>
       <dt>ρ (rho)</dt><dd>Wood density: how heavy the wood is, in grams per cm³. Light wood about 0.3, heavy wood about 0.9. It depends on the species of tree.</dd>
-      <dt>Size value</dt><dd>Our short name for ρ × D² × H, the part inside the brackets. One number that says how big the tree is. For our example tree it is 230.4.</dd>
+      <dt>Size value</dt><dd>Our short name for ρ × D² × H, the part inside the brackets. One number that says how big the tree is. For our example tree #406, introduced in Panel A, it is 230.4.</dd>
       <dt>a</dt><dd>The first number of the equation, 0.0673. It is a multiplier: it turns the size value into kg.</dd>
       <dt>b</dt><dd>The second number of the equation, 0.976. It is a power: the size value is raised to the power b before multiplying by a.</dd>
     </dl>
@@ -170,6 +170,7 @@ select,input[type=number]{font:inherit;font-size:14px;padding:5px 7px;border:1px
       <dt>Data point</dt><dd>One harvested tree: its size value and its measured weight. One dot on the chart.</dd>
       <dt>Best-fit line</dt><dd>The straight line that passes as close as possible to all the dots. "Fitting" means finding it. The line gives a and b.</dd>
       <dt>Log scale</dt><dd>A chart axis where each grid step means "10 times more": 1, 10, 100, 1,000. On log axes the equation is a straight line.</dd>
+      <dt>σ (sigma)</dt><dd>The SD of the dots around the line, measured on the log scale. It has no unit. σ = 0.357 means a typical tree is between 1 ÷ 1.43 = 0.7 and 1.43 times the weight on the line. The 1.43 is e<sup>0.357</sup>, with e = 2.718, the base of natural logarithms; the computer does this step for you.</dd>
       <dt>Parameters</dt><dd>The numbers a and b. They are not laws of nature. They were found from measured trees, and another set of trees would give slightly different values.</dd>
     </dl>
   </div>
@@ -237,7 +238,7 @@ select,input[type=number]{font:inherit;font-size:14px;padding:5px 7px;border:1px
       <tr><td>On the chart</td><td>the whole line is a little too high or too low</td><td>dots above and below the line</td></tr>
       <tr><td>Smaller if the equation is built from more harvested trees? (n = the number of trees cut down and weighed to make the equation)</td><td><b>Yes.</b> Divide by √n. With 4 times more harvested trees the doubt is halved.</td><td><b>No.</b> It stays the same.</td></tr>
       <tr><td>Smaller when we add up the weights of many trees in a plot? (m = the number of trees in the plot)</td><td><b>No.</b> It stays the same.</td><td><b>Yes.</b> Divide by √m. For 4 trees added up the doubt is halved; for 100 trees it is one tenth.</td></tr>
-      <tr><td>Size for our equation</td><td>about 1 % of the weight, for one tree and for a whole plot</td><td>about 40 % for one tree; about 4 % for the total of 100 trees</td></tr>
+      <tr><td>Size for our equation</td><td>about 1 % of the weight, for one tree and for a whole plot</td><td>about 40 % for one tree (CV 37 %, factor 1.43; we round to 40 %); about 4 % for the total of 100 trees</td></tr>
       <tr><td>Shown in</td><td>Panel D</td><td>Panel E</td></tr>
     </table>
     </div>
@@ -288,7 +289,7 @@ select,input[type=number]{font:inherit;font-size:14px;padding:5px 7px;border:1px
 <section class="panel" id="pG">
   <div class="eyebrow">Panel B</div>
   <h2>The equation as a picture</h2>
-  <p class="lead">Each dot below is one tree: its size value across, its weight up. The green line is the equation. There are 4,004 dots, as in the real study, but they are computer-made. Trees come in all sizes: a sapling with size value 10 weighs less than 1 kg, a forest giant with size value 10,000,000 weighs 300 tonnes. On ordinary graph paper (left) this is a problem. If the axes stop at 2,000, as here, more than half of the trees do not fit. If the axes went up to the giants, all the small trees would be squashed into one corner.</p>
+  <p class="lead">Each dot below is one tree: its size value across, its weight up. The green line is the equation. There are 4,004 dots, as in the real study, but they are computer-made. Trees come in all sizes: a sapling with size value 10 weighs less than 1 kg, a forest giant with size value 10,000,000 weighs about 450 tonnes. On ordinary graph paper (left) this is a problem. If the axes stop at 2,000, as here, more than half of the trees do not fit. If the axes went up to the giants, all the small trees would be squashed into one corner.</p>
   <p class="lead">So we change the grid. On a <b>log scale</b> (right) each grid step means "10 times more": 1, 10, 100, 1,000, instead of 1, 2, 3, 4. Now the sapling and the giant get the same amount of room, and the equation becomes a <b>straight line</b>. This is why everyone who works with this equation draws it on log paper.</p>
   <div class="grid2">
     <figure><svg id="gSvg1" viewBox="0 0 460 420" role="img" aria-label="Trees on ordinary axes"></svg><figcaption>Ordinary axes: 4,004 computer-made trees, the same number as in the real study. Most do not fit on the page, and the ones that do are crowded into the corner.</figcaption></figure>
@@ -303,7 +304,7 @@ select,input[type=number]{font:inherit;font-size:14px;padding:5px 7px;border:1px
 <section class="panel" id="pA">
   <div class="eyebrow">Panel C</div>
   <h2>Where a and b come from: cut, dry, weigh, fit</h2>
-  <p class="lead">The only way to know the true weight of a tree is to cut it down, dry it in an oven, and weigh it. Researchers did this for 4,004 trees in 58 tropical forests. Each dot below is one such tree: its size value across, its measured weight up, both on log scales. When all n trees are in, the computer draws the straight line that passes closest to the dots. The slope of that line is b. Its height is a. That is all an equation is: the best line through measured dots.</p>
+  <p class="lead">The only way to know the true weight of a tree is to cut it down, dry it in an oven, and weigh it. Researchers did this for 4,004 trees in 58 tropical forests. Each dot below is one such tree: its size value across, its measured weight up, both on log scales. When all n trees are in, the computer draws the straight line that passes closest to the dots. The slope of that line is b. Its height, the weight where the line crosses size value 1, gives a. That is all an equation is: the best line through measured dots.</p>
   <div class="controls">
     <label class="ctl">Number of trees cut down, n <input type="range" id="aN" class="wide" min="0" max="100" value="60"> <b id="aNv">500</b></label>
     <button id="aPlay" class="primary">Play</button>
@@ -325,7 +326,7 @@ select,input[type=number]{font:inherit;font-size:14px;padding:5px 7px;border:1px
         <div class="stat"><div class="k">Scatter around the line, <span style="text-transform:none">σ</span> (log scale)</div><div class="v" id="aSig">–</div></div>
         <div class="stat"><div class="k">Prediction for #406 (size value 230.4)</div><div class="v" id="aP">–</div></div>
       </div>
-      <p class="small"><b>How the computer finds the line.</b> It measures the vertical distance from every dot to a trial line, squares each distance (so that dots above and below do not cancel), and adds them up. Then it moves the line until this total is as small as possible. This is called <b>least squares</b>.</p>
+      <p class="small"><b>How the computer finds the line.</b> It measures, on the log chart, the vertical distance from every dot to a trial line, squares each distance (so that dots above and below do not cancel), and adds them up. Then it moves the line until this total is as small as possible. This is called <b>least squares</b>.</p>
       <p class="small">The fitted a and b are never exactly the true 0.0673 and 0.976, because the dots do not sit exactly on the line. With more trees they come closer.</p>
       <p class="small"><b>Try it:</b> set n = 20, press Fast-forward, and look at the fitted a and b. Then set n = 4,000 and do it again. With 20 trees the line can tilt a lot. With 4,000 trees it hardly moves.</p>
     </div>
@@ -336,7 +337,7 @@ select,input[type=number]{font:inherit;font-size:14px;padding:5px 7px;border:1px
 <section class="panel" id="pB">
   <div class="eyebrow">Panel D</div>
   <h2>Doubt 1: a and b are not known exactly</h2>
-  <p class="lead">In Panel C we found a and b from n trees. Now imagine a second team goes to the forest and harvests n <i>different</i> trees. Their dots are different, so their line is a little different, so their a and b are a little different. A third team gets a third line. Press the button to repeat the harvest again and again. The lines pile up into a fan. The width of the fan shows how unsure we are about a and b. This is <b>parameter uncertainty</b>. It depends only on n, the number of trees harvested.</p>
+  <p class="lead">In Panel C we found a and b from n trees. Now imagine a second team goes to the forest and harvests n <i>different</i> trees. Their dots are different, so their line is a little different, so their a and b are a little different. A third team gets a third line. Press the button to repeat the harvest again and again. The lines pile up into a fan. The width of the fan shows how unsure we are about a and b. This is <b>parameter uncertainty</b>. It gets smaller as n, the number of trees harvested, gets larger.</p>
   <div class="controls">
     <button id="bOnce" class="warm">Harvest a new set of trees and fit again</button>
     <button id="bPlay" class="primary">Play</button>
@@ -363,7 +364,7 @@ select,input[type=number]{font:inherit;font-size:14px;padding:5px 7px;border:1px
         <figure><svg id="bHa" viewBox="0 0 220 160" role="img" aria-label="Histogram of fitted a"></svg><figcaption>values of a from each harvest</figcaption></figure>
         <figure><svg id="bHb" viewBox="0 0 220 160" role="img" aria-label="Histogram of fitted b"></svg><figcaption>values of b from each harvest</figcaption></figure>
       </div>
-      <p class="small"><b>The orange box is the one that matters for our tree.</b> It answers: by how many percent does the predicted weight of #406 change from one harvest to the next? <b>Try it:</b> set n = 50 in Panel C and press Fast-forward here; then set n = 4,000 and press Fast-forward again. The percentage falls from several percent to well below 1 %. The fan gets narrower by √n: 100 times more trees, 10 times narrower. The real equation was built from 4,004 trees, so this doubt is about 1 % of the predicted weight. That is the value we will use for the project.</p>
+      <p class="small"><b>The orange box is the one that matters for our tree.</b> It answers: by how many percent does the predicted weight of #406 change from one harvest to the next? <b>Try it:</b> set n = 50 in Panel C and press Fast-forward here; then set n = 4,000 and press Fast-forward again. The percentage falls from several percent to about 1 %. The fan gets narrower by √n: 100 times more trees, 10 times narrower. The real equation was built from 4,004 trees, so for the project we take this doubt as 1 % of the predicted weight.</p>
     </div>
   </div>
   <div class="why">
@@ -372,10 +373,10 @@ select,input[type=number]{font:inherit;font-size:14px;padding:5px 7px;border:1px
       <p>We are <b>users</b>. We take one finished equation and apply it to every standing tree in our plot. We never harvest a tree, so we can never check whether our line is a little too high or too low. The error is frozen into the numbers 0.0673 and 0.976, and it is the same for every tree we calculate. To us Doubt 1 is a systematic error.</p>
       <h4 style="margin-top:10px">How do we put a number on Doubt 1 if we never harvest a tree?</h4>
       <p>We cannot measure it ourselves, but we can borrow the builders' information. Three ways, from easy to hard:</p>
-      <p><b>1 · Use what the builders published.</b> A well-made paper reports not only a and b but also how uncertain they are (their standard errors, or a bootstrap like this panel run on the real 4,004 trees). From these one can work out how much the predicted weight at a given size value would move with a new harvest. For this equation the answer is about 1 % of the weight. That is the number we carry into the project.</p>
+      <p><b>1 · Use what the builders published.</b> A well-made paper reports not only a and b but also how uncertain they are (their standard errors, or the harvest repeated many times on the computer, as this panel does, using the real 4,004 trees). From these one can work out how much the predicted weight at a given size value would move with a new harvest. For this equation the answer is about 1 % of the weight. That is the number we carry into the project.</p>
       <p><b>2 · Compare with a different published equation.</b> Other researchers built other equations from other trees. If two reasonable equations differ by 5 % for our tree, then our systematic doubt is at least of that order. This is a rough but honest check.</p>
       <p><b>3 · Harvest a few local trees.</b> If a few trees of our species and size can be cut and weighed, we compare their true weights with the equation. A small local harvest cannot replace 4,004 trees, but it can show whether the equation is badly off for our forest.</p>
-      <p><b>Then treat it as systematic.</b> When we add up a plot, we apply the 1 % to the <i>total</i>, not to each tree separately, because it does not cancel between trees. On the Monte Carlo pages this means: draw one pair of a and b per run, and use that same pair for every tree in the plot.</p>
+      <p><b>Then treat it as systematic.</b> When we add up a plot, we apply the 1 % to the <i>total</i>, not to each tree separately, because it does not cancel between trees. In practice this means: draw one pair of a and b per run, and use that same pair for every tree in the plot.</p>
     </div>
 </section>
 
@@ -405,7 +406,7 @@ select,input[type=number]{font:inherit;font-size:14px;padding:5px 7px;border:1px
         <div class="stat or"><div class="k">Trees that landed inside the 95 % band</div><div class="v" id="cIn">–</div></div>
         <div class="stat"><div class="k" id="cCVk">CV of one tree's weight</div><div class="v" id="cCV">37 %</div></div>
       </div>
-      <p class="small" id="cMsg"><b>This band does not get narrower when more trees are harvested.</b> Harvesting 40,000 trees instead of 4,000 would fix a and b even better. But the next tree would still land between 0.7 and 1.4 times the line. The scatter belongs to the trees themselves, not to how many trees we measured.</p>
+      <p class="small" id="cMsg"><b>This band does not get narrower when more trees are harvested.</b> Cutting down 40,000 trees instead of 4,000 would fix the position of the line even better. But each new tree would still land between 0.7 and 1.4 times the line. The scatter belongs to the trees themselves, not to how many trees we measured.</p>
       <p class="small"><b>What does make the band narrower? Averaging.</b> Move the "average of m trees" slider. Here m is the number of trees you average. If you report the <b>average</b> weight of m trees of this size, the band becomes narrower by √m: 4 trees, half as wide; 100 trees, one tenth. The hollow trees and the heavy-branched trees partly cancel each other out.</p>
     </div>
   </div>
@@ -499,7 +500,7 @@ function aDraw(){
   for(let i=0;i<A.shown;i++){const t=A.trees[i];svg.appendChild(el('circle',{cx:F.X(t.x),cy:F.Y(t.y),r:i===A.shown-1&&A.shown<A.n?r+2:r,fill:i===A.shown-1&&A.shown<A.n?or:pt}));}
   if(A.fit&&A.lineProg>0){const p=el('path',{d:linePath(F,A.fit.la,A.fit.b,10,1e7),stroke:ac,'stroke-width':3,fill:'none'});svg.appendChild(p);
     const len=p.getTotalLength();p.setAttribute('stroke-dasharray',len);p.setAttribute('stroke-dashoffset',len*(1-A.lineProg));
-    if(A.lineProg>=1){svg.appendChild(el('text',{x:F.L+F.pw-6,y:F.T+F.ph-14,'text-anchor':'end',fill:ac,'font-size':17,'font-weight':700},`best-fit line: AGB = ${sig(A.fit.a,3)} · x^${sig(A.fit.b,4)}`));}}
+    if(A.lineProg>=1){svg.appendChild(el('text',{x:F.L+F.pw-6,y:F.T+F.ph-14,'text-anchor':'end',fill:ac,'font-size':17,'font-weight':700},`best-fit line: AGB = ${sig(A.fit.a,3)} · (size value)^${sig(A.fit.b,4)}`));}}
   // marker 406
   svg.appendChild(el('line',{x1:F.X(X406),x2:F.X(X406),y1:F.T,y2:F.T+F.ph,stroke:or,'stroke-dasharray':'3 4'}));
   svg.appendChild(el('text',{x:F.X(X406)+4,y:F.T+14,fill:or,'font-size':16},'#406'));
@@ -560,7 +561,7 @@ $('bReset').onclick=bReset;
 // ============================ PANEL C ============================
 const C={ws:[],m:1,n:0};
 const MAXC=2000;
-function cFell(){const m=C.m;let s=0;for(let i=0;i<m;i++)s+=P406*Math.exp(SIG*normal(rngs.c));C.ws.push(s/m);C.n++;}
+function cFell(){const m=C.m;let s=0;for(let i=0;i<m;i++)s+=SIG*normal(rngs.c);C.ws.push(P406*Math.exp(s/m));C.n++;}
 function cDraw(){
   const svg=$('cSvg');const F=frame(svg,{strip:true,range:{lxmin:1,lxmax:4,lymin:-1,lymax:3}});const or=css('--orange'),ac=css('--accent'),fg=css('--fg'),mu=css('--muted'),b1=css('--band1'),b2=css('--band2');
   const la=Math.log(TRUE_A),b=TRUE_B,sm=SIG/Math.sqrt(C.m);
@@ -591,7 +592,7 @@ function cDraw(){
   const inside=C.ws.filter(w=>w>=lo2&&w<=hi2).length;$('cIn').textContent=C.n?`${inside} / ${C.n} = ${(100*inside/C.n).toFixed(0)} %`:'–';
   $('cCV').textContent=(100*Math.sqrt(Math.exp(sm*sm)-1)).toFixed(C.m>=10?1:0)+' %';$('cCVk').textContent=C.m===1?"CV of one tree's weight":`CV of the average of ${C.m} trees`;
   $('cCount').textContent=`trees cut down: ${C.n.toLocaleString()}`+(C.m>1?` (each dot = average of ${C.m} trees)`:'');
-  $('cMsg').innerHTML=C.m===1?'<b>This band does not get narrower when more trees are harvested.</b> Cutting down 40,000 trees instead of 4,000 would fix the position of the line even better. But each new tree would still land between 0.7 and 1.4 times the line. The scatter belongs to the trees themselves, not to how many trees we measured.':`<b>Now each dot is the average of ${C.m} trees</b> of the size of #406. The band is σ ÷ √${C.m} = ${sm.toFixed(3)} on the log scale. Typical doubt: about ± ${(100*sm).toFixed(0)} %. 95 % range: ${lo2.toFixed(1)} to ${hi2.toFixed(1)} kg. Move the slider back to 1 to see one tree again.`;
+  $('cMsg').innerHTML=C.m===1?'<b>This band does not get narrower when more trees are harvested.</b> Cutting down 40,000 trees instead of 4,000 would fix the position of the line even better. But each new tree would still land between 0.7 and 1.4 times the line. The scatter belongs to the trees themselves, not to how many trees we measured.':`<b>Now each dot is the average of ${C.m} trees</b> of the size of #406. The average is taken on the log scale, the same scale as the band. The band is σ ÷ √${C.m} = ${sm.toFixed(3)}. CV of the average: about ${(100*Math.sqrt(Math.exp(sm*sm)-1)).toFixed(0)} %. 95 % range: ${lo2.toFixed(1)} to ${hi2.toFixed(1)} kg. Move the slider back to 1 to see one tree again.`;
 }
 const mSteps=[1,2,3,4,5,6,8,10,12,15,20,25,30,40,50,60,80,100,150,200,400];
 const cLoop=makeLoop(n=>{for(let i=0;i<n&&C.n<MAXC;i++)cFell();cDraw();return C.n<MAXC;},$('cSpeed'));

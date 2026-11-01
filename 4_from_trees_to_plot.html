@@ -125,7 +125,7 @@ footer{color:var(--muted); font-size:13px; text-align:center; padding-top:8px}
 <header style="display:grid;gap:10px">
   <div class="eyebrow">Quantifying uncertainty in tree biomass · page 4 of 4</div>
   <h1>From 25 Trees to a Plot</h1>
-  <p class="lede"><strong>What you are looking at.</strong> On page 3, the biomass of one tree was uncertain by about ± 40 %. Here we add up 25 measured trees from a Miyawaki plot. Each tree is still ± 40 %. But the total of the 25 trees is uncertain by only about ± 12 %. Why? Because random errors partly cancel when you add many trees: one tree comes out too high, another too low, and the total ends up close to the truth.</p>
+  <p class="lede"><strong>What you are looking at.</strong> On page 3, the biomass of one tree was uncertain by about ± 40 %. Here we add up 25 example trees, like the ones measured in a Miyawaki plot. Each tree is still ± 40 %. But the total of the 25 trees is uncertain by only about ± 12 %. Why? Because random errors partly cancel when you add many trees: one tree comes out too high, another too low, and the total ends up close to the truth.</p>
   <p class="lede">But not all errors cancel. Some errors are <em>shared</em> by many trees: the same wood-density value is used for every tree of a species, and the same equation is used for all 25 trees. If the equation is 1 % too high, every tree is 1 % too high, and the total is also 1 % too high. Shared errors do not cancel. This page lets you watch both effects.</p>
   <section class="words" aria-label="Words used on this page">
     <h3>Words used on this page</h3>
@@ -135,6 +135,7 @@ footer{color:var(--muted); font-size:13px; text-align:center; padding-top:8px}
       <dt>Round</dt><dd>One round of the simulation: every one of the 25 trees gets one random set of errors, the 25 biomasses are added, and the sum goes into the pile. (Page 3 called this a "draw" for one tree.)</dd>
       <dt>SD</dt><dd><b>Standard deviation.</b> One number that measures spread: roughly the typical distance of a value from the mean.</dd>
       <dt>CV</dt><dd><b>Coefficient of variation.</b> SD ÷ mean × 100, a percentage. The relative error. On this page a spread written as a percentage is always a CV. An SD always has a unit (m, cm, kg).</dd>
+      <dt>ε and σ</dt><dd>ε (epsilon) is the scatter of one tree around the equation, on the log scale: Doubt 2 from page 2. σ (sigma) is its SD, 0.357, with no unit. A scatter with σ = 0.357 is a CV of about 37 %, rounded on these pages to 40 %.</dd>
       <dt>Median</dt><dd>The middle value when all the rounds are sorted.</dd>
       <dt>95 % interval</dt><dd>The range that holds the middle 95 % of the rounds. Also called the 95 % range.</dd>
       <dt>Whisker</dt><dd>A horizontal line drawn through a dot to show its 95 % interval. A long whisker means a large uncertainty.</dd>
@@ -150,7 +151,7 @@ footer{color:var(--muted); font-size:13px; text-align:center; padding-top:8px}
   <div class="controls">
     <div class="ctl-group">
       <h3>The five dice: sources of uncertainty</h3>
-      <p class="caption">Each box gives the CV (coefficient of variation) of that source: the SD as a percentage of the value. For a 6.0 m tree, CV 10 % means SD = 0.6 m. "Per tree" = a different error for every tree. "Per species" = one error shared by all trees of that species. "All trees" = one error shared by all 25 trees.</p>
+      <p class="caption">Each box gives the CV (coefficient of variation) of that source: the SD as a percentage of the value. For a 6.0 m tree, CV 10 % means SD = 0.6 m. "Per tree" = a different error for every tree. "Per species" = one error shared by all trees of that species. "All trees" = one error shared by all 25 trees. The last box is different: σ is the SD of the scatter on the log scale, not a CV; σ = 0.357 is a CV of about 37 %, which we round to 40 %.</p>
       <div class="ctl-row"><label class="lab"><input type="checkbox" id="onH" checked> Height H (per tree)</label><span class="val">CV <input type="number" id="sdH" value="10" step="0.5" min="0"> %</span></div>
       <div class="ctl-row"><label class="lab"><input type="checkbox" id="onD" checked> Diameter D (per tree)</label><span class="val">CV <input type="number" id="sdD" value="2.5" step="0.5" min="0"> %</span></div>
       <div class="ctl-row"><label class="lab"><input type="checkbox" id="onR" checked> Wood density ρ (per species)</label><span class="val">CV <input type="number" id="sdR" value="10" step="0.5" min="0"> %</span></div>
@@ -163,7 +164,7 @@ footer{color:var(--muted); font-size:13px; text-align:center; padding-top:8px}
       <p class="caption">Changing any control restarts the animation and recalculates panels A, C and D.</p>
     </div>
   </div>
-  <p class="caption"><b>Where are the buttons?</b> Step, Play and Fast-forward are in Panel B below, next to the chart they drive.</p>
+  <p class="caption"><b>Where are the buttons?</b> Step, Play, Fast-forward, Reset and New random numbers are in Panel B below, next to the chart they drive.</p>
   <details>
     <summary>Show the 25 measured trees</summary>
     <div class="tbl-wrap" style="margin-top:8px"><table id="treeTable"><thead><tr><th>#</th><th class="sp">Species</th><th>D (cm)</th><th>H (m)</th><th>ρ (g/cm³)</th><th>AGB point (kg)</th></tr></thead><tbody></tbody></table></div>
@@ -184,7 +185,7 @@ footer{color:var(--muted); font-size:13px; text-align:center; padding-top:8px}
   <div>
     <div class="panel-tag">BEFORE PANEL B · A SMALL EXAMPLE, BY HAND</div>
     <h2>Three trees first</h2>
-    <p class="caption">Panel B does for 25 trees what this box does for three. Read this once, slowly, and Panel B will be easy. The three trees are real rows from the table above, and they are three different species.</p>
+    <p class="caption">Panel B does for 25 trees what this box does for three. Read this once, slowly, and Panel B will be easy. The three trees are three rows from the example table above, and they are three different species. (The table prints 3.99 kg for tree #1; here it is rounded to 4.0 kg.)</p>
   </div>
 
   <div class="step">
@@ -194,7 +195,7 @@ footer{color:var(--muted); font-size:13px; text-align:center; padding-top:8px}
 
 Tree #1   T. bellirica    D = 4.9 cm   H = 4.4 m   ρ = 0.62   size value = 0.62 × 4.9² × 4.4 =  65.5   AGB =  4.0 kg
 Tree #14  P. cineraria    D = 5.1 cm   H = 5.1 m   ρ = 0.75   size value = 0.75 × 5.1² × 5.1 =  99.5   AGB =  6.0 kg
-Tree #8   P. gujava       D = 6.8 cm   H = 5.2 m   ρ = 0.70   size value = 0.70 × 6.8² × 5.2 = 168.3   AGB = 10.0 kg
+Tree #8   P. guajava       D = 6.8 cm   H = 5.2 m   ρ = 0.70   size value = 0.70 × 6.8² × 5.2 = 168.3   AGB = 10.0 kg
 
 Point total = 4.0 + 6.0 + 10.0 = 20.0 kg</div>
   </div>
@@ -225,8 +226,8 @@ Round 3   #1: 4.0 × 0.8 = 3.2     #14: 6.0 × 0.9 = 5.4     #8: 10.0 × 0.7 =  
 Round 4   #1: 4.0 × 0.6 = 2.4     #14: 6.0 × 1.5 = 9.0     #8: 10.0 × 0.9 =  9.0
           total = 2.4 + 9.0 +  9.0 = 20.4 kg      2 % above 20.0</div>
     <p><b>Round 1:</b> tree #1 went up by 40 %, tree #14 went down by 30 %, tree #8 did not move. One up and one down: they <b>cancelled</b>, and the total is only 1 % away from 20.0 kg. <b>Round 4:</b> the same thing, tree #1 far down and tree #14 far up, total 2 % away.</p>
-    <p><b>Round 2:</b> all three went up. <b>Round 3:</b> all three went down. Nothing cancelled in these rounds, so the total moved a lot, by 18 % and 22 %. This can happen, but it is not common: for three independent dice to all go the same way is like three coins all landing heads, about 1 round in 4. With 25 trees it is like 25 coins all landing heads, which almost never happens. That is why the total of many trees stays close to the point total.</p>
-    <p>Now do this 20,000 times and write down every total. That list of 20,000 totals is the pile in Panel B. Its median is close to 20.0 kg, and its spread is the uncertainty of the plot total.</p>
+    <p><b>Round 2:</b> all three went up. <b>Round 3:</b> all three went down. Nothing cancelled in these rounds, so the total moved a lot, by 18 % and 22 %. This can happen, but it is not common: for three independent dice to all go the same way is like three coins all landing on the same side, all heads or all tails: about 1 round in 4. With 25 trees it is like 25 coins all landing on the same side, which almost never happens. That is why the total of many trees stays close to the point total.</p>
+    <p>Now do this 20,000 times and write down every total. Panel B builds exactly such a pile, for 25 trees. The middle of the pile is a little above 20.0 kg, near 21 kg (the note under Panel B explains why), and its spread is the uncertainty of the plot total.</p>
   </div>
 
   <div class="step">
@@ -237,7 +238,7 @@ Round 4   #1: 4.0 × 0.6 = 2.4     #14: 6.0 × 1.5 = 9.0     #8: 10.0 × 0.9 =  
 CV of total = 4.9 ÷ 20.0 = 25 %        (each tree alone was 40 %)
 
 95 % interval of the total: roughly 20.0 − 2 × 4.9 to 20.0 + 2 × 4.9 = about 10 to 30 kg</div>
-    <p>So three trees added together are known to 25 %, better than any one of them at 40 %. Not as good as the textbook 40 % ÷ √3 = 23 %, because that rule is for three <b>equal</b> trees. Here tree #8 is half the total, so its die matters most, and the plot behaves like 2.6 equal trees, not 3. Panel C shows the same thing for 25 trees: the green curve stays above the dashed √n line.</p>
+    <p>So three trees added together are known to 25 %, better than any one of them at 40 %. Not as good as the textbook 40 % ÷ √3 = 23 %, because that rule is for three <b>equal</b> trees. Here tree #8 is half the total, so its die matters most, and the plot behaves like 2.6 equal trees, not 3. Panel C shows the same thing for 25 trees: both curves, blue and green, stay above the dashed √n line.</p>
   </div>
 
   <div class="step">
@@ -245,7 +246,7 @@ CV of total = 4.9 ÷ 20.0 = 25 %        (each tree alone was 40 %)
     <p>So far every tree rolled its own die. Some errors are not like that. The equation (a and b) is the same for all three trees. If it is 1 % too high, all three trees are 1 % too high in the same round. They move together, never one up and one down. There is nothing to cancel.</p>
     <div class="eq">Equation 1 % too high   →   #1: 4.0 × 1.01 = 4.04    #14: 6.0 × 1.01 = 6.06    #8: 10.0 × 1.01 = 10.10    total = 20.2 kg   (+1 %)</div>
     <p>For a shared error the total moves by the same percentage as each tree. It does not shrink by the square-add-root rule, and it does not shrink however many trees you add. Add 1,000 trees that all use the same equation, and the 1 % is still there. That is why the green curve in Panel C never reaches zero: the shared part is a floor.</p>
-    <p><b>Wood density is shared too, but only within a species.</b> Our three trees are three different species, so each uses its own density value from the table, and their density errors are independent, like the scatter: they cancel. On the full page it is different: six of the 25 trees are T. bellirica and all six use the same value 0.62. If that value is 10 % too high, all six go up by 10 % together. In Panel B you can watch trees of one species move in the same direction in every round.</p>
+    <p><b>Wood density is shared too, but only within a species.</b> Our three trees are three different species, so each uses its own density value from the table, and their density errors are independent, like the scatter: they cancel. On the full page it is different: six of the 25 trees are T. bellirica and all six use the same value 0.62. If that value is 10 % too high, all six go up by 10 % together. In Panel B, if you switch off the H, D and scatter dice and leave only ρ on, you can watch the six T. bellirica trees move in the same direction in every round.</p>
   </div>
 
   <div class="note"><b>The whole page in three lines.</b> Each round: weight of every tree with its own rolled errors, then add them up. Independent errors shrink in the total by the square-add-root rule. Shared errors do not shrink. Panel B shows the rounds, Panel C shows the shrinking, and the "give every tree its own error" box above switches the shared errors off so you can see the difference.</div>
@@ -255,7 +256,7 @@ CV of total = 4.9 ÷ 20.0 = 25 %        (each tree alone was 40 %)
   <div>
     <div class="panel-tag">PANEL B</div>
     <h2>Adding them up</h2>
-    <p class="caption">One round = one possible "world". In each round, all 25 trees get their random errors at the same time. The green dots move to the new values (the grey tick on each row is the tree's point value). The 25 values are added up, exactly as in Step 3 of the three-tree example: total of the round = AGB₁ + AGB₂ + … + AGB₂₅, each with its own rolled errors. The sum drops into the histogram of plot totals below. Trees of the same species share the same ρ error, so watch them move together, in the same direction.</p>
+    <p class="caption">One round = one possible "world". In each round, all 25 trees get their random errors at the same time. The green dots move to the new values (the grey tick on each row is the tree's point value). The 25 values are added up, exactly as in Step 3 of the three-tree example: total of the round = AGB₁ + AGB₂ + … + AGB₂₅, each with its own rolled errors. The sum drops into the histogram of plot totals below. Trees of the same species share the same ρ error. With all dice on, the big scatter die hides this; switch off the H, D and scatter dice to see the six T. bellirica trees move together, in the same direction.</p>
   </div>
   <div class="buttons">
     <button id="btnStep">Step (1 round)</button>
@@ -283,7 +284,7 @@ CV of total = 4.9 ÷ 20.0 = 25 %        (each tree alone was 40 %)
     <div class="cell"><div class="v" id="bigTotal" style="color:var(--accent)">– %</div><div class="l">CV of the total of all 25 trees</div></div>
   </div>
   <div class="note" id="noteMean">
-    <b>Why is the mean of the rounds higher than the point total?</b> The point total is 286 kg, but the mean of the rounds comes out near 306 kg, about 7 % higher. Reason: the scatter factor e<sup>ε</sup> is not symmetric. Its 95 % range runs from factor 0.5 (half as heavy) to factor 2.0 (twice as heavy). A factor of 2.0 adds 100 %; a factor of 0.5 removes only 50 %. So, averaged over many rounds, each tree comes out about 7 % heavier than the plain equation says (the exact factor is e<sup>σ²/2</sup> = 1.066). The median of the rounds is the fairer "middle value" to report. It stays close to the point total.
+    <b>Why is the mean of the rounds higher than the point total?</b> The point total is 286 kg, but the mean of the rounds comes out near 306 kg, about 7 % higher. Reason: the scatter factor e<sup>ε</sup> is not symmetric. Its 95 % range runs from factor 0.5 (half as heavy) to factor 2.0 (twice as heavy). A factor of 2.0 adds 100 %; a factor of 0.5 removes only 50 %. So, averaged over many rounds, each tree comes out about 7 % heavier than the plain equation says (the exact factor is e<sup>σ²/2</sup> = 1.066). For one tree the median was equal to the point value (page 3). For a sum of many trees this is no longer true: the pile of totals is nearly symmetric, so its median (about 304 kg) sits close to its mean, about 6 % above the point total. Report the median and the 95 % interval. And remember: adding up plain-equation values for many trees under-estimates the plot by a few percent.
   </div>
 </section>
 
@@ -316,11 +317,12 @@ CV of total = 4.9 ÷ 20.0 = 25 %        (each tree alone was 40 %)
       <p class="caption" id="areaNote">Area = number of trees ÷ density. Change either the density or the area; the other one is updated. If you change the number of trees away from 25, the total is multiplied by (trees ÷ 25). This assumes the 25 measured trees are typical of the others.</p>
     </div>
     <div class="kpis" id="kpisD"></div>
+    <p class="caption">Carbon = 0.47 × biomass (dry wood is about 47 % carbon). CO₂ = 3.67 × carbon (44 ÷ 12, the weight of CO₂ made from one unit of carbon).</p>
   </div>
   <div class="caution">
     <b>Caution: this is a big jump from a small plot.</b>
-    <span>Going from about 8 m² to 10,000 m² means multiplying by roughly 1,200. The interval shown covers only the measurement and equation uncertainty of <em>these</em> 25 trees. It says nothing about a second kind of uncertainty, the <em>sampling</em> uncertainty: if you had measured a different 8 m² of the same planting, you would have got a different total. Chave et al. (2004) found that sampling error alone is about 10 % for a plot of 0.25 hectare and about 5 % for 1 hectare. For a plot of a few square metres it is far larger. A per-hectare number from one tiny plot must be reported with this warning next to it.</span>
-    <span><b>Sanity check (does the number make sense?):</b> at 3 trees per m², these 25 example trees give roughly 340 tonnes per hectare. That is what a fully grown tropical rainforest carries, not a 5-year-old planting. So something is off. Possible reasons: the real density is lower than 3 per m²; the example D and H values are too large; or the equation (built from natural forest trees with D ≥ 5 cm) gives too-high values for small, crowded, planted trees. A result that fails a sanity check is not a failure. It is a finding: write it down and name the possible reasons.</span>
+    <span>Going from about 8 m² to 10,000 m² means multiplying by roughly 1,200. The interval shown covers only the measurement and equation uncertainty of <em>these</em> 25 trees. It says nothing about a second kind of uncertainty, the <em>sampling</em> uncertainty: if you had measured a different 8 m² of the same planting, you would have got a different total. Chave et al. (2004, Philosophical Transactions of the Royal Society B, volume 359, pages 409–420) found that sampling error alone is about 10 % for a plot of 0.25 hectare and about 5 % for 1 hectare. For a plot of a few square metres it is far larger. A per-hectare number from one tiny plot must be reported with this warning next to it.</span>
+    <span><b>Sanity check (does the number make sense?):</b> at 3 trees per m², these 25 example trees give roughly 340 to 370 tonnes per hectare. That is what a fully grown tropical rainforest carries, not a young planting. So something is off. Possible reasons: the real density is lower than 3 per m²; the example D and H values are too large; or the equation (built from natural forest trees with D ≥ 5 cm) gives too-high values for small, crowded, planted trees. A result that fails a sanity check is not a failure. It is a finding: write it down and name the possible reasons.</span>
   </div>
 </section>
 
@@ -330,7 +332,7 @@ CV of total = 4.9 ÷ 20.0 = 25 %        (each tree alone was 40 %)
     <li><b>Adding up trees makes random error smaller.</b> Each tree is ± 40 %; the total of 25 trees is about ± 12 %. High and low errors cancel. This is why foresters measure many trees instead of measuring one tree very carefully.</li>
     <li><b>But the error does not fall as fast as 40 % ÷ √n.</b> With 25 equal trees the CV would be 40 ÷ √25 = 8 %. Our trees are very unequal: the two biggest make up a third of the total. So the plot behaves like fewer than 25 trees, and the green curve in Panel C stays above the dashed line.</li>
     <li><b>Shared errors do not get smaller.</b> Tick the "give every tree its own error" box: the curve drops further. In reality, every tree of a species uses the same density value and every tree uses the same equation. That part of the error is systematic. It stays the same however many trees you add. With very many trees it becomes a floor below which the CV cannot go.</li>
-    <li><b>Mean and median are different when the pile is not symmetric.</b> The scatter pushes the mean about 6 to 7 % above the point total. Report the median and the 95 % interval.</li>
+    <li><b>Mean and median are different when the pile is not symmetric.</b> The scatter pushes the mean about 7 % above the point total, and for a sum of many trees the median is pushed up almost as much. Report the median and the 95 % interval.</li>
     <li><b>Per-hectare numbers from tiny plots are a big jump.</b> The interval covers measurement and equation error only. The sampling error ("which 8 m² did we pick?") is extra, and probably bigger.</li>
   </ul>
 </section>
@@ -346,12 +348,12 @@ const TREES = [
  {id:1,species:"Terminalia bellirica",D:4.9,H:4.4,rho:0.62},{id:2,species:"Phyllanthus emblica",D:3.0,H:3.3,rho:0.70},
  {id:3,species:"Azadirachta indica",D:7.8,H:6.1,rho:0.69},{id:4,species:"Terminalia bellirica",D:5.9,H:5.2,rho:0.62},
  {id:5,species:"Prosopis cineraria",D:6.0,H:4.9,rho:0.75},{id:6,species:"Simarouba glauca",D:7.9,H:6.8,rho:0.39},
- {id:7,species:"Syzygium cumini",D:6.4,H:5.3,rho:0.70},{id:8,species:"Psidium gujava",D:6.8,H:5.2,rho:0.70},
+ {id:7,species:"Syzygium cumini",D:6.4,H:5.3,rho:0.70},{id:8,species:"Psidium guajava",D:6.8,H:5.2,rho:0.70},
  {id:9,species:"Terminalia arjuna",D:5.7,H:5.1,rho:0.73},{id:10,species:"Simarouba glauca",D:6.2,H:4.3,rho:0.39},
  {id:11,species:"Terminalia arjuna",D:5.5,H:5.1,rho:0.73},{id:12,species:"Syzygium cumini",D:6.0,H:5.0,rho:0.70},
  {id:13,species:"Azadirachta indica",D:7.8,H:7.7,rho:0.69},{id:14,species:"Prosopis cineraria",D:5.1,H:5.1,rho:0.75},
  {id:15,species:"Bombax ceiba",D:4.0,H:3.6,rho:0.33},{id:16,species:"Terminalia bellirica",D:4.2,H:4.3,rho:0.62},
- {id:17,species:"Cleistanthus collinus",D:8.2,H:7.5,rho:0.80},{id:18,species:"Swietenia Mahogany",D:4.7,H:4.4,rho:0.60},
+ {id:17,species:"Cleistanthus collinus",D:8.2,H:7.5,rho:0.80},{id:18,species:"Swietenia mahagoni",D:4.7,H:4.4,rho:0.60},
  {id:19,species:"Terminalia bellirica",D:5.5,H:4.4,rho:0.62},{id:20,species:"Terminalia bellirica",D:7.5,H:6.7,rho:0.62},
  {id:21,species:"Terminalia arjuna",D:6.9,H:5.3,rho:0.73},{id:22,species:"Pongamia pinnata",D:4.8,H:4.9,rho:0.60},
  {id:23,species:"Terminalia bellirica",D:7.7,H:6.8,rho:0.62},{id:24,species:"Azadirachta indica",D:10.9,H:7.6,rho:0.69},

@@ -184,7 +184,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 <header>
   <div class="eyebrow">Quantifying uncertainty · page 1 of 4</div>
   <h1>From Dice to a Tree</h1>
-  <p class="sub">We start with one die. We end with a real tree. The question is the same for both: what can many readings tell us about the thing that produced them?</p>
+  <p class="sub">We start with one die. We end with a tree. The question is the same for both: what can many readings tell us about the thing that produced them?</p>
   <div class="toprow">
     <button id="newseed" class="primary" title="Use a different random sequence">New random numbers</button>
     <span class="small" id="seedlabel">The page uses the same random numbers every time you open it. Press the button to get new ones.</span>
@@ -244,6 +244,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
     <h3>1 · The data</h3>
     <dl>
       <dt>Reading</dt><dd>One measured number. Also called a value or an observation. Example: one student measures the tree and writes 6.4 m. That is one reading.</dd>
+      <dt>DBH</dt><dd><b>Diameter at breast height.</b> The thickness of the trunk, measured 1.3 m above the ground, in cm.</dd>
       <dt>n</dt><dd>The number of readings. For 5, 6, 7 n is 3. For 2, 6, 10 n is also 3.</dd>
     </dl>
   </div>
@@ -261,7 +262,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
     <dl>
       <dt>Spread</dt><dd>An everyday word, not a number. It means how far the readings are from each other and from the mean. 5, 6, 7 have a small spread. 2, 6, 10 have a large spread. Both have mean 6. "Less spread" means the readings stay closer to the mean.</dd>
       <dt>SD</dt><dd><b>Standard deviation.</b> The number that measures the spread. It is roughly the typical distance of a reading from the mean. 5, 6, 7: SD = 1. 2, 6, 10: SD = 4. SD has the same unit as the readings (metres for heights, centimetres for diameters). SD = 0 means all readings are the same.</dd>
-      <dt>CV</dt><dd><b>Coefficient of variation.</b> SD as a percentage of the mean: CV = SD ÷ mean × 100. For 5, 6, 7: 1 ÷ 6 = 16.7 %. CV has no unit, so you can compare the spread of heights (in m) with the spread of diameters (in cm).</dd>
+      <dt>CV</dt><dd><b>Coefficient of variation.</b> SD as a percentage of the mean: CV = SD ÷ mean × 100. For 5, 6, 7: 1 ÷ 6 × 100 = 16.7 %. CV has no unit, so you can compare the spread of heights (in m) with the spread of diameters (in cm).</dd>
     </dl>
     <div class="try">
       <div class="try-head"><b>Try it: spread and SD.</b> Move the slider. Three readings sit on a number line, always with mean 6. The slider changes how far apart they are. Watch the SD change with them.</div>
@@ -284,7 +285,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
     <dl>
       <dt>√n</dt><dd>The square root of n. √4 = 2, √9 = 3, √25 = 5, √100 = 10. √3 is about 1.73 and √10 is about 3.16.</dd>
       <dt>SE</dt><dd><b>Standard error.</b> The SD of a <i>mean</i>. It says how much the mean would typically move if you threw away all the readings and measured n new ones. If you could collect many such means, the SE would be their SD. Formula: SE = SD ÷ √n. For 5, 6, 7: SD = 1, so SE = 1 ÷ √3 = 1 ÷ 1.73 = 0.58. More readings make √n bigger and SE smaller.</dd>
-      <dt>95 % range</dt><dd>Two numbers, a low one and a high one, between which the true mean very probably lies. Quick rule: from mean − 2 × SE to mean + 2 × SE. For 5, 6, 7: 6 ± 2 × 0.58 = 6 ± 1.15, so 4.85 to 7.15. Also called a 95 % interval. There is a second way to find it, used later on this page: sort many values, then cut off the lowest 2.5 % and the highest 2.5 %.</dd>
+      <dt>95 % range</dt><dd>Two numbers, a low one and a high one, between which the true mean very probably lies. Quick rule: from mean − 2 × SE to mean + 2 × SE. For 5, 6, 7: 6 ± 2 × 0.58 = 6 ± 1.16, so 4.84 to 7.16. Also called a 95 % interval. There is a second way to find it, used later on this page: sort many values, then cut off the lowest 2.5 % and the highest 2.5 %.</dd>
     </dl>
   </div>
 
@@ -478,7 +479,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
     <tr><td>7. Square root. This is the <b>SD</b></td><td>√1 = <b>1</b></td><td>√16 = <b>4</b></td></tr>
     <tr><td>8. <b>CV</b> = SD ÷ mean × 100</td><td>1 ÷ 6 × 100 = <b>16.7 %</b></td><td>4 ÷ 6 × 100 = <b>66.7 %</b></td></tr>
     <tr><td>9. <b>SE</b> = SD ÷ √n</td><td>1 ÷ √3 = 1 ÷ 1.73 = <b>0.58</b></td><td>4 ÷ √3 = 4 ÷ 1.73 = <b>2.31</b></td></tr>
-    <tr><td>10. <b>95 % range</b> for the mean ≈ mean ± 2 × SE</td><td>6 ± 1.15 → <b>4.85 to 7.15</b></td><td>6 ± 4.62 → <b>1.38 to 10.62</b></td></tr>
+    <tr><td>10. <b>95 % range</b> for the mean ≈ mean ± 2 × SE</td><td>6 ± 1.16 → <b>4.84 to 7.16</b></td><td>6 ± 4.62 → <b>1.38 to 10.62</b></td></tr>
   </table>
   </div>
   <p class="small">Why divide by n − 1 and not n in step 6? With n readings, the mean was calculated from those same readings, so the distances are a little too small. Dividing by n − 1 corrects for that. For large n it makes almost no difference.</p>
@@ -497,7 +498,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
   <h3>Where we go next</h3>
   <p>So far: one die and its probabilities, a mystery die guessed from its rolls, and the recipe for mean, SD, SE and the 95 % range. Four experiments remain. Each has its own Play, Step and Reset buttons.</p>
   <p><b>Panel C</b> rolls several dice at once and keeps only their average. It shows that an average has less spread than a single roll, and by how much. This is the reason why more readings make a guess better.</p>
-  <p><b>Panel D</b> moves to a real tree. We are 250 students in the class. Let us assume that, hypothetically, every one of us measured the height and the DBH of a single tree. (DBH is the diameter at breast height: the diameter of the trunk measured 1.3 m above the ground.) These readings are the "rolls" of the tree. The numbers are made up for this page, but they are the kind a class would get. Panel D is a revision: every idea from the dice, applied to the tree, ending with a 95 % confidence interval for its height.</p>
+  <p><b>Panel D</b> moves to a tree. We are 250 students in the class. Let us assume that, hypothetically, every one of us measured the height and the DBH of a single tree. (DBH is the diameter at breast height: the diameter of the trunk measured 1.3 m above the ground.) These readings are the "rolls" of the tree. The numbers are made up for this page, but they are the kind a class would get. Panel D is a revision: every idea from the dice, applied to the tree, ending with a 95 % confidence interval for its height.</p>
   <p><b>Panel E</b> finds the same 95 % interval a second way, without the formula, by "rolling the bag" of readings. This is called the <b>bootstrap</b>. <b>Panel F</b> asks what to do when a tree has only one reading, as in our project. The answer is the <b>Monte Carlo</b> method: build the bag yourself from an assumed error, and then roll it.</p>
   <p>Press Play at slow speed first. Press Fast-forward only after you have understood one step.</p>
 </div>
@@ -509,7 +510,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
   <h2>An average has less spread than a single roll</h2>
   <p class="lead">Now roll k dice at the same time and write down only their <b>average</b>. Compare two cases. One die (k = 1): the result can be anything from 1 to 6, and every value is equally likely. The average of 25 dice (k = 25): the result is usually between 3 and 4, and almost always between 2.8 and 4.2. It practically never goes below 2.5 or above 4.5. That is what "less spread" means: the values stay closer to the middle.</p>
   <p class="lead"><b>Why does the average stay in the middle?</b> For the average of 25 dice to be 1, every one of the 25 dice must show 1 at the same time. The chance of that is 1/6 × 1/6 × … × 1/6, twenty-five times, which is about 1 in 3 × 10<sup>19</sup>, practically zero. For the average to be 6, all 25 dice must show 6, equally impossible. Even an average of 2 needs almost every die to show a low number, which is very unlikely. But there are very many ways to get an average near 3.5: some dice show high numbers, some show low numbers, and the high and low ones cancel each other out. So the average of many dice is pulled toward the middle, and its spread is small.</p>
-  <p class="lead">How much less spread? The SD of the averages is the SD of one die divided by √k. The SD of one ordinary die is 1.71, calculated from its six faces in the expected value section above. So with 4 dice the SD of the averages is half of 1.71, with 25 dice one fifth, with 100 dice one tenth. This rule is the most useful fact in this course.</p>
+  <p class="lead">How much less spread? The SD of the averages is the SD of one die divided by √k. The SD of one ordinary die is 1.71, calculated from its six faces in the expected value section above. So with 25 dice (try it below) the SD of the averages is one fifth of 1.71, and with 100 dice it would be one tenth. This rule is the most useful fact in this course.</p>
   <p class="lead"><b>One number, two names.</b> The SD of the averages has a special name: the <b>standard error, SE</b>. An SE is simply the SD of a mean. Here we can find it in two ways: measure it from the histogram of many averages, or calculate it from the formula SE = SD of one value ÷ √k. The two green boxes below show both. They give the same number.</p>
   <div class="controls">
     <label class="ctl">Dice per roll, k
@@ -584,7 +585,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
     </div>
     <div>
       <figure><svg id="cHist" viewBox="0 0 420 300" role="img" aria-label="Histogram of the readings taken so far"></svg>
-        <figcaption>Histogram of the readings taken so far. Dashed green line: the running mean. Green band: mean ± 1 SD, where about two thirds of the readings fall. Orange bracket: the 95 % confidence interval for the true height, mean ± 2 × SE. It is much narrower than the spread of the readings.</figcaption></figure>
+        <figcaption>Histogram of the readings taken so far. Dashed green line: the running mean. Green band: mean ± 1 SD, where about two thirds of the readings fall. Orange bracket: the 95 % confidence interval for the true height (or DBH), mean ± 2 × SE. It is much narrower than the spread of the readings.</figcaption></figure>
       <figure><svg id="cRun" viewBox="0 0 420 220" role="img" aria-label="Running mean with its 95 % confidence interval"></svg>
         <figcaption>Running mean after n readings (orange line), with the 95 % confidence interval around it (orange band). The band narrows as n grows, like the band in the running-mean chart of Panel A.</figcaption></figure>
       <div class="stats">
@@ -627,7 +628,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
     <li>Draw one chip from the bag. Write down its value. <b>Put the chip back.</b></li>
     <li>Repeat 250 times. This is one <b>pretend class</b> of 250 readings. Some chips come out two or three times. Some never come out.</li>
     <li>Calculate the mean of the pretend class. Drop it into the histogram.</li>
-    <li>Repeat steps 1 to 3 thousands of times. The spread of the pretend means is the SE, found by experiment. Sort the pretend means and cut off the lowest 2.5 % and the highest 2.5 %: what remains is the 95 % interval.</li>
+    <li>Repeat steps 1 to 3 thousands of times. The SD of the pretend means is the SE, found by experiment. Sort the pretend means and cut off the lowest 2.5 % and the highest 2.5 %: what remains is the 95 % interval.</li>
   </ol>
   <div class="words">
     <h3>Two new words</h3>
@@ -656,7 +657,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
         <div class="meanline" id="sLine">Press Step to draw one pretend class.</div>
       </div>
       <div class="stats" style="margin-top:12px">
-        <div class="stat"><div class="k" id="sRealK">Mean of the real 250 readings</div><div class="v" id="sReal">–</div></div>
+        <div class="stat"><div class="k" id="sRealK">Mean of the original 250 readings</div><div class="v" id="sReal">–</div></div>
         <div class="stat hi"><div class="k">SE by bootstrap: SD of the pretend values</div><div class="v" id="sBSE">–</div></div>
         <div class="stat hi"><div class="k" id="sFSEK">SE by formula: SD ÷ √250</div><div class="v" id="sFSE">–</div></div>
         <div class="stat or"><div class="k">95 % interval by bootstrap (sort and cut 2.5 % each end)</div><div class="v" id="sBPI">–</div></div>
@@ -664,12 +665,12 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
       </div>
     </div>
     <figure><svg id="sHist" viewBox="0 0 420 300" role="img" aria-label="Histogram of the pretend-class values"></svg>
-      <figcaption>Each pretend class gives one value, dropped into this histogram. Green dashed line: the value from the real 250 readings. Orange bracket: the bootstrap 95 % interval. Green bracket (for the mean only): the formula interval from Panel D. The two brackets almost coincide.</figcaption></figure>
+      <figcaption>Each pretend class gives one value, dropped into this histogram. Green dashed line: the value from the original 250 readings. Orange bracket: the bootstrap 95 % interval. Green bracket (for the mean only): the formula interval from Panel D. The two brackets almost coincide.</figcaption></figure>
   </div>
   <div class="why">
-    <h4>Why bother, if the formula gives the same answer?</h4>
+    <h4>Why use the bootstrap, if the formula gives the same answer?</h4>
     <p><b>1. The formula only works for the mean.</b> Press "SD" above. We often want to know how sure we are about the SD, or the CV, or the median, or a biomass calculated from the readings. There is no simple "÷ √n" rule for those. The bootstrap uses the same four steps for any quantity: calculate it for each pretend class and look at the spread.</p>
-    <p><b>2. The formula makes an assumption.</b> "Mean ± 2 × SE" assumes that the means of many classes would pile up in a bell shape. Panel C showed that averages do this when readings are well behaved. But if the readings are lopsided, for example a few students made very large mistakes, the bell shape is only approximate. The bootstrap makes no such assumption. It uses the actual shape of the readings in the bag.</p>
+    <p><b>2. The formula makes an assumption.</b> "Mean ± 2 × SE" assumes that the means of many classes would pile up in a bell shape. Panel C showed that averages do this when the readings are spread evenly around the middle. But if the readings are not symmetric, with a long tail on one side, for example because a few students made very large mistakes, the bell shape is only approximate. The bootstrap makes no such assumption. It uses the actual shape of the readings in the bag.</p>
     <p><b>3. It is one recipe for everything.</b> Draw with replacement, calculate, repeat, sort, cut 2.5 % at each end. The computer does the repeating. We will use exactly this recipe again for the biomass of a whole plot.</p>
     <p><b>What if we did not put the chips back?</b> Then every pretend class would contain exactly the same 250 chips, only in a different order. Every pretend mean would be identical. The histogram would be one single bar, and it would tell us nothing. Putting the chip back is what lets the bag behave like the tree: it can give the same reading twice.</p>
   </div>
@@ -682,7 +683,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
   <p class="lead">In our real project nobody measures one tree 250 times. Each tree is measured <b>once</b>: one height, one DBH. So for a single tree there is no bag of readings to roll. The bootstrap cannot start. A bag with one chip always gives the same answer.</p>
   <div class="grid3">
     <div>
-      <p class="lead"><b>The idea.</b> If we cannot fill the bag with readings, we fill it with an <b>assumption</b>. From Panel D we know how far a height reading can be from the truth: the CV of height readings was about 10 %. So we say: "the true height is somewhere between the reading − 10 % and the reading + 10 %, and we have no reason to prefer any value in that range." That is a die with very many faces, all equally likely, spread evenly from 5.4 m to 6.6 m for a reading of 6.0 m. This shape is called the <b>uniform distribution</b>: drawn as a picture, it has a flat top. Then we roll it, exactly as before. This is the <b>Monte Carlo</b> method, named after the casino town, because it works by rolling dice.</p>
+      <p class="lead"><b>The idea.</b> If we cannot fill the bag with readings, we fill it with an <b>assumption</b>. From Panel D we know how far a height reading can be from the truth: the CV of height readings was about 10 %. (A flat die with limits ± 10 % is not quite the same as a bell die with CV 10 %; see the note at the end of this panel.) So we say: "the true height is somewhere between the reading − 10 % and the reading + 10 %, and we have no reason to prefer any value in that range." That is a die with very many faces, all equally likely, spread evenly from 5.4 m to 6.6 m for a reading of 6.0 m. This shape is called the <b>uniform distribution</b>: drawn as a picture, it has a flat top. Then we roll it, exactly as before. This is the <b>Monte Carlo</b> method, named after the casino town, because it works by rolling dice.</p>
     </div>
     <figure><svg id="uSvg" viewBox="0 0 420 210" role="img" aria-label="two uniform distributions: an ordinary die and the height die"></svg>
       <figcaption>Two uniform distributions. Left: an ordinary die. Six values, each with probability 1/6. Right: the height die for a reading of 6.0 m. Every value from 5.4 m to 6.6 m is equally likely, and nothing outside is possible. Both pictures have a flat top: that is what "uniform" means. Compare the bell shape of the real readings in Panel D, where values near the middle were more common.</figcaption></figure>
@@ -691,7 +692,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
     <h3>Two new words</h3>
     <dl>
       <dt>Uniform distribution</dt><dd>Every value between a low limit and a high limit is equally likely. An ordinary die is uniform on 1 to 6. Here the die is uniform on "reading − 10 %" to "reading + 10 %".</dd>
-      <dt>Monte Carlo</dt><dd>The bootstrap with a bag that we build ourselves from an assumed shape (here uniform) and an assumed size of error (here ± 10 %). Draw, calculate, repeat, sort, cut 2.5 % at each end: the same four steps.</dd>
+      <dt>Monte Carlo</dt><dd>The bootstrap with a bag that we build ourselves from an assumed shape (here uniform) and an assumed size of error (here ± 10 %). Draw, calculate, repeat, sort, cut 2.5 % at each end: the same steps.</dd>
     </dl>
   </div>
   <div class="tablewrap">
@@ -706,7 +707,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 
   <h4 class="grp">A worked example by hand: the volume of a trunk</h4>
   <p class="lead">For one tree alone, Monte Carlo on the height gives nothing new: the mean is the reading and the range is ± 10 %. It becomes useful when the reading goes into a <b>formula</b>. Take the simplest tree formula: treat the trunk as a cylinder. Its volume is V = π × r² × H, where r is the radius, half the DBH.</p>
-  <p class="lead">One tree was measured once: H = 6.0 m and DBH = 8.0 cm, so r = 4.0 cm = 0.04 m. From the readings alone: V = 3.1416 × 0.04 × 0.04 × 6.0 = 0.0302 m³ = <b>30.2 litres</b> (1 m³ = 1,000 litres). But how sure are we of 30.2? Height can be off by ± 10 %, DBH by ± 3 % (its CV in Panel D). Two errors go into one formula, and the DBH is squared. Working this out with algebra is messy. Rolling is easy.</p>
+  <p class="lead">One tree was measured once: H = 6.0 m and DBH = 8.0 cm, so r = 4.0 cm = 0.04 m. From the readings alone: V = 3.1416 × 0.04 × 0.04 × 6.0 = 0.0302 m³ = <b>30.2 litres</b> (1 m³ = 1,000 litres). But how sure are we of 30.2? Height can be off by ± 10 %, DBH by ± 3 % (about the size of the DBH spread seen in Panel D). Two errors go into one formula, and the DBH is squared. Working this out with algebra is messy. Rolling is easy.</p>
   <p class="lead">For a hand calculation, make the two dice with coarse faces. <b>Height die:</b> 13 faces, 5.4, 5.5, 5.6, …, 6.6 m (6.0 ± 10 %). <b>DBH die:</b> 5 faces, 7.8, 7.9, 8.0, 8.1, 8.2 cm (8.0 ± 3 %, rounded to 0.1 cm). Roll both, calculate V, repeat:</p>
   <div class="tablewrap">
   <table class="calc">
@@ -718,7 +719,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
     <tr><td>5</td><td>5.9</td><td>7.8</td><td>0.0390</td><td>3.1416 × 0.00152 × 5.9 = 0.0282 m³</td><td><b>28.2</b></td></tr>
   </table>
   </div>
-  <p class="lead">After 5 rolls the mean is (29.4 + 31.9 + 29.0 + 31.2 + 28.2) ÷ 5 = 29.9 litres. Five rolls are too few, just as 5 rolls of a die were too few in Panel A. Let the computer roll 2,000 times below. The pile of 2,000 volumes gives the mean, the SD and the 95 % interval of V. You will find: mean about 30.2 litres, SD about 2.0 litres, 95 % interval about 26.5 to 34.1 litres. So we report: <b>V = 30.2 litres, 95 % interval 26.5 to 34.1 litres</b>, or "30 litres, give or take about 13 %".</p>
+  <p class="lead">After 5 rolls the mean is (29.4 + 31.9 + 29.0 + 31.2 + 28.2) ÷ 5 = 29.9 litres. Five rolls are too few, just as 5 rolls of a die were too few in Panel A. Let the computer roll 2,000 times below. The pile of 2,000 volumes gives the mean, the SD and the 95 % interval of V. You will find: mean about 30.2 litres, SD about 2.0 litres, 95 % interval about 26.5 to 34.1 litres. So we report: <b>V = 30.2 litres, 95 % interval 26.5 to 34.1 litres</b>, or "30 litres, plus or minus about 13 %".</p>
   <div class="controls">
     <label class="ctl">Height reading <input type="number" id="mH" value="6.0" step="0.1" min="1" max="60" style="width:70px"> m, error ± <input type="number" id="mHe" value="10" step="1" min="0" max="50" style="width:55px"> %</label>
     <label class="ctl">DBH reading <input type="number" id="mD" value="8.0" step="0.1" min="1" max="200" style="width:70px"> cm, error ± <input type="number" id="mDe" value="3" step="1" min="0" max="50" style="width:55px"> %</label>
@@ -769,7 +770,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
     <li><b>Two different 95 % ranges.</b> Mean ± 2 × SD is where 95 % of the single readings fall. Mean ± 2 × SE is where the true value very probably lies. The first is for one roll, the second for the average of many rolls. Do not mix them up.</li>
     <li><b>Two ways to the same interval.</b> Panel D used the formula mean ± 2 × SE. Panel E rolled the bag of readings 2,000 times and got the same interval without any formula. The bootstrap also works for the SD, the median, or anything calculated from the readings, where no formula exists.</li>
     <li><b>Monte Carlo is the bootstrap with a bag you build yourself.</b> When a tree has only one reading, assume the error (for example ± 10 %, uniform), build the die from it, and roll. Panel F turned one height and one DBH into a volume of 30.2 litres with a 95 % interval of about 26.5 to 34.1 litres.</li>
-    <li><b>Height is harder to measure than DBH.</b> Press the "DBH, cm" button in Panel D. The DBH readings agree with each other much better (CV about 3 %) than the height readings (CV about 11 %).</li>
+    <li><b>Height is harder to measure than DBH.</b> Press the "DBH, cm" button in Panel D. The DBH readings agree with each other much better (CV about 3 %) than the height readings (CV about 10 %, exactly 10.6 %).</li>
   </ol>
 </div>
 <footer>Ecology &amp; Environment 2026 · Quantifying uncertainty in tree biomass · built for teaching; numbers are illustrative</footer>
@@ -1130,7 +1131,7 @@ function bDraw(){
   for(let i=0;i<NB;i++){if(!bins[i])continue;const p=bins[i]/B.n;svg.appendChild(el('rect',{x:L+i*bwpx+0.5,y:Y(p),width:bwpx-1,height:ph-(Y(p)-T),fill:ac}));}
   if(B.n){svg.appendChild(el('line',{x1:X(m),x2:X(m),y1:T,y2:T+ph,stroke:or,'stroke-width':2}));
     if(B.n>1){const x1=X(m-s),x2=X(m+s);svg.appendChild(el('line',{x1,x2,y1:T+12,y2:T+12,stroke:or,'stroke-width':2}));svg.appendChild(el('line',{x1,x2:x1,y1:T+6,y2:T+18,stroke:or,'stroke-width':2}));svg.appendChild(el('line',{x1:x2,x2,y1:T+6,y2:T+18,stroke:or,'stroke-width':2}));
-      svg.appendChild(el('text',{x:X(m),y:T+36,'text-anchor':'middle',fill:or,'font-size':15,'font-weight':700},'± 1 SD = ± '+f(s,2)));}}
+      svg.appendChild(el('text',{x:X(m),y:T+36,'text-anchor':'middle',fill:or,'font-size':15,'font-weight':700},'± 1 SE = ± '+f(s,2)));}}
   svg.appendChild(el('text',{x:L+pw/2,y:H-8,'text-anchor':'middle',fill:mu,'font-size':15},`average of ${B.k} ${B.k>1?'dice':'die'}`));
   svg.appendChild(el('text',{x:14,y:T+ph/2,transform:`rotate(-90 14 ${T+ph/2})`,'text-anchor':'middle',fill:mu,'font-size':15},'share of rolls'));
 }
@@ -1176,7 +1177,7 @@ function cDrawHist(){
   if(st){svg.appendChild(el('line',{x1:X(st.m),x2:X(st.m),y1:T-4,y2:T+ph,stroke:ac,'stroke-width':2,'stroke-dasharray':'5 4'}));
     svg.appendChild(el('text',{x:X(st.m)+5,y:T+12,fill:ac,'font-size':13,'font-weight':700},'mean '+st.m.toFixed(d.dec)));
     if(isFinite(st.se)){const y=T+30;svg.appendChild(el('line',{x1:X(st.lo),x2:X(st.hi),y1:y,y2:y,stroke:or,'stroke-width':3}));svg.appendChild(el('line',{x1:X(st.lo),x2:X(st.lo),y1:y-7,y2:y+7,stroke:or,'stroke-width':2}));svg.appendChild(el('line',{x1:X(st.hi),x2:X(st.hi),y1:y-7,y2:y+7,stroke:or,'stroke-width':2}));
-      svg.appendChild(el('text',{x:X(st.hi)+6,y:y+4,fill:or,'font-size':12,'font-weight':700},'95 % CI'));}}
+      svg.appendChild(el('text',{x:X(st.hi)+6,y:y+4,fill:or,'font-size':12,'font-weight':700},'95 % interval'));}}
 }
 function cDrawRun(){
   const d=cData(),svg=$('cRun');svg.textContent='';
@@ -1207,7 +1208,7 @@ function cDrawStats(){
   $('cTwo').innerHTML=`<b>Two different 95 % ranges, do not mix them up.</b> About 95 % of the <i>single readings</i> lie within mean ± 2 × SD, that is ${(F.m-2*F.s).toFixed(dec)} to ${(F.m+2*F.s).toFixed(dec)} ${un}: one reading is rough. The <i>true ${nm}</i> lies, with 95 % confidence, within mean ± 2 × SE, that is ${F.lo.toFixed(dec)} to ${F.hi.toFixed(dec)} ${un}: 250 readings together are precise. This is the same difference as between one die and the average of 25 dice in Panel C.`;
   $('cFewer').innerHTML=`<b>Why 250 readings help.</b> √250 = 15.8, so the interval is 15.8 times narrower than the spread of single readings. With 25 readings it would be only 5 times narrower: about ± ${(2*F.s/5).toFixed(dec)} ${un} instead of ± ${(2*F.se).toFixed(dec)} ${un}. With one reading there is no interval at all: a single roll tells you almost nothing about the die.`;
   const FH=(()=>{const v=DATA.H.vals,m=mean(v),s=sd(v);return {m,s,cv:100*s/m};})(),FD=(()=>{const v=DATA.D.vals,m=mean(v),s=sd(v);return {m,s,cv:100*s/m};})();
-  $('cHD').innerHTML=`Height: SD ${FH.s.toFixed(2)} m on a mean of ${FH.m.toFixed(2)} m, CV <b>${FH.cv.toFixed(1)} %</b>. DBH: SD ${FD.s.toFixed(2)} cm on a mean of ${FD.m.toFixed(2)} cm, CV <b>${FD.cv.toFixed(1)} %</b>. The DBH readings agree with each other about three times better than the height readings.`;
+  $('cHD').innerHTML=`Height: SD ${FH.s.toFixed(2)} m on a mean of ${FH.m.toFixed(2)} m, CV <b>${FH.cv.toFixed(1)} %</b>. DBH: SD ${FD.s.toFixed(2)} cm on a mean of ${FD.m.toFixed(2)} cm, CV <b>${FD.cv.toFixed(1)} %</b>. The DBH readings agree with each other about three and a half times better than the height readings.`;
 }
 function cDrawAll(){cDrawBag();cDrawHist();cDrawRun();cDrawStats();}
 const cLoop=makeLoop(n=>{for(let i=0;i<n&&C.n<NC;i++)cTake();cDrawAll();return C.n<NC;},$('cSpeed'));
@@ -1239,7 +1240,7 @@ function sDraw(){
   for(let i=0;i<15;i++){const c=document.createElement('div');c.className='chip';c.textContent=SB.strip.length?SB.strip[i].toFixed(1):'·';if(!SB.strip.length)c.style.opacity='.25';st.appendChild(c);}
   $('sLine').innerHTML=SB.n?`Pretend class ${SB.n.toLocaleString()}: 250 draws, ${SB.distinct} different chips came out, ${NC-SB.distinct} never did. Its mean = <b>${SB.lastM.toFixed(dec)} ${d.unit}</b>, its SD = <b>${SB.lastS.toFixed(dec)} ${d.unit}</b>.`:'Press Step to draw one pretend class.';
   $('sCount').textContent='pretend classes: '+SB.n.toLocaleString();
-  $('sRealK').textContent=(isM?'Mean':'SD')+' of the real 250 readings';$('sReal').innerHTML=realStat.toFixed(dec)+u;
+  $('sRealK').textContent=(isM?'Mean':'SD')+' of the original 250 readings';$('sReal').innerHTML=realStat.toFixed(dec)+u;
   const bse=vals.length>1?sd(vals):NaN;
   $('sBSE').innerHTML=isFinite(bse)?bse.toFixed(dec+1)+u:'<small>shown after 2 pretend classes</small>';
   $('sFSEK').textContent=isM?'SE by formula: SD ÷ √250':'SE by formula';$('sFSE').innerHTML=isM?real.se.toFixed(dec+1)+u:'<small>no simple formula</small>';
@@ -1262,7 +1263,7 @@ function sDraw(){
   svg.appendChild(el('text',{x:L+pw/2,y:H-6,'text-anchor':'middle',fill:mu,'font-size':14},`${isM?'mean':'SD'} of one pretend class, ${d.unit}`));
   svg.appendChild(el('text',{x:12,y:T+ph/2,transform:`rotate(-90 12 ${T+ph/2})`,'text-anchor':'middle',fill:mu,'font-size':14},'number of pretend classes'));
   svg.appendChild(el('line',{x1:X(realStat),x2:X(realStat),y1:T-4,y2:T+ph,stroke:ac,'stroke-width':2,'stroke-dasharray':'5 4'}));
-  svg.appendChild(el('text',{x:X(realStat)+5,y:T+12,fill:ac,'font-size':13,'font-weight':700},'real '+realStat.toFixed(dec)));
+  svg.appendChild(el('text',{x:X(realStat)+5,y:T+12,fill:ac,'font-size':13,'font-weight':700},'original '+realStat.toFixed(dec)));
   function bracket(a,b,y,col,label){svg.appendChild(el('line',{x1:X(a),x2:X(b),y1:y,y2:y,stroke:col,'stroke-width':3}));svg.appendChild(el('line',{x1:X(a),x2:X(a),y1:y-7,y2:y+7,stroke:col,'stroke-width':2}));svg.appendChild(el('line',{x1:X(b),x2:X(b),y1:y-7,y2:y+7,stroke:col,'stroke-width':2}));svg.appendChild(el('text',{x:X(b)+6,y:y+4,fill:col,'font-size':12,'font-weight':700},label));}
   if(SB.n>=40)bracket(pct(srt,.025),pct(srt,.975),T+34,or,'bootstrap 95 %');
   if(isM)bracket(real.lo,real.hi,T+56,ac,'formula 95 %');
@@ -1323,9 +1324,9 @@ function mDraw(){
   $('mLine').innerHTML=MC.last?`Height die shows <b>${MC.last.h.toFixed(2)} m</b>, DBH die shows <b>${MC.last.d.toFixed(2)} cm</b>. V = 3.1416 × (${(MC.last.d/200).toFixed(4)})² × ${MC.last.h.toFixed(2)} × 1,000 = <b>${MC.last.v.toFixed(1)} litres</b>.`:'Press Step to roll the two dice once.';
   const tb=$('mTable');while(tb.rows.length>1)tb.deleteRow(1);
   MC.first.forEach((r,i)=>{const tr=tb.insertRow();[i+1,r.h.toFixed(2),r.d.toFixed(2),r.v.toFixed(1)].forEach(t=>{const td=tr.insertCell();td.textContent=t;});});
-  $('mPoint').innerHTML=point.toFixed(1)+' <small>L</small>';
+  $('mPoint').innerHTML=point.toFixed(1)+' <small>litres</small>';
   const m=MC.n?mean(MC.vals):NaN,s=MC.n>1?sd(MC.vals):NaN;
-  $('mM').innerHTML=MC.n?m.toFixed(1)+' <small>L</small>':'–';$('mSD').innerHTML=isFinite(s)?s.toFixed(2)+' <small>L</small>':'–';$('mCV').textContent=isFinite(s)?(100*s/m).toFixed(1)+' %':'–';
+  $('mM').innerHTML=MC.n?m.toFixed(1)+' <small>litres</small>':'–';$('mSD').innerHTML=isFinite(s)?s.toFixed(2)+' <small>litres</small>':'–';$('mCV').textContent=isFinite(s)?(100*s/m).toFixed(1)+' %':'–';
   const srt=MC.vals.slice().sort((a,b)=>a-b);
   $('mPI').innerHTML=MC.n>=40?pct(srt,.025).toFixed(1)+' – '+pct(srt,.975).toFixed(1)+' <small>L</small>':'<small>shown after 40 rolls</small>';
   // histogram

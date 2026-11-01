@@ -165,8 +165,8 @@ input[type=number]{font:inherit;font-family:var(--mono);font-size:14px;width:6.5
       <dt>Log-normal</dt><dd><b>A die that multiplies instead of adding.</b> Two kinds of die are used on this page, and the difference matters.
         <p style="margin:6px 0 4px"><b>An adding die</b> says "+ something" or "− something". The height die is one: reading 6.0 m, die says + 0.6 m or − 0.6 m, result 6.6 m or 5.4 m. The two results are the same distance from 6.0 on both sides. This is the ordinary bell curve.</p>
         <p style="margin:0 0 4px"><b>A multiplying die</b> says "× something" or "÷ something". The scatter die is one: point value 13.6 kg, die says × 1.43 or ÷ 1.43, result 19.4 kg or 9.5 kg. Going up adds 5.8 kg, going down takes away only 4.1 kg. The two results are the same distance from 13.6 only in "times", not in kg. A pile made by such a die is squeezed on the left and stretched on the right. It is called log-normal because taking the logarithm turns "times" into "plus", so on the log scale it is an ordinary bell curve again.</p>
-        <p style="margin:0 0 4px"><b>Why not use an adding die for everything?</b> Try it for the scatter: an adding die with CV 40 % has SD = 40 % of 13.6 kg = 5.4 kg. Three SDs down gives 13.6 − 16.3 = −2.7 kg, a tree with negative weight. Impossible. The multiplying die never does this: ÷ 1.43 three times gives 13.6 ÷ 2.9 = 4.7 kg, small but still positive. For errors that are naturally "a percentage of the value", and for values that cannot go below zero, the multiplying die is the honest one.</p>
-        <p style="margin:0"><b>Why not use a multiplying die for everything?</b> For small errors the two dice give nearly the same answer. Height: adding ± 10 % gives 5.4 and 6.6 m; multiplying by 1.1 and dividing by 1.1 gives 5.45 and 6.6 m. The difference is 5 cm, not worth the extra idea. So the height and diameter dice stay simple adding dice, and only the two big "percentage" errors, wood density and scatter, get the multiplying die.</p></dd>
+        <p style="margin:0 0 4px"><b>Why not use an adding die for everything?</b> Try it for the scatter: an adding die with CV 40 % has SD = 40 % of 13.6 kg = 5.4 kg. (Panel C shows 5.8 kg, because there the 40 % is taken of the mean, 14.6 kg.) Three SDs down gives 13.6 − 16.3 = −2.7 kg, a tree with negative weight. Impossible. The multiplying die never does this: ÷ 1.43 three times gives 13.6 ÷ 2.9 = 4.7 kg, small but still positive. For errors that are naturally "a percentage of the value", and for values that cannot go below zero, the multiplying die is the honest one.</p>
+        <p style="margin:0"><b>Why not use a multiplying die for everything?</b> For small errors the two dice give nearly the same answer. Height: adding ± 10 % gives 5.4 and 6.6 m; multiplying by 1.1 and dividing by 1.1 gives 5.45 and 6.6 m. The difference is 5 cm, not worth the extra idea. So the height and diameter dice stay simple adding dice. The wood density and scatter dice multiply by a log-normal factor, because those errors are naturally a percentage and the value can never be negative. The a, b die (Panel A) also multiplies the answer, but its 1 % is so small that it is written as a plain adding die on the number 1.</p></dd>
       <dt>ε (epsilon)</dt><dd>The scatter of one tree around the equation line, on the log scale: Doubt 2 of page 2. Its SD is σ = 0.357. The weight is multiplied by e<sup>ε</sup>: e<sup>0.357</sup> = 1.43 and e<sup>−0.357</sup> = 0.70.</dd>
       <dt>Carbon fraction</dt><dd>0.47. About 47 % of the dry weight of wood is carbon. Carbon = 0.47 × AGB.</dd>
       <dt>CO₂ factor</dt><dd>3.67. One CO₂ molecule weighs 44 units and its carbon atom weighs 12 units, and 44 ÷ 12 = 3.67. CO₂ = 3.67 × carbon.</dd>
@@ -192,8 +192,8 @@ input[type=number]{font:inherit;font-family:var(--mono);font-size:14px;width:6.5
   <table>
     <tr><th>Die</th><th>What can be wrong</th><th>Size of the error, as CV (the SD as % of the value)</th><th>Where the size comes from</th><th>Same for every tree, or different?</th></tr>
     <tr><td><b>Height H</b></td><td>The height reading</td><td>CV 10 % (for H = 6.0 m, SD = 0.6 m)</td><td>Page 1, Panel D: 250 readings of one tree had a CV of about 10 %</td><td>Different for each tree</td></tr>
-    <tr><td><b>Diameter D</b></td><td>The tape reading</td><td>CV 2.5 % (for D = 8.0 cm, SD = 0.2 cm)</td><td>Page 1, Panel D: the DBH readings had a CV of about 3 %</td><td>Different for each tree</td></tr>
-    <tr><td><b>Wood density ρ</b></td><td>We did not measure it. We took it from a table, and published values for this species run from 0.54 to 0.64</td><td>CV 10 %, log-normal (for ρ = 0.60 g/cm³, SD ≈ 0.06 g/cm³)</td><td>The spread of the published values</td><td>Different for each tree, because each tree gets the value for its own species name from the table. Trees of the same species share the same value.</td></tr>
+    <tr><td><b>Diameter D</b></td><td>The tape reading</td><td>CV 2.5 % (for D = 8.0 cm, SD = 0.2 cm)</td><td>Page 1, Panel D: the DBH (diameter at breast height) readings had a CV of about 3 %; we use a slightly smaller 2.5 % here so that the error of D² is a round 5 %</td><td>Different for each tree</td></tr>
+    <tr><td><b>Wood density ρ</b></td><td>We did not measure it. We took it from a table, and published values for one species often spread over a range like 0.54 to 0.64 (hypothetical numbers)</td><td>CV 10 %, log-normal (for ρ = 0.60 g/cm³, SD ≈ 0.06 g/cm³)</td><td>The spread of the published values</td><td>Different between species, but the same for every tree of one species. For one tree it behaves like an ordinary die; for a whole plot it is a shared error.</td></tr>
     <tr><td><b>a and b</b></td><td><span class="tag d1">Doubt 1</span> the line is a little off</td><td>CV 1 %</td><td>Page 2, Panel D</td><td>Same for every tree</td></tr>
     <tr><td><b>Scatter ε</b></td><td><span class="tag d2">Doubt 2</span> this tree is not on the line</td><td>σ = 0.357 on the log scale, about 40 %</td><td>Page 2, Panel E</td><td>Different for each tree</td></tr>
   </table>
@@ -205,7 +205,7 @@ input[type=number]{font:inherit;font-family:var(--mono);font-size:14px;width:6.5
       <p>"CV 10 %" means the SD is 10 % of the reading: 0.6 m for a 6.0 m tree. About 2 draws in 3 land within ± 1 SD, that is within ± 10 % of the reading, and about 19 in 20 land within ± 20 %. The cards in Panel B show this curve, with the shaded part covering the middle 95 %.</p>
     </div>
     <div class="stepbox">
-      <h4>Two of the dice multiply: log-normal</h4>
+      <h4>Two of the dice multiply by a log-normal factor</h4>
       <p>The density die and the scatter die are the multiplying kind described in the words box. The scatter die draws ε from a bell curve with SD 0.357, and the weight is multiplied by e<sup>ε</sup>: ε = +0.357 gives × 1.43, ε = −0.357 gives ÷ 1.43 (that is × 0.70). The die is fair in "times", not in "plus".</p>
       <p>This is why a tree can come out twice as heavy as the point value but never below zero. The pile in Panel B will show it: a long tail to the right, a steep wall on the left.</p>
     </div>
@@ -213,8 +213,8 @@ input[type=number]{font:inherit;font-family:var(--mono);font-size:14px;width:6.5
   <div class="stepbox" style="margin-top:10px">
     <h4>A simplification: a and b are shaken together, as one die</h4>
     <p>On this page the a, b die is one multiplying factor on the whole answer: draw one bell number z, set factor = 1 + 0.01 × z, and multiply. This is the same as shaking a by about 1 % and keeping b fixed at 0.976.</p>
-    <p>The more correct way is to treat a and b as a pair with a <b>joint probability distribution</b>: a two-dimensional bell curve with a mean for a, a mean for b, an SD for each, and a correlation between them. Each draw would then pick one (a, b) pair from this curve. The correlation matters: in a least-squares fit, a refit that gives a steeper b also gives a smaller a, so that the line still passes through the centre of the data (the fan in Panel D of page 2 pivots, it does not shift). Two separate, independent dice for a and b would ignore this and would exaggerate the doubt.</p>
-    <p>We use the simple form for two reasons. Chave and others (2014) do not publish the SDs and the correlation of a and b, so the joint curve cannot be written down. And Doubt 1 is about 1 % while the scatter die is about 40 %, so under the "square, add, square root" rule the way we split it changes nothing visible. The one thing the simple form hides: a shake of b changes big trees more than small trees, because b is a power of the size value. For tree #406 (size value 230), a 1 % shake of b would move the weight by about 5 %.</p>
+    <p>The more correct way is to treat a and b as a pair with a <b>joint probability distribution</b> (one die for the pair): a two-dimensional bell curve with a mean for a, a mean for b, an SD for each, and a correlation between them (when one comes out high, the other tends to come out low). Each draw would then pick one (a, b) pair from this curve. The correlation matters: in a least-squares fit (the method page 2 used to find the line), a refit that gives a steeper b also gives a smaller a, so that the line still passes through the centre of the data (the fan in Panel D of page 2 pivots, it does not shift). Two separate, independent dice for a and b would ignore this and would exaggerate the doubt.</p>
+    <p>We use the simple form for two reasons. Chave and others (2014) do not give the SDs and the correlation of a and b in the main paper, so the joint curve cannot be written down from it. And Doubt 1 is about 1 % while the scatter die is about 40 %, so under the "square, add, square root" rule the way we split it changes nothing visible. The one thing the simple form hides: a shake of b changes big trees more than small trees, because b is a power of the size value. For tree #406 (size value 230), a 1 % shake of b would move the weight by about 5 %.</p>
   </div>
   <h4 class="grp">Set the tree and the dice</h4>
   <div class="ctlgrid">
@@ -268,7 +268,7 @@ input[type=number]{font:inherit;font-family:var(--mono);font-size:14px;width:6.5
       <span style="--sw:var(--point)">Point value</span>
       <span style="--sw:var(--marker)">Median of the draws</span>
     </div>
-    <p class="small"><b>The pile is lopsided.</b> It has a long tail on the right and a steep wall on the left, because the dice multiply the answer instead of adding to it (Panel A). A tree can easily come out at twice the point value, 27 kg, but never below zero.</p>
+    <p class="small"><b>The pile is lopsided.</b> It has a long tail on the right and a steep wall on the left, because the dice multiply the answer instead of adding to it (Panel A). A tree sometimes comes out at twice the point value, 27 kg (about 1 draw in 25), but never below zero.</p>
   </div>
 </section>
 
@@ -289,7 +289,7 @@ input[type=number]{font:inherit;font-family:var(--mono);font-size:14px;width:6.5
   </div>
   <div class="stepbox" style="margin-top:12px">
     <h4>How each column is calculated, and why they differ</h4>
-    <p>Only the <b>point value</b> comes from a formula. Every other column comes from the pile: the list of all draws made so far, sorted from smallest to largest. The numbers below are for the starting tree after 20,000 draws; your run may differ a little.</p>
+    <p>Only the <b>point value</b> comes from a formula. Every other column comes from the pile: the list of all draws made so far, sorted from smallest to largest. The numbers below are for the starting tree after 20,000 draws. Your run gives the same numbers, because the page uses the same random numbers every time, unless you press New random numbers.</p>
     <div class="tablewrap">
     <table>
       <tr><th>Column</th><th>How it is calculated</th><th>Result</th></tr>
@@ -301,7 +301,7 @@ input[type=number]{font:inherit;font-family:var(--mono);font-size:14px;width:6.5
       <tr><td><b>95 % interval</b></td><td>Sort the draws. Cut off the lowest 2.5 % and the highest 2.5 %. The interval runs from the first draw kept to the last draw kept.</td><td>6.4 to 28.9 kg</td></tr>
     </table>
     </div>
-    <p><b>Why the median equals the point value.</b> Every die is centred on its reading, and the multiplying dice are fair in "times": × 1.43 is exactly as likely as ÷ 1.43. So half the draws land above the point value and half below, and the middle draw is the point value itself. (The adding dice on H and D push it up or down by a few tenths of a percent; the gap is too small to see.)</p>
+    <p><b>Why the median equals the point value.</b> Every die is centred on its reading, and the multiplying dice are fair in "times": × 1.43 is exactly as likely as ÷ 1.43. So half the draws land above the point value and half below, and the middle draw is the point value itself. (The adding dice on H and D push it up or down by about a tenth of a percent; the gap is too small to see.)</p>
     <p><b>Why the mean is higher.</b> Multiplying dice make a lopsided pile. Going up by × 1.43 adds 5.8 kg; going down by ÷ 1.43 removes only 4.1 kg. The ups are bigger than the downs in kg, so when you add all the draws and divide, the mean lands above the middle. For the scatter die alone the mean is e<sup>σ²/2</sup> = e<sup>0.064</sup> = 1.07 times the median, about 7 % above. The median ignores the tail, which is why we report it.</p>
     <p><b>Why the 95 % interval is not symmetric.</b> The point value sits 7.2 kg above the lower end but 15.3 kg below the upper end. The same lopsided pile again: "13.6 ± 11" would be wrong on both sides. On the log scale the interval is symmetric: 13.6 ÷ 6.4 = 2.1 and 28.9 ÷ 13.6 = 2.1. That is the signature of multiplying dice.</p>
     <p><b>Why SD and CV are only a rough summary here.</b> On page 1 the 68–95 rule said "2 draws in 3 within ± 1 SD". That rule is for a bell-shaped pile. This pile is not bell-shaped, so 13.6 ± 5.8 kg does not hold 2 draws in 3 on each side equally. The CV of 40 % is still useful as one number to compare dice (Panel D uses it), but the interval is the honest report.</p>
@@ -325,14 +325,14 @@ input[type=number]{font:inherit;font-family:var(--mono);font-size:14px;width:6.5
   <div class="eyebrow">Panel E</div>
   <h2>How to write the result</h2>
   <p class="lead">A single number hides the uncertainty. Write the middle value, the range, how many draws, and which die matters most.</p>
-  <div class="report"><div class="q" id="reportText">"AGB ≈ 14 kg (95 % interval 6.4–29 kg) from 20,000 Monte Carlo draws; most of the uncertainty comes from the scatter of the equation."</div></div>
+  <div class="report"><div class="q" id="reportText">Press Fast-forward in Panel B. The sentence for your tree appears here after 1,000 draws.</div></div>
   <div class="stepbox">
     <h4>Why 14 and not 13.6?</h4>
     <p>Writing "13.6" suggests we know the answer to within 0.1 kg. We do not: the 95 % interval runs from about 6 kg to 29 kg. Round the number to what you actually know.</p>
   </div>
   <div class="stepbox" style="margin-top:10px">
     <h4>Why a 95 % interval and not "± SD"?</h4>
-    <p>The pile is lopsided. "13.6 ± 5.8 kg" (the SD from Panel C) would say that 8 kg and 19 kg are equally likely. They are not: the spread runs much further up than down. The 95 % interval shows this. "± SD" hides it.</p>
+    <p>The pile is lopsided. "13.6 ± 5.8 kg" (the SD from Panel C) would suggest that the pile reaches equally far below and above 13.6 kg, to 8 kg and to 19 kg. It does not: the spread runs much further up than down. The 95 % interval shows this. "± SD" hides it.</p>
   </div>
 </section>
 </div>
@@ -340,7 +340,7 @@ input[type=number]{font:inherit;font-family:var(--mono);font-size:14px;width:6.5
 <div class="notice">
   <h3>What to notice</h3>
   <ol>
-    <li><b>The scatter die (Doubt 2) is the biggest by far.</b> Even with perfect measurements, one tree is only known to about ± 40 %. Measuring the height more carefully (CV 10 % to 5 %) hardly changes the total. Try it in Panel A.</li>
+    <li><b>The scatter die (Doubt 2) is the biggest by far.</b> Even with perfect measurements, one tree is only known to within a factor of about 2 (CV about 40 %). Measuring the height more carefully (CV 10 % to 5 %) hardly changes the total. Try it in Panel A.</li>
     <li><b>Errors combine by "square, add, square root", not by adding.</b> So only the biggest die matters. Making a small die smaller does not help.</li>
     <li><b>Report the median and the 95 % interval.</b> The pile is lopsided, so "mean ± SD" would mislead. Monte Carlo is only counting: the pile is the answer.</li>
   </ol>
@@ -394,7 +394,7 @@ let C = cfg();
 const DICE = [
   { key:'H', name:'Height H', unit:'m',   isOn:c=>c.onH, sdText:c=>`CV ${fmt(c.sdH*100,1)} % · SD ${fmt(c.H*c.sdH,2)} m`, centre:c=>c.H,   sdAbs:c=>c.H*c.sdH, log:false, z:d=>d.zH, val:d=>d.H,   fmtV:v=>fmt(v,1) },
   { key:'D', name:'Diameter D', unit:'cm', isOn:c=>c.onD, sdText:c=>`CV ${fmt(c.sdD*100,1)} % · SD ${fmt(c.D*c.sdD,2)} cm`, centre:c=>c.D,   sdAbs:c=>c.D*c.sdD, log:false, z:d=>d.zD, val:d=>d.D,   fmtV:v=>fmt(v,2) },
-  { key:'R', name:'Density ρ', unit:'g/cm³', isOn:c=>c.onR, sdText:c=>`CV ${fmt(c.sdR*100,1)} % (log) · SD ≈ ${fmt(c.rho*c.sdR,3)}`, centre:c=>c.rho, sdAbs:c=>c.sdR, log:true, z:d=>d.zR, val:d=>d.rho, fmtV:v=>fmt(v,3) },
+  { key:'R', name:'Density ρ', unit:'g/cm³', isOn:c=>c.onR, sdText:c=>`CV ${fmt(c.sdR*100,1)} % (log) · SD ≈ ${fmt(c.rho*c.sdR,3)} g/cm³`, centre:c=>c.rho, sdAbs:c=>c.sdR, log:true, z:d=>d.zR, val:d=>d.rho, fmtV:v=>fmt(v,3) },
   { key:'P', name:'a, b die', unit:'×', isOn:c=>c.onP, sdText:c=>`CV ${fmt(c.sdP*100,1)} %`, centre:c=>1,     sdAbs:c=>c.sdP, log:false, z:d=>d.zP, val:d=>d.pf,  fmtV:v=>fmt(v,3) },
   { key:'E', name:'Scatter ε', unit:'', isOn:c=>c.onE, sdText:c=>`σ ${fmt(c.sdE,3)}`, centre:c=>0,     sdAbs:c=>c.sdE, log:false, z:d=>d.zE, val:d=>d.eps, fmtV:v=>(v>=0?'+':'')+fmt(v,2) },
 ];
@@ -541,7 +541,7 @@ function fastForward(){
   schedule(chunk);
 }
 function setButtons(en){ ['btnStep','btnPlay','btnFast','btnReset','btnSeed','btnOne'].forEach(id => $(id).disabled = !en); }
-function reset(){ stopPlay(); n = 0; normal = makeNormal(mulberry32(seed)); C = cfg(); const p = agbPoint(C.D, C.H, C.rho); $('ptAGB').textContent = fmtKg(p); $('ptC').textContent = fmtKg(p*CF); $('ptCO2').textContent = fmtKg(p*CF*CO2F); updateDiceLabels(); DICE.forEach(d => $('mk'+d.key).setAttribute('transform', `translate(${zToX(0)} 0)`)); resetFormula(); DICE.forEach(d => { $('dr'+d.key).classList.remove('flash'); }); buildDiceText(); updateReadouts(); $('bars').innerHTML = ''; $('oneStatus').textContent = ''; $('quadNote').innerHTML = '<h4>How the five errors combine</h4><p>Press the button to see the numbers. The rule: square each CV, add the squares, take the square root. The biggest die decides the answer almost alone.</p>'; }
+function reset(){ stopPlay(); n = 0; $('reportText').textContent = 'Press Fast-forward in Panel B. The sentence for your tree appears here after 1,000 draws.'; normal = makeNormal(mulberry32(seed)); C = cfg(); const p = agbPoint(C.D, C.H, C.rho); $('ptAGB').textContent = fmtKg(p); $('ptC').textContent = fmtKg(p*CF); $('ptCO2').textContent = fmtKg(p*CF*CO2F); updateDiceLabels(); DICE.forEach(d => $('mk'+d.key).setAttribute('transform', `translate(${zToX(0)} 0)`)); resetFormula(); DICE.forEach(d => { $('dr'+d.key).classList.remove('flash'); }); buildDiceText(); updateReadouts(); $('bars').innerHTML = ''; $('oneStatus').textContent = ''; $('quadNote').innerHTML = '<h4>How the five errors combine</h4><p>Press the button to see the numbers. The rule: square each CV, add the squares, take the square root. The biggest die decides the answer almost alone.</p>'; }
 function buildDiceText(){ DICE.forEach(d => { const v = d.centre(C); $('dr'+d.key).textContent = d.key==='E' ? 'ε = 0.00' : d.key==='P' ? '× 1.000' : `${d.key.replace('R','ρ')} = ${d.fmtV(v)} ${d.unit}`; }); }
 
 // ---------- one die at a time ----------
