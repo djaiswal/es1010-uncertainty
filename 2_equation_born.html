@@ -6,7 +6,7 @@
 <title>How an Equation Is Born</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
-/* Layout: one column of stacked panels; each panel = a log–log scatter on the left, live numbers and controls on the right; same paper-and-forest palette as page 1 */
+/* Layout: one column of stacked panels, same paper-and-forest palette as page 1. The tree weight equation: read it, picture it, fit it, doubt it. */
 :root{
   --bg:#f6f4ee; --panel:#ffffff; --fg:#1f2a24; --muted:#5c6a62; --line:#d8d4c8;
   --accent:#1f6f5f; --accent-soft:#cfe6df; --orange:#c2622b; --orange-soft:#f3d9c6;
@@ -83,36 +83,229 @@ figcaption{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.4}
 .compare li{margin-bottom:4px}
 .notice ol{margin:0;padding-left:20px}
 .notice li{margin-bottom:6px}
+.words{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--orange);padding:14px 16px;margin:0 0 22px}
+.words h3{margin:0 0 8px;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--orange)}
+.words dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:6px 14px}
+.words dt{font-weight:700;color:var(--fg)}
+.words dd{margin:0;max-width:75ch}
+@media (max-width:560px){.words dl{grid-template-columns:1fr}.words dd{margin-bottom:6px}}
 footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:12px}
 .tree406{display:inline-block;background:var(--orange-soft);border:1px solid var(--orange);border-radius:4px;padding:0 5px;font-family:var(--mono);font-size:14px}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+
+/* ---- shared with page 1 ---- */
+.rule{font-family:var(--mono);font-size:14px;background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:8px 10px;max-width:none;margin:0 0 14px}
+.words+.words{margin-top:-8px}
+.grp{font-family:var(--display);font-size:17px;margin:16px 0 8px}
+.confuse{margin-top:6px;border:1px solid var(--line);border-left:5px solid var(--accent);padding:12px 14px;border-radius:0 6px 6px 0}
+.confuse h4{margin:0 0 8px;font-size:16px;font-family:var(--display)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:6px 8px;border-bottom:1px solid var(--line)}
+th{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.confuse td:first-child{white-space:nowrap}
+.tablewrap{overflow-x:auto}
+table.calc td{font-variant-numeric:tabular-nums}
+.stepbox{border:1px solid var(--line);border-left:5px solid var(--orange);padding:10px 12px;border-radius:0 6px 6px 0}
+.stepbox h4{margin:0 0 6px;font-size:16px;font-family:var(--display)}
+.stepbox p{margin:0 0 6px;font-size:15px}
+.why{margin-top:14px;border:1px solid var(--line);border-left:5px solid var(--orange);padding:12px 14px;border-radius:0 6px 6px 0}
+.why h4{margin:0 0 6px;font-size:16px;font-family:var(--display)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media (max-width:760px){.grid2{grid-template-columns:minmax(0,1fr)}}
+select,input[type=number]{font:inherit;font-size:14px;padding:5px 7px;border:1px solid var(--line);border-radius:5px;background:var(--bg);color:var(--fg)}
+.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:1px 7px;border-radius:4px;margin-right:4px;vertical-align:middle}
+.tag.d1{background:var(--orange-soft);color:var(--orange);border:1px solid var(--orange)}
+.tag.d2{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent)}
+.words .compare .card{background:var(--bg)}
+.words .compare h4{font-size:17px}
+.dtab th.d1{color:var(--orange);font-size:14px;text-transform:none;letter-spacing:0}
+.dtab th.d2{color:var(--accent);font-size:14px;text-transform:none;letter-spacing:0}
+.dtab td:first-child{color:var(--muted);width:30%}
+.dtab td:nth-child(2){border-left:4px solid var(--orange)}
+.dtab td:nth-child(3){border-left:4px solid var(--accent)}
+.dtab tr:nth-child(odd) td{background:var(--bg)}
+.minis{grid-template-columns:1fr 1fr}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
-  <div class="eyebrow">Quantifying uncertainty · page 2 of 2</div>
+  <div class="eyebrow">Quantifying uncertainty · page 2 of 4</div>
   <h1>How an Equation Is Born</h1>
-  <p class="sub">Where the biomass formula comes from, and the two different ways it can be wrong.</p>
+  <p class="sub">The equation we use to estimate the weight of a tree: what each symbol means, where its two numbers come from, and the two ways it can be wrong.</p>
   <div class="toprow">
-    <button id="newseed" class="primary">New seed</button>
-    <span class="small" id="seedlabel">seed 2026 (same story every time you open the page)</span>
-  </div>
-  <div class="intro">
-    <h3>What you are looking at</h3>
-    <p>To weigh a standing tree we use an equation. The one in this course (Chave et al. 2014) is</p>
-    <div class="eq">AGB [kg] = 0.0673 × (ρ · D² · H)<sup>0.976</sup></div>
-    <p>AGB is the above-ground biomass, ρ the wood density (g/cm³), D the trunk diameter (cm) and H the height (m). Nobody was handed this equation. Researchers felled 4,004 trees in 58 tropical forests, dried them, put them on a scale, and fitted a straight line through the data on log paper. Panel A lets you repeat that harvest with any number of trees. Panels B and C show the two kinds of doubt that remain even after the fit: <b>where exactly the line is</b>, and <b>how far real trees sit from it</b>. For tree <span class="tree406">#406</span> (D = 8.0 cm, H = 6.0 m, ρ = 0.60) the size variable is ρD²H = 230.4 and the equation predicts 13.6 kg.</p>
+    <button id="newseed" class="primary">New random numbers</button>
+    <span class="small" id="seedlabel">The page uses the same random numbers every time you open it. Press the button to get new ones.</span>
   </div>
 </header>
 
-<!-- ============ PANEL A ============ -->
-<section class="panel" id="pA">
+<div class="intro">
+  <h3>What this page is about</h3>
+  <p>We cannot put a living tree on a weighing scale. So we measure three easy things, the thickness of the trunk, the height, and the type of wood, and put them into an <b>equation</b> that gives the weight. The equation used in this course is:</p>
+  <p class="rule">AGB = 0.0673 × (ρ × D² × H)<sup>0.976</sup></p>
+  <p>This page has five panels. <b>Panel A</b> reads the equation one piece at a time, so that every symbol is clear. <b>Panel B</b> shows the equation as a picture. <b>Panel C</b> shows where the two numbers 0.0673 and 0.976 come from: nobody calculated them, they were measured. <b>Panels D and E</b> show the two different ways the equation can be wrong.</p>
+</div>
+
+<!-- ============ WORDS ============ -->
+<section class="panel" id="pW">
+  <div class="eyebrow">Words used on this page</div>
+  <h2>The words, in the order you will meet them</h2>
+  <p class="lead">Read this once now, and come back whenever a word is unclear. The words from the first page (mean, SD, SE, CV, 95 % range) are used again here without explanation.</p>
+  <div class="words">
+    <h3>1 · The symbols in the equation</h3>
+    <dl>
+      <dt>AGB</dt><dd><b>Above-ground biomass.</b> The dry weight of the trunk, branches and leaves of a tree, in kg. This is what the equation gives us.</dd>
+      <dt>D</dt><dd>The thickness of the trunk, in cm, measured 1.3 m above the ground. Its full name is DBH, diameter at breast height.</dd>
+      <dt>H</dt><dd>The height of the tree, in m.</dd>
+      <dt>ρ (rho)</dt><dd>Wood density: how heavy the wood is, in grams per cm³. Light wood about 0.3, heavy wood about 0.9. It depends on the species of tree.</dd>
+      <dt>Size value</dt><dd>Our short name for ρ × D² × H, the part inside the brackets. One number that says how big the tree is. For our example tree it is 230.4.</dd>
+      <dt>a</dt><dd>The first number of the equation, 0.0673. It is a multiplier: it turns the size value into kg.</dd>
+      <dt>b</dt><dd>The second number of the equation, 0.976. It is a power: the size value is raised to the power b before multiplying by a.</dd>
+    </dl>
+  </div>
+  <div class="words">
+    <h3>2 · Making the equation</h3>
+    <dl>
+      <dt>Harvest</dt><dd>Cut down a tree, dry it in an oven, and weigh it. The only way to know the true weight of a tree.</dd>
+      <dt>Data point</dt><dd>One harvested tree: its size value and its measured weight. One dot on the chart.</dd>
+      <dt>Best-fit line</dt><dd>The straight line that passes as close as possible to all the dots. "Fitting" means finding it. The line gives a and b.</dd>
+      <dt>Log scale</dt><dd>A chart axis where each grid step means "10 times more": 1, 10, 100, 1,000. On log axes the equation is a straight line.</dd>
+      <dt>Parameters</dt><dd>The numbers a and b. They are not laws of nature. They were found from measured trees, and another set of trees would give slightly different values.</dd>
+    </dl>
+  </div>
+  <div class="words" id="w3">
+    <h3>3 · The two doubts</h3>
+    <p class="small" style="margin:0 0 10px">An equation can be wrong in two different ways. On this page, <span class="tag d1">orange</span> always means Doubt 1, which comes from the <b>equation</b>, and <span class="tag d2">green</span> always means Doubt 2, which comes from the <b>trees</b>.</p>
+    <div class="compare">
+      <div class="card sys">
+        <h4><span class="tag d1">Doubt 1</span> The line is a little off</h4>
+        <p style="margin:0 0 6px;font-size:15px">a and b were found from a limited number of harvested trees, so the whole line may sit a little too high or a little too low. Whatever the error is, it is the same for every tree we calculate.</p>
+        <p style="margin:0;font-size:15px"><b>Potato shop:</b> the weighing scale is set 20 g too high. Every bag is off by the same 20 g.</p>
+      </div>
+      <div class="card rnd">
+        <h4><span class="tag d2">Doubt 2</span> The tree is not on the line</h4>
+        <p style="margin:0 0 6px;font-size:15px">Even if the line were perfect, two trees of the same size do not weigh the same. One is hollow, another has heavy branches. Each tree lands a little above or below the line, in its own direction.</p>
+        <p style="margin:0;font-size:15px"><b>Potato shop:</b> the scale is perfect, but each potato has its own weight. Some heavier, some lighter.</p>
+      </div>
+    </div>
+    <figure style="margin:14px 0 6px">
+      <svg viewBox="0 0 680 330" role="img" aria-label="Doubt 1 and Doubt 2 shown as charts and as arrows on a target" style="max-width:680px">
+        <style>.t{font-family:var(--body);font-size:13px;fill:var(--muted)}.h{font-family:var(--body);font-size:15px;font-weight:700}</style>
+        <!-- column titles -->
+        <text class="h" x="170" y="18" text-anchor="middle" style="fill:var(--orange)">Doubt 1 · where is the line?</text>
+        <text class="h" x="510" y="18" text-anchor="middle" style="fill:var(--accent)">Doubt 2 · where is the tree?</text>
+        <line x1="340" y1="6" x2="340" y2="324" style="stroke:var(--line)"/>
+        <!-- top row: charts -->
+        <g transform="translate(40,30)">
+          <rect width="260" height="120" style="fill:none;stroke:var(--line)"/>
+          <line x1="10" y1="104" x2="250" y2="16" style="stroke:var(--fg);stroke-width:2;stroke-dasharray:6 4"/>
+          <line x1="10" y1="112" x2="250" y2="30" style="stroke:var(--orange);stroke-width:1.5;opacity:.6"/>
+          <line x1="10" y1="96" x2="250" y2="6" style="stroke:var(--orange);stroke-width:1.5;opacity:.6"/>
+          <line x1="10" y1="100" x2="250" y2="24" style="stroke:var(--orange);stroke-width:1.5;opacity:.6"/>
+          <line x1="10" y1="108" x2="250" y2="12" style="stroke:var(--orange);stroke-width:1.5;opacity:.6"/>
+          <line x1="10" y1="92" x2="250" y2="20" style="stroke:var(--orange);stroke-width:1.5;opacity:.6"/>
+          <text class="t" x="130" y="136" text-anchor="middle">dashed: true line · orange: one fitted line per harvest</text>
+        </g>
+        <g transform="translate(380,30)">
+          <rect width="260" height="120" style="fill:none;stroke:var(--line)"/>
+          <line x1="10" y1="104" x2="250" y2="16" style="stroke:var(--accent);stroke-width:2.5"/>
+          <g style="fill:var(--accent);opacity:.8">
+            <circle cx="30" cy="84" r="3.5"/><circle cx="50" cy="100" r="3.5"/><circle cx="70" cy="76" r="3.5"/><circle cx="90" cy="92" r="3.5"/><circle cx="110" cy="58" r="3.5"/><circle cx="130" cy="74" r="3.5"/><circle cx="150" cy="44" r="3.5"/><circle cx="170" cy="66" r="3.5"/><circle cx="190" cy="30" r="3.5"/><circle cx="210" cy="48" r="3.5"/><circle cx="230" cy="18" r="3.5"/><circle cx="120" cy="86" r="3.5"/><circle cx="200" cy="56" r="3.5"/><circle cx="60" cy="64" r="3.5"/>
+          </g>
+          <text class="t" x="130" y="136" text-anchor="middle">the line is right, but each tree lands above or below it</text>
+        </g>
+        <!-- bottom row: targets -->
+        <g transform="translate(170,245)">
+          <circle r="62" style="fill:none;stroke:var(--line)"/><circle r="42" style="fill:none;stroke:var(--line)"/><circle r="22" style="fill:none;stroke:var(--line)"/><circle r="4" style="fill:var(--fg)"/>
+          <g style="fill:var(--orange)"><circle cx="-34" cy="-26" r="4"/><circle cx="-28" cy="-34" r="4"/><circle cx="-38" cy="-36" r="4"/><circle cx="-30" cy="-22" r="4"/><circle cx="-40" cy="-29" r="4"/><circle cx="-33" cy="-40" r="4"/><circle cx="-25" cy="-29" r="4"/></g>
+          <text class="t" x="0" y="80" text-anchor="middle">bent sight: all arrows shifted the same way</text>
+        </g>
+        <g transform="translate(510,245)">
+          <circle r="62" style="fill:none;stroke:var(--line)"/><circle r="42" style="fill:none;stroke:var(--line)"/><circle r="22" style="fill:none;stroke:var(--line)"/><circle r="4" style="fill:var(--fg)"/>
+          <g style="fill:var(--accent)"><circle cx="-30" cy="18" r="4"/><circle cx="24" cy="-34" r="4"/><circle cx="-12" cy="-40" r="4"/><circle cx="38" cy="10" r="4"/><circle cx="6" cy="30" r="4"/><circle cx="-44" cy="-14" r="4"/><circle cx="16" cy="-8" r="4"/><circle cx="-8" cy="8" r="4"/><circle cx="34" cy="38" r="4"/></g>
+          <text class="t" x="0" y="80" text-anchor="middle">no bent sight: each arrow lands differently</text>
+        </g>
+      </svg>
+      <figcaption>Top: what each doubt looks like on the chart. Bottom: the same two doubts as arrows shot at a target. A shifted cluster can be fixed by fixing the sight. A wide cloud cannot be fixed, but its centre is easy to find when there are many arrows.</figcaption>
+    </figure>
+    <div class="tablewrap">
+    <table class="dtab">
+      <tr><th></th><th class="d1">Doubt 1</th><th class="d2">Doubt 2</th></tr>
+      <tr><td>Comes from</td><td>the equation (a and b)</td><td>the trees (data)</td></tr>
+      <tr><td>Name</td><td>parameter uncertainty</td><td>scatter</td></tr>
+      <tr><td>Type of error</td><td>systematic: same direction for every tree</td><td>random: different direction for each tree</td></tr>
+      <tr><td>On the chart</td><td>the whole line is a little too high or too low</td><td>dots above and below the line</td></tr>
+      <tr><td>Smaller if the equation is built from more harvested trees? (n = the number of trees cut down and weighed to make the equation)</td><td><b>Yes.</b> Divide by √n. With 4 times more harvested trees the doubt is halved.</td><td><b>No.</b> It stays the same.</td></tr>
+      <tr><td>Smaller when we add up the weights of many trees in a plot? (m = the number of trees in the plot)</td><td><b>No.</b> It stays the same.</td><td><b>Yes.</b> Divide by √m. For 4 trees added up the doubt is halved; for 100 trees it is one tenth.</td></tr>
+      <tr><td>Size for our equation</td><td>about 1 % of the weight, for one tree and for a whole plot</td><td>about 40 % for one tree; about 4 % for the total of 100 trees</td></tr>
+      <tr><td>Shown in</td><td>Panel D</td><td>Panel E</td></tr>
+    </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PANEL A: THE EQUATION ============ -->
+<section class="panel" id="pV">
   <div class="eyebrow">Panel A</div>
-  <h2>Cut, dry, weigh</h2>
-  <p class="lead">Each dot is one felled tree: its size ρ·D²·H on the horizontal axis, its dry weight on the scale on the vertical axis. Both axes are logarithmic (each grid step is ×10), which turns the power law into a straight line. When all trees are in, the best-fit line draws itself.</p>
+  <h2>Reading the equation, one piece at a time</h2>
+  <p class="rule">AGB = a × (ρ × D² × H)<sup>b</sup> &nbsp; with &nbsp; a = 0.0673 &nbsp; and &nbsp; b = 0.976</p>
+  <p class="lead">We will read it from the inside out, using our example tree <span class="tree406">#406</span>: trunk thickness D = 8.0 cm, height H = 6.0 m, wood density ρ = 0.60 g/cm³.</p>
+  <div class="stepbox">
+    <h4>Piece 1 · Inside the brackets: ρ × D² × H, the size value</h4>
+    <p>Think of the trunk as a cylinder. A cylinder holds more wood when it is thicker and when it is taller. Its volume is proportional to D² × H: D is squared because the cross-section of the trunk is a circle, and the area of a circle grows with the square of its diameter. To go from volume to weight we multiply by the density of the wood, ρ. So ρ × D² × H is a rough measure of how much wood the tree has. We call it the <b>size value</b>.</p>
+    <p>For #406: D² = 8 × 8 = 64. Then ρ × D² × H = 0.60 × 64 × 6.0 = <b>230.4</b>.</p>
+    <p class="small">The size value is not a weight in kg; the units are mixed on purpose. It is only a number that grows when the tree is thicker, taller, or made of heavier wood. The next two pieces turn it into kg.</p>
+  </div>
+  <div class="stepbox" style="margin-top:12px">
+    <h4>Piece 2 · The power b = 0.976</h4>
+    <p>"Raise to the power 0.976" is almost the same as "leave as it is", because any number to the power 1 is itself. The power 0.976 makes the number a little smaller: 230.4<sup>0.976</sup> = <b>202.2</b>. (On a calculator: 230.4, then the x<sup>y</sup> key, then 0.976.)</p>
+    <p>Why is b not exactly 1? Because big trees are a little lighter than their size value suggests, perhaps because big trunks are more often hollow. The table shows what b = 0.976 does. Going down the table, each size value is 10 times the one above it. If b were exactly 1, each weight would also be 10 times the one above it. With b = 0.976 each weight is only 9.5 times the one above it, because 10<sup>0.976</sup> = 9.5.</p>
+    <div class="tablewrap">
+    <table class="calc">
+      <tr><th>Size value</th><th>Compared with the row above</th><th>Weight from the equation</th><th>Compared with the row above</th></tr>
+      <tr><td>10</td><td>–</td><td>0.64 kg</td><td>–</td></tr>
+      <tr><td>100</td><td>10 times bigger</td><td>6.0 kg</td><td>only 9.5 times bigger (6.0 ÷ 0.64)</td></tr>
+      <tr><td>1,000</td><td>10 times bigger</td><td>57 kg</td><td>only 9.5 times bigger (57 ÷ 6.0)</td></tr>
+      <tr><td>10,000</td><td>10 times bigger</td><td>540 kg</td><td>only 9.5 times bigger (540 ÷ 57)</td></tr>
+    </table>
+    </div>
+  </div>
+  <div class="stepbox" style="margin-top:12px">
+    <h4>Piece 3 · The multiplier a = 0.0673</h4>
+    <p>The last step multiplies by a. This turns the number into kg: 0.0673 × 202.2 = <b>13.6 kg</b>. That is the weight the equation gives for tree #406.</p>
+  </div>
+  <h4 class="grp">Try it with any tree</h4>
   <div class="controls">
-    <label class="ctl">Trees felled, n <input type="range" id="aN" class="wide" min="0" max="100" value="60"> <b id="aNv">500</b></label>
+    <label class="ctl">D, trunk thickness <input type="number" id="vD" value="8.0" step="0.1" min="0.5" max="300" style="width:75px"> cm</label>
+    <label class="ctl">H, height <input type="number" id="vH" value="6.0" step="0.1" min="0.5" max="80" style="width:75px"> m</label>
+    <label class="ctl">ρ, wood density <input type="number" id="vR" value="0.60" step="0.01" min="0.1" max="1.2" style="width:75px"> g/cm³</label>
+  </div>
+  <div class="stepbox" id="vOut"></div>
+  <p class="small" style="margin-top:10px"><b>Where do 0.0673 and 0.976 come from?</b> Nobody can calculate them from physics. They were measured, from 4,004 real trees (Chave and others, 2014). Panel C shows how.</p>
+</section>
+
+<!-- ============ PANEL B: THE PICTURE ============ -->
+<section class="panel" id="pG">
+  <div class="eyebrow">Panel B</div>
+  <h2>The equation as a picture</h2>
+  <p class="lead">Each dot below is one tree: its size value across, its weight up. The green line is the equation. There are 4,004 dots, as in the real study, but they are computer-made. Trees come in all sizes: a sapling with size value 10 weighs less than 1 kg, a forest giant with size value 10,000,000 weighs 300 tonnes. On ordinary graph paper (left) this is a problem. If the axes stop at 2,000, as here, more than half of the trees do not fit. If the axes went up to the giants, all the small trees would be squashed into one corner.</p>
+  <p class="lead">So we change the grid. On a <b>log scale</b> (right) each grid step means "10 times more": 1, 10, 100, 1,000, instead of 1, 2, 3, 4. Now the sapling and the giant get the same amount of room, and the equation becomes a <b>straight line</b>. This is why everyone who works with this equation draws it on log paper.</p>
+  <div class="grid2">
+    <figure><svg id="gSvg1" viewBox="0 0 460 420" role="img" aria-label="Trees on ordinary axes"></svg><figcaption>Ordinary axes: 4,004 computer-made trees, the same number as in the real study. Most do not fit on the page, and the ones that do are crowded into the corner.</figcaption></figure>
+    <figure><svg id="gSvg2" viewBox="0 0 460 420" role="img" aria-label="Trees on log axes"></svg><figcaption>Log axes: the same 4,004 trees. Every one of them is on the page, and the equation is a straight line.</figcaption></figure>
+  </div>
+  <h4 class="grp">What a = 0.0673 and b = 0.976 mean on this picture</h4>
+  <p><b>b = 0.976 is the slope of the line</b>: how steep it is. With b = 1 the line would go up exactly one grid step for every grid step across (10 times the size, 10 times the weight). With b = 0.976 it is very slightly less steep: the "9.5 times" of the table in Panel A. By eye you cannot tell 0.976 from 1; it shows up only in the numbers.</p>
+  <p><b>a = 0.0673 sets how high the line sits.</b> Read the line at size value 10: the weight there is 0.0673 × 10<sup>0.976</sup> = 0.64 kg. At size value 100 it is 6.0 kg, at 1,000 it is 57 kg. If a were twice as big, 0.1346, every one of these weights would double and the whole line would move up by one small step, without changing its slope. If a were half, 0.0337, the line would move down by the same step.</p>
+  <p class="small">The next panel shows how this line is found from measured trees.</p>
+</section>
+<!-- ============ PANEL C: CUT, DRY, WEIGH ============ -->
+<section class="panel" id="pA">
+  <div class="eyebrow">Panel C</div>
+  <h2>Where a and b come from: cut, dry, weigh, fit</h2>
+  <p class="lead">The only way to know the true weight of a tree is to cut it down, dry it in an oven, and weigh it. Researchers did this for 4,004 trees in 58 tropical forests. Each dot below is one such tree: its size value across, its measured weight up, both on log scales. When all n trees are in, the computer draws the straight line that passes closest to the dots. The slope of that line is b. Its height is a. That is all an equation is: the best line through measured dots.</p>
+  <div class="controls">
+    <label class="ctl">Number of trees cut down, n <input type="range" id="aN" class="wide" min="0" max="100" value="60"> <b id="aNv">500</b></label>
     <button id="aPlay" class="primary">Play</button>
     <button id="aStep">Step</button>
     <button id="aFF">Fast-forward</button>
@@ -122,110 +315,108 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
   </div>
   <div class="grid">
     <figure><svg id="aSvg" viewBox="0 0 460 420" role="img" aria-label="Scatter of tree weight against tree size on log-log axes"></svg>
-      <figcaption>Simulated harvest. Trees are generated from the true equation with the real residual scatter (σ = 0.357 on the log scale), so the picture looks like the real data set.</figcaption></figure>
+      <figcaption>Computer-made trees from the true equation plus the real amount of scatter, so that the fitted a and b can be compared with the true ones. The dashed marker is the size value of tree #406.</figcaption></figure>
     <div>
       <div class="stats" style="grid-template-columns:1fr 1fr">
-        <div class="stat hi"><div class="k">Fitted a</div><div class="v" id="aA">–</div></div>
-        <div class="stat hi"><div class="k">Fitted b</div><div class="v" id="aB">–</div></div>
+        <div class="stat hi"><div class="k">a found from this data (fitted a)</div><div class="v" id="aA">–</div></div>
+        <div class="stat hi"><div class="k">b found from this data (fitted b)</div><div class="v" id="aB">–</div></div>
         <div class="stat"><div class="k">True a (used to make the trees)</div><div class="v">0.0673</div></div>
-        <div class="stat"><div class="k">True b</div><div class="v">0.976</div></div>
-        <div class="stat"><div class="k">Scatter around the line, σ (log)</div><div class="v" id="aSig">–</div></div>
-        <div class="stat"><div class="k">Prediction for #406 (x = 230.4)</div><div class="v" id="aP">–</div></div>
+        <div class="stat"><div class="k">True b (used to make the trees)</div><div class="v">0.976</div></div>
+        <div class="stat"><div class="k">Scatter around the line, <span style="text-transform:none">σ</span> (log scale)</div><div class="v" id="aSig">–</div></div>
+        <div class="stat"><div class="k">Prediction for #406 (size value 230.4)</div><div class="v" id="aP">–</div></div>
       </div>
-      <p class="small">How the fit works: take the natural log of every x and every weight, then find the straight line ln(AGB) = ln(a) + b·ln(x) that makes the sum of squared vertical distances smallest ("least squares"). The slope is b; the intercept gives a. The fitted numbers never come out exactly 0.0673 and 0.976, because the trees scatter. The more trees, the closer.</p>
-      <p class="small">Try n = 20, then 4,000. With 20 trees the line can tilt visibly; with 4,000 it is pinned down.</p>
+      <p class="small"><b>How the computer finds the line.</b> It measures the vertical distance from every dot to a trial line, squares each distance (so that dots above and below do not cancel), and adds them up. Then it moves the line until this total is as small as possible. This is called <b>least squares</b>.</p>
+      <p class="small">The fitted a and b are never exactly the true 0.0673 and 0.976, because the dots do not sit exactly on the line. With more trees they come closer.</p>
+      <p class="small"><b>Try it:</b> set n = 20, press Fast-forward, and look at the fitted a and b. Then set n = 4,000 and do it again. With 20 trees the line can tilt a lot. With 4,000 trees it hardly moves.</p>
     </div>
   </div>
 </section>
 
-<!-- ============ PANEL B ============ -->
+<!-- ============ PANEL D: DOUBT 1 ============ -->
 <section class="panel" id="pB">
-  <div class="eyebrow">Panel B</div>
-  <h2>Uncertainty 1: where exactly is the line? (parameter uncertainty)</h2>
-  <p class="lead">Suppose another team went to the forest and felled n different trees. They would get a slightly different line. Press the button to harvest again and again: the lines pile up into a fan. The width of the fan is the uncertainty of a and b. It depends on n, the number of trees harvested, and on nothing else.</p>
+  <div class="eyebrow">Panel D</div>
+  <h2>Doubt 1: a and b are not known exactly</h2>
+  <p class="lead">In Panel C we found a and b from n trees. Now imagine a second team goes to the forest and harvests n <i>different</i> trees. Their dots are different, so their line is a little different, so their a and b are a little different. A third team gets a third line. Press the button to repeat the harvest again and again. The lines pile up into a fan. The width of the fan shows how unsure we are about a and b. This is <b>parameter uncertainty</b>. It depends only on n, the number of trees harvested.</p>
   <div class="controls">
-    <button id="bOnce" class="warm">Harvest another sample and refit</button>
+    <button id="bOnce" class="warm">Harvest a new set of trees and fit again</button>
     <button id="bPlay" class="primary">Play</button>
     <button id="bStep">Step</button>
-    <button id="bFF">Fast-forward (200 refits)</button>
+    <button id="bFF">Fast-forward (200 harvests)</button>
     <button id="bReset">Reset</button>
     <label class="ctl">Speed <input type="range" id="bSpeed" min="1" max="100" value="30"></label>
-    <span class="counter" id="bCount">refits: 0</span>
+    <span class="counter" id="bCount">harvests: 0</span>
   </div>
-  <p class="small" style="margin-top:-4px">Uses the same n as Panel A (<b id="bNv">500</b> trees per harvest). Change n with the slider in Panel A; this panel resets.</p>
+  <p class="small" style="margin-top:-4px">This panel uses the same n as Panel C (<b id="bNv">500</b> trees per harvest). To change n, use the slider in Panel C. This panel then resets.</p>
   <div class="grid">
     <figure><svg id="bSvg" viewBox="0 0 460 420" role="img" aria-label="Fan of fitted lines from repeated harvests"></svg>
-      <figcaption>Every faint orange line is one harvest of n trees and its fit. The dark line is the true equation. The dots are the latest harvest. The vertical marker is tree #406.</figcaption></figure>
+      <figcaption>Each faint orange line is the best-fit line from one harvest of n trees. The dark dashed line is the true equation. The dots are the latest harvest. The vertical dashed marker shows the size of tree #406.</figcaption></figure>
     <div>
       <div class="stats" style="grid-template-columns:1fr 1fr">
         <div class="stat"><div class="k">Harvests so far</div><div class="v" id="bN">0</div></div>
         <div class="stat"><div class="k">Trees per harvest</div><div class="v" id="bNn">500</div></div>
-        <div class="stat"><div class="k">a: mean ± SD</div><div class="v" id="bA">–</div></div>
-        <div class="stat"><div class="k">b: mean ± SD</div><div class="v" id="bB">–</div></div>
-        <div class="stat or"><div class="k">Prediction for #406: SD as % of mean</div><div class="v" id="bCV">–</div></div>
-        <div class="stat"><div class="k">95 % of predictions for #406</div><div class="v" id="bPI">–</div></div>
+        <div class="stat"><div class="k">a: mean ± SD over all harvests</div><div class="v" id="bA">–</div></div>
+        <div class="stat"><div class="k">b: mean ± SD over all harvests</div><div class="v" id="bB">–</div></div>
+        <div class="stat or"><div class="k">Prediction for #406: CV (SD as % of mean)</div><div class="v" id="bCV">–</div></div>
+        <div class="stat"><div class="k">95 % range of the predictions for #406</div><div class="v" id="bPI">–</div></div>
       </div>
       <div class="minis">
-        <figure><svg id="bHa" viewBox="0 0 220 160" role="img" aria-label="Histogram of fitted a"></svg><figcaption>fitted a</figcaption></figure>
-        <figure><svg id="bHb" viewBox="0 0 220 160" role="img" aria-label="Histogram of fitted b"></svg><figcaption>fitted b</figcaption></figure>
+        <figure><svg id="bHa" viewBox="0 0 220 160" role="img" aria-label="Histogram of fitted a"></svg><figcaption>values of a from each harvest</figcaption></figure>
+        <figure><svg id="bHb" viewBox="0 0 220 160" role="img" aria-label="Histogram of fitted b"></svg><figcaption>values of b from each harvest</figcaption></figure>
       </div>
-      <p class="small">The orange tile is what matters for our tree: by how many percent does the predicted weight of #406 move from one harvest to the next? Set n = 50 and refit 50 times, then n = 4,000 and refit 50 times. The percentage drops from several percent to well under 1 %. With the real 4,004 trees this doubt is about 1 %, the value used on the other pages.</p>
+      <p class="small"><b>The orange box is the one that matters for our tree.</b> It answers: by how many percent does the predicted weight of #406 change from one harvest to the next? <b>Try it:</b> set n = 50 in Panel C and press Fast-forward here; then set n = 4,000 and press Fast-forward again. The percentage falls from several percent to well below 1 %. The fan gets narrower by √n: 100 times more trees, 10 times narrower. The real equation was built from 4,004 trees, so this doubt is about 1 % of the predicted weight. That is the value we will use for the project.</p>
     </div>
   </div>
+  <div class="why">
+      <h4>Random to the builders, fixed to the users</h4>
+      <p>Doubt 1 looks different depending on who you are. The <b>builders</b> of the equation (the researchers who harvested the 4,004 trees) could harvest again and again, and each time the line would land a little higher or lower, with no pattern. To them Doubt 1 behaves like a random error. That is what the fan above shows.</p>
+      <p>We are <b>users</b>. We take one finished equation and apply it to every standing tree in our plot. We never harvest a tree, so we can never check whether our line is a little too high or too low. The error is frozen into the numbers 0.0673 and 0.976, and it is the same for every tree we calculate. To us Doubt 1 is a systematic error.</p>
+      <h4 style="margin-top:10px">How do we put a number on Doubt 1 if we never harvest a tree?</h4>
+      <p>We cannot measure it ourselves, but we can borrow the builders' information. Three ways, from easy to hard:</p>
+      <p><b>1 · Use what the builders published.</b> A well-made paper reports not only a and b but also how uncertain they are (their standard errors, or a bootstrap like this panel run on the real 4,004 trees). From these one can work out how much the predicted weight at a given size value would move with a new harvest. For this equation the answer is about 1 % of the weight. That is the number we carry into the project.</p>
+      <p><b>2 · Compare with a different published equation.</b> Other researchers built other equations from other trees. If two reasonable equations differ by 5 % for our tree, then our systematic doubt is at least of that order. This is a rough but honest check.</p>
+      <p><b>3 · Harvest a few local trees.</b> If a few trees of our species and size can be cut and weighed, we compare their true weights with the equation. A small local harvest cannot replace 4,004 trees, but it can show whether the equation is badly off for our forest.</p>
+      <p><b>Then treat it as systematic.</b> When we add up a plot, we apply the 1 % to the <i>total</i>, not to each tree separately, because it does not cancel between trees. On the Monte Carlo pages this means: draw one pair of a and b per run, and use that same pair for every tree in the plot.</p>
+    </div>
 </section>
 
-<!-- ============ PANEL C ============ -->
+<!-- ============ PANEL E: DOUBT 2 ============ -->
 <section class="panel" id="pC">
-  <div class="eyebrow">Panel C</div>
-  <h2>Uncertainty 2: trees do not sit on the line (residual scatter)</h2>
-  <p class="lead">Even if we knew the line perfectly, a single tree is not on it. Two trees with the same ρ·D²·H can weigh quite different amounts: one is hollow, one has a heavy crown. The vertical spread of the dots around the line is σ = 0.357 on the log scale, which means a factor of about 1.4 either way for a typical tree, and a factor of 2 for the extremes (95 %). Press Play to fell trees of exactly the size of #406 and see where their weights land.</p>
+  <div class="eyebrow">Panel E</div>
+  <h2>Doubt 2: a real tree is not on the line</h2>
+  <p class="lead">Now suppose we knew the line perfectly. A single tree is still not on it. Two trees with the same size value can have quite different weights: one may be hollow inside, the other may have many heavy branches. The equation gives the <i>typical</i> weight. A real tree lands somewhere around it. How far? On the log scale the spread of the dots around the line is σ = 0.357. In plain numbers: a typical tree weighs between 0.7 and 1.4 times what the line says, and the extreme trees (the outer 5 %) weigh less than half, or more than double. This spread is the <b>scatter</b>. Press Play to harvest many trees that have exactly the size of #406 and see where their weights land.</p>
   <div class="controls">
     <button id="cPlay" class="primary">Play</button>
-    <button id="cStep">Step (fell one tree)</button>
+    <button id="cStep">Step (one tree)</button>
     <button id="cFF">Fast-forward (500 trees)</button>
     <button id="cReset">Reset</button>
     <label class="ctl">Speed <input type="range" id="cSpeed" min="1" max="100" value="30"></label>
     <label class="ctl">Average of m trees <input type="range" id="cM" min="0" max="20" value="0"> <b id="cMv">1</b></label>
-    <span class="counter" id="cCount">trees felled: 0</span>
+    <span class="counter" id="cCount">trees cut down: 0</span>
   </div>
   <div class="grid">
     <figure><svg id="cSvg" viewBox="0 0 460 420" role="img" aria-label="Fitted line with residual scatter bands and tree 406"></svg>
-      <figcaption>Dark band: ±1σ, where about 68 % of trees land (0.7× to 1.4× the prediction). Light band: ±1.96σ, where 95 % land (0.5× to 2×). Orange dots: simulated trees of size 230.4, each landing somewhere in the band. The right-hand strip shows the same dots, spread out horizontally so you can see how they pile up.</figcaption></figure>
+      <figcaption>Dark band: ± 1 σ, about 68 % of trees. Light band: ± 1.96 σ, about 95 % of trees. Orange dots: computer-made trees of size 230.4. The strip on the right shows the same dots piled up sideways.</figcaption></figure>
     <div>
       <div class="stats" style="grid-template-columns:1fr 1fr">
-        <div class="stat"><div class="k">Prediction for #406</div><div class="v">13.6 <small>kg</small></div></div>
-        <div class="stat"><div class="k">σ on the log scale</div><div class="v">0.357</div></div>
-        <div class="stat hi"><div class="k">Typical range (±1σ)</div><div class="v" id="c1">9.5 – 19.4 <small>kg</small></div></div>
-        <div class="stat hi"><div class="k">95 % range (±1.96σ)</div><div class="v" id="c2">6.8 – 27.4 <small>kg</small></div></div>
-        <div class="stat or"><div class="k">Of the felled trees, inside the 95 % band</div><div class="v" id="cIn">–</div></div>
+        <div class="stat"><div class="k">Prediction for #406 from the line</div><div class="v">13.6 <small>kg</small></div></div>
+        <div class="stat"><div class="k"><span style="text-transform:none">σ</span> on the log scale</div><div class="v">0.357</div></div>
+        <div class="stat hi"><div class="k">Typical range (± 1 σ, about 68 % of trees)</div><div class="v" id="c1">9.5 – 19.4 <small>kg</small></div></div>
+        <div class="stat hi"><div class="k">95 % range (± 1.96 σ)</div><div class="v" id="c2">6.8 – 27.4 <small>kg</small></div></div>
+        <div class="stat or"><div class="k">Trees that landed inside the 95 % band</div><div class="v" id="cIn">–</div></div>
         <div class="stat"><div class="k" id="cCVk">CV of one tree's weight</div><div class="v" id="cCV">37 %</div></div>
       </div>
-      <p class="small" id="cMsg"><b>This band does not shrink when more trees are harvested.</b> Harvesting 40,000 trees instead of 4,000 would pin the line down even better, but each new tree would still sit 0.7× to 1.4× away from it. The scatter is a property of trees, not of our sample size.</p>
-      <p class="small">What does shrink the band is averaging. Move the "average of m trees" slider: if you report the <b>average</b> weight of m trees of this size, the band narrows by √m, because the hollow trees and the heavy-crowned trees cancel partly. For one tree the doubt is ±40 %; for the average of 100 such trees it is ±4 %.</p>
+      <p class="small" id="cMsg"><b>This band does not get narrower when more trees are harvested.</b> Harvesting 40,000 trees instead of 4,000 would fix a and b even better. But the next tree would still land between 0.7 and 1.4 times the line. The scatter belongs to the trees themselves, not to how many trees we measured.</p>
+      <p class="small"><b>What does make the band narrower? Averaging.</b> Move the "average of m trees" slider. Here m is the number of trees you average. If you report the <b>average</b> weight of m trees of this size, the band becomes narrower by √m: 4 trees, half as wide; 100 trees, one tenth. The hollow trees and the heavy-branched trees partly cancel each other out.</p>
     </div>
   </div>
 </section>
 
 <div class="notice">
-  <h3>Two kinds of doubt, side by side</h3>
-  <div class="compare">
-    <div class="card sys"><h4>Parameter uncertainty (Panel B)</h4>
-      <ul><li><b>Systematic.</b> If the line is 1 % too high, it is 1 % too high for every tree in the plantation. The errors do not cancel across trees.</li>
-        <li><b>Same for every tree.</b> It belongs to the equation, not to the tree.</li>
-        <li><b>Tiny with 4,004 trees:</b> under 1 % on the predicted weight. It would be large if the equation had been built from 50 trees.</li></ul></div>
-    <div class="card rnd"><h4>Residual scatter (Panel C)</h4>
-      <ul><li><b>Random.</b> One tree is heavier than the line says, the next is lighter. The direction differs from tree to tree.</li>
-        <li><b>Large for one tree:</b> about ±40 % (95 % range 0.5× to 2×).</li>
-        <li><b>Partly averages out</b> over many trees: divide by √m. For a plantation of 400 trees it is about ±2 % on the total. It never shrinks by harvesting more trees for the equation.</li></ul></div>
-  </div>
-</div>
-<div class="notice">
   <h3>What to notice</h3>
   <ol>
-    <li><b>An equation is a fitted line, not a law of nature.</b> Its numbers 0.0673 and 0.976 came out of a particular harvest and would be slightly different with another.</li>
-    <li><b>The fan in Panel B closes as n grows</b>, roughly as 1/√n: 100× more trees, 10× narrower fan. Same rule as on page 1.</li>
-    <li><b>The band in Panel C never closes.</b> It is the single largest source of doubt for one tree (CV 37 %), bigger than the height, diameter and density errors together.</li>
-    <li><b>Systematic vs random matters when you add trees up.</b> For a whole plantation the random part shrinks and the systematic part remains. On the final page we will add these up for 1,000 trees.</li>
+    <li><b>The equation is a fitted line, not a law of nature.</b> Its two numbers came from one particular set of 4,004 harvested trees.</li>
+    <li><b>Doubt 1 (the line) shrinks with more harvested trees, by √n.</b> With 4,004 trees it is about 1 %. It is the same for every tree, so it does not cancel when a plot is added up.</li>
+    <li><b>Doubt 2 (the tree) never shrinks with more harvested trees.</b> It is about 40 % for one tree, the largest single doubt we have. It is different for every tree, so it partly cancels when a plot is added up, by √m.</li>
   </ol>
 </div>
 <footer>Ecology &amp; Environment 2026 · Quantifying uncertainty in tree biomass · built for teaching; numbers are illustrative</footer>
@@ -236,8 +427,8 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 'use strict';
 const TRUE_A=0.0673,TRUE_B=0.976,SIG=0.357,X406=230.4,P406=TRUE_A*Math.pow(X406,TRUE_B);
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
-let seed=2026;const rngs={a:null,b:null,c:null};
-function reseed(){rngs.a=mulberry32(seed);rngs.b=mulberry32(seed+1);rngs.c=mulberry32(seed+2);}
+let seed=2026;const rngs={a:null,b:null,c:null,g:null};
+function reseed(){rngs.a=mulberry32(seed);rngs.b=mulberry32(seed+1);rngs.c=mulberry32(seed+2);rngs.g=mulberry32(777);}
 reseed();
 function normal(r){let u=0,v=0;while(u===0)u=r();v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
 const $=id=>document.getElementById(id);
@@ -268,12 +459,35 @@ function frame(svg,opts){
   const g=el('g',{});svg.appendChild(g);
   for(let e=FRr.lxmin;e<=FRr.lxmax;e++){const x=Math.pow(10,e);g.appendChild(el('line',{x1:X(x),x2:X(x),y1:T,y2:T+ph,stroke:ln}));g.appendChild(el('text',{x:X(x),y:T+ph+20,'text-anchor':'middle',fill:mu,'font-size':16},fmtPow(e)));}
   for(let e=FRr.lymin;e<=FRr.lymax;e++){const y=Math.pow(10,e);g.appendChild(el('line',{x1:L,x2:L+pw,y1:Y(y),y2:Y(y),stroke:ln}));g.appendChild(el('text',{x:L-6,y:Y(y)+4,'text-anchor':'end',fill:mu,'font-size':16},fmtPow(e)));}
-  g.appendChild(el('text',{x:L+pw/2,y:H-8,'text-anchor':'middle',fill:fg,'font-size':17},'size of the tree, ρ·D²·H (log scale)'));
-  g.appendChild(el('text',{x:14,y:T+ph/2,transform:`rotate(-90 14 ${T+ph/2})`,'text-anchor':'middle',fill:fg,'font-size':17},'weight found on the scale, kg (log scale)'));
+  g.appendChild(el('text',{x:L+pw/2,y:H-8,'text-anchor':'middle',fill:fg,'font-size':17},'size value of the tree, ρ × D² × H (log scale)'));
+  g.appendChild(el('text',{x:14,y:T+ph/2,transform:`rotate(-90 14 ${T+ph/2})`,'text-anchor':'middle',fill:fg,'font-size':17},'dry weight on the scale, kg (log scale)'));
   return{X,Y,pw,ph,L,T,fg,mu,ln,xmin:Math.pow(10,FRr.lxmin),xmax:Math.pow(10,FRr.lxmax)};
 }
 function fmtPow(e){if(e<0)return '0.'+'0'.repeat(-e-1)+'1';const v=Math.pow(10,e);return v>=1e6?(v/1e6)+' M':v>=1000?(v/1000).toLocaleString()+' k':String(v);}
 function linePath(F,la,b,x0,x1){const y0=Math.exp(la+b*Math.log(x0)),y1=Math.exp(la+b*Math.log(x1));return `M${F.X(x0)},${F.Y(y0)} L${F.X(x1)},${F.Y(y1)}`;}
+
+
+// ---------- Panel A: the equation, step by step ----------
+function vDraw(){const D=+$('vD').value||0,H=+$('vH').value||0,R=+$('vR').value||0;const sv=R*D*D*H;const pw=Math.pow(sv,TRUE_B);const agb=TRUE_A*pw;
+  const f=v=>v<10?v.toFixed(2):v<1000?v.toFixed(1):Math.round(v).toLocaleString();
+  $('vOut').innerHTML=`<h4>The equation for this tree</h4><p>Piece 1, size value: ρ × D² × H = ${R} × ${D}² × ${H} = ${R} × ${(D*D).toFixed(2)} × ${H} = <b>${f(sv)}</b></p><p>Piece 2, the power: ${f(sv)}<sup>0.976</sup> = <b>${f(pw)}</b></p><p>Piece 3, the multiplier: 0.0673 × ${f(pw)} = <b>${agb<10?agb.toFixed(2):agb<1000?agb.toFixed(1):Math.round(agb).toLocaleString()} kg</b></p>`;}
+['vD','vH','vR'].forEach(id=>$(id).addEventListener('input',vDraw));
+
+// ---------- Panel B: ordinary axes vs log axes ----------
+function gDraw(){
+  const NT=4004;const r=mulberry32(777);const trees=[];for(let i=0;i<NT;i++)trees.push(genTree(r));
+  const pt=css('--point'),ac=css('--accent'),fg=css('--fg'),mu=css('--muted'),ln=css('--line');
+  // ordinary axes, limited to size value 0..2000, weight 0..120 kg
+  const s1=$('gSvg1');s1.textContent='';{const W=FR.W,H=FR.H,L=FR.L,R=FR.R,T=FR.T,B=FR.B,pw=W-L-R,ph=H-T-B;const xmax=2000,ymax=120;const X=x=>L+x/xmax*pw,Y=y=>T+ph-y/ymax*ph;
+    for(let x=0;x<=xmax;x+=500){s1.appendChild(el('line',{x1:X(x),x2:X(x),y1:T,y2:T+ph,stroke:ln}));s1.appendChild(el('text',{x:X(x),y:T+ph+20,'text-anchor':'middle',fill:mu,'font-size':14},x.toLocaleString()));}
+    for(let y=0;y<=ymax;y+=20){s1.appendChild(el('line',{x1:L,x2:L+pw,y1:Y(y),y2:Y(y),stroke:ln}));s1.appendChild(el('text',{x:L-6,y:Y(y)+4,'text-anchor':'end',fill:mu,'font-size':14},y));}
+    s1.appendChild(el('text',{x:L+pw/2,y:H-8,'text-anchor':'middle',fill:fg,'font-size':17},'size value of the tree, ρ × D² × H (ordinary scale)'));s1.appendChild(el('text',{x:20,y:T+ph/2,transform:`rotate(-90 20 ${T+ph/2})`,'text-anchor':'middle',fill:fg,'font-size':17},'dry weight, kg (ordinary scale)'));
+    let d='';for(let x=1;x<=xmax;x+=10){const y=TRUE_A*Math.pow(x,TRUE_B);if(y>ymax)break;d+=(d?'L':'M')+X(x)+','+Y(y)+' ';}s1.appendChild(el('path',{d,stroke:ac,'stroke-width':2.5,fill:'none'}));
+    let off=0;for(const t of trees){if(t.x<=xmax&&t.y<=ymax)s1.appendChild(el('circle',{cx:X(t.x),cy:Y(t.y),r:2.2,fill:pt,opacity:.7}));else off++;}
+    s1.appendChild(el('text',{x:L+pw-6,y:T+16,'text-anchor':'end',fill:mu,'font-size':13},off.toLocaleString()+' of '+NT.toLocaleString()+' trees are too big to fit on this chart'));}
+  // log axes
+  const s2=$('gSvg2');{const F=frame(s2);for(const t of trees)s2.appendChild(el('circle',{cx:F.X(t.x),cy:F.Y(t.y),r:1.8,fill:pt,opacity:.6}));s2.appendChild(el('path',{d:linePath(F,Math.log(TRUE_A),TRUE_B,10,1e7),stroke:ac,'stroke-width':2.5,fill:'none'}));}
+}
 
 // ============================ PANEL A ============================
 const A={n:500,trees:[],shown:0,fit:null,lineProg:0,anim:null};
@@ -295,7 +509,7 @@ function aDraw(){
   $('aP').innerHTML=f?sig(f.a*Math.pow(X406,f.b),3)+' <small>kg</small>':'–';
 }
 function aAnimateLine(done){cancelAnimationFrame(A.anim);const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;const t0=performance.now();const dur=reduce?0:1200;
-  function st(now){A.lineProg=dur?Math.min(1,(now-t0)/dur):1;aDraw();if(A.lineProg<1)A.anim=requestAnimationFrame(st);else if(done)done();}A.anim=requestAnimationFrame(st);}
+  function st(now){A.lineProg=dur?Math.min(1,(now-t0)/dur):1;aDraw();if(A.lineProg<1)A.anim=requestAnimationFrame(st);else if(done)done();}A.anim=requestAnimationFrame(st);clearTimeout(A.tmo);A.tmo=setTimeout(()=>{if(A.lineProg<1){cancelAnimationFrame(A.anim);A.lineProg=1;aDraw();if(done)done();}},dur+300);}
 const aLoop=makeLoop(n=>{if(A.shown>=A.n)return false;A.shown=Math.min(A.n,A.shown+n);aDraw();if(A.shown>=A.n){aFinishFit();aAnimateLine();setPlayLabel($('aPlay'),{playing:false});return false;}return true;},$('aSpeed'));
 function aReset(){aLoop.stop();cancelAnimationFrame(A.anim);setPlayLabel($('aPlay'),aLoop);aGen();aDraw();bReset();}
 $('aN').oninput=e=>{A.n=sliderToN(+e.target.value);$('aNv').textContent=A.n.toLocaleString();$('bNv').textContent=A.n.toLocaleString();$('bNn').textContent=A.n.toLocaleString();aReset();};
@@ -308,7 +522,7 @@ $('aReset').onclick=aReset;
 const B={fits:[],preds:[],last:null,n:0};
 function bRefit(){const trees=[];for(let i=0;i<A.n;i++)trees.push(genTree(rngs.b));const f=fit(trees);B.fits.push(f);B.preds.push(f.a*Math.pow(X406,f.b));B.last=trees;B.n++;}
 function miniHist(svg,vals,trueV,label){svg.textContent='';const W=220,H=160,L=10,R=10,T=10,Bm=40,pw=W-L-R,ph=H-T-Bm;const mu=css('--muted'),ac=css('--accent'),or=css('--orange'),fg=css('--fg');
-  if(vals.length<2){svg.appendChild(el('text',{x:W/2,y:H/2,'text-anchor':'middle',fill:mu,'font-size':16},'refit at least twice'));return;}
+  if(vals.length<2){svg.appendChild(el('text',{x:W/2,y:H/2,'text-anchor':'middle',fill:mu,'font-size':16},'needs 2 or more harvests'));return;}
   const m=mean(vals),s=sd(vals)||1e-9;const lo=Math.min(trueV,m-3.5*s),hi=Math.max(trueV,m+3.5*s);const NB=24,bw=(hi-lo)/NB;const bins=new Array(NB).fill(0);
   for(const v of vals){let i=Math.floor((v-lo)/bw);if(i<0)i=0;if(i>=NB)i=NB-1;bins[i]++;}const mx=Math.max(...bins);
   const X=v=>L+(v-lo)/(hi-lo)*pw;
@@ -325,13 +539,13 @@ function bDraw(){
   svg.appendChild(el('path',{d:linePath(F,Math.log(TRUE_A),TRUE_B,10,1e7),stroke:fg,'stroke-width':2,'stroke-dasharray':'6 4',fill:'none'}));
   svg.appendChild(el('line',{x1:F.X(X406),x2:F.X(X406),y1:F.T,y2:F.T+F.ph,stroke:or,'stroke-dasharray':'3 4'}));
   svg.appendChild(el('text',{x:F.X(X406)+4,y:F.T+14,fill:or,'font-size':16},'#406'));
-  svg.appendChild(el('text',{x:F.L+F.pw-6,y:F.T+F.ph-32,'text-anchor':'end',fill:fg,'font-size':16},'dashed: true equation'));svg.appendChild(el('text',{x:F.L+F.pw-6,y:F.T+F.ph-14,'text-anchor':'end',fill:or,'font-size':16},'orange: one fitted line per harvest'));
-  $('bN').textContent=B.n;$('bCount').textContent='refits: '+B.n;
+  svg.appendChild(el('text',{x:F.L+F.pw-6,y:F.T+F.ph-32,'text-anchor':'end',fill:fg,'font-size':16},'dashed: the true equation'));svg.appendChild(el('text',{x:F.L+F.pw-6,y:F.T+F.ph-14,'text-anchor':'end',fill:or,'font-size':16},'orange: one best-fit line per harvest'));
+  $('bN').textContent=B.n;$('bCount').textContent='harvests: '+B.n;
   const as=B.fits.map(f=>f.a),bs=B.fits.map(f=>f.b);
   $('bA').textContent=B.n>1?`${sig(mean(as),3)} ± ${sig(sd(as),2)}`:B.n?sig(as[0],3):'–';
   $('bB').textContent=B.n>1?`${sig(mean(bs),4)} ± ${sig(sd(bs),2)}`:B.n?sig(bs[0],4):'–';
   $('bCV').textContent=B.n>1?(100*sd(B.preds)/mean(B.preds)).toFixed(2)+' %':'–';
-  if(B.n>=20){const s=B.preds.slice().sort((x,y)=>x-y);$('bPI').innerHTML=`${pct(s,.025).toFixed(1)} – ${pct(s,.975).toFixed(1)} <small>kg</small>`;}else $('bPI').innerHTML='<small>needs ≥ 20 refits</small>';
+  if(B.n>=20){const s=B.preds.slice().sort((x,y)=>x-y);$('bPI').innerHTML=`${pct(s,.025).toFixed(1)} – ${pct(s,.975).toFixed(1)} <small>kg</small>`;}else $('bPI').innerHTML='<small>shown after 20 harvests</small>';
   miniHist($('bHa'),as,TRUE_A,'a');miniHist($('bHb'),bs,TRUE_B,'b');
 }
 const MAXB=1000;
@@ -370,14 +584,14 @@ function cDraw(){
   svg.appendChild(el('rect',{x:sx,y:F.Y(hi2),width:sw,height:F.Y(lo2)-F.Y(hi2),fill:b2}));svg.appendChild(el('rect',{x:sx,y:F.Y(hi1),width:sw,height:F.Y(lo1)-F.Y(hi1),fill:b1}));
   if(C.ws.length){const NB=40,lmin=Math.log10(lo2)-0.35,lmax=Math.log10(hi2)+0.35;const bins=new Array(NB).fill(0);for(const w of C.ws){let i=Math.floor((Math.log10(w)-lmin)/(lmax-lmin)*NB);if(i<0)i=0;if(i>=NB)i=NB-1;bins[i]++;}const mx=Math.max(...bins);
     for(let i=0;i<NB;i++){if(!bins[i])continue;const y0=F.Y(Math.pow(10,lmin+(i+1)*(lmax-lmin)/NB)),y1=F.Y(Math.pow(10,lmin+i*(lmax-lmin)/NB));svg.appendChild(el('rect',{x:sx+1,y:y0,width:bins[i]/mx*sw,height:Math.max(1,y1-y0-0.5),fill:or}));}}
-  svg.appendChild(el('text',{x:sx+sw/2,y:F.T-3,'text-anchor':'middle',fill:mu,'font-size':14},'pile-up'));svg.appendChild(el('text',{x:F.L+8,y:F.T+16,fill:fg,'font-size':16},'bands: ±1σ (dark), ±1.96σ (light)'));
+  svg.appendChild(el('text',{x:sx+sw/2,y:F.T-3,'text-anchor':'middle',fill:mu,'font-size':14},'pile-up'));svg.appendChild(el('text',{x:F.L+8,y:F.T+16,fill:fg,'font-size':16},'dark band: ± 1 σ · light band: ± 1.96 σ'));
   svg.appendChild(el('line',{x1:sx,x2:sx+sw,y1:F.Y(P406),y2:F.Y(P406),stroke:ac,'stroke-width':2}));
   // stats
   $('c1').innerHTML=`${lo1.toFixed(1)} – ${hi1.toFixed(1)} <small>kg</small>`;$('c2').innerHTML=`${lo2.toFixed(1)} – ${hi2.toFixed(1)} <small>kg</small>`;
   const inside=C.ws.filter(w=>w>=lo2&&w<=hi2).length;$('cIn').textContent=C.n?`${inside} / ${C.n} = ${(100*inside/C.n).toFixed(0)} %`:'–';
   $('cCV').textContent=(100*Math.sqrt(Math.exp(sm*sm)-1)).toFixed(C.m>=10?1:0)+' %';$('cCVk').textContent=C.m===1?"CV of one tree's weight":`CV of the average of ${C.m} trees`;
-  $('cCount').textContent=`trees felled: ${C.n.toLocaleString()}`+(C.m>1?` (each dot = average of ${C.m})`:'');
-  $('cMsg').innerHTML=C.m===1?'<b>This band does not shrink when more trees are harvested.</b> Harvesting 40,000 trees instead of 4,000 would pin the line down even better, but each new tree would still sit 0.7× to 1.4× away from it. The scatter is a property of trees, not of our sample size.':`<b>Now each dot is the average of ${C.m} trees</b> of the size of #406. The band is σ/√${C.m} = ${sm.toFixed(3)} on the log scale: ±${(100*sm).toFixed(0)} % typical, 95 % range ${lo2.toFixed(1)}–${hi2.toFixed(1)} kg. Set the slider back to 1 to see one tree again.`;
+  $('cCount').textContent=`trees cut down: ${C.n.toLocaleString()}`+(C.m>1?` (each dot = average of ${C.m} trees)`:'');
+  $('cMsg').innerHTML=C.m===1?'<b>This band does not get narrower when more trees are harvested.</b> Cutting down 40,000 trees instead of 4,000 would fix the position of the line even better. But each new tree would still land between 0.7 and 1.4 times the line. The scatter belongs to the trees themselves, not to how many trees we measured.':`<b>Now each dot is the average of ${C.m} trees</b> of the size of #406. The band is σ ÷ √${C.m} = ${sm.toFixed(3)} on the log scale. Typical doubt: about ± ${(100*sm).toFixed(0)} %. 95 % range: ${lo2.toFixed(1)} to ${hi2.toFixed(1)} kg. Move the slider back to 1 to see one tree again.`;
 }
 const mSteps=[1,2,3,4,5,6,8,10,12,15,20,25,30,40,50,60,80,100,150,200,400];
 const cLoop=makeLoop(n=>{for(let i=0;i<n&&C.n<MAXC;i++)cFell();cDraw();return C.n<MAXC;},$('cSpeed'));
@@ -388,9 +602,10 @@ $('cStep').onclick=()=>{cLoop.stop();setPlayLabel($('cPlay'),cLoop);if(C.n<MAXC)
 $('cFF').onclick=()=>{cLoop.stop();setPlayLabel($('cPlay'),cLoop);for(let i=0;i<500&&C.n<MAXC;i++)cFell();cDraw();};
 $('cReset').onclick=cReset;
 
-$('newseed').onclick=()=>{seed=(seed*7919+13)%100000;reseed();$('seedlabel').textContent='seed '+seed;aReset();cReset();};
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{aDraw();bDraw();cDraw();});
+$('newseed').onclick=()=>{seed=(seed*7919+13)%100000;reseed();$('seedlabel').textContent='New random numbers in use (set '+seed+'). All panels have been reset.';aReset();cReset();};
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{gDraw();aDraw();bDraw();cDraw();});
 A.n=sliderToN(60);$('aNv').textContent=A.n;$('bNv').textContent=A.n;$('bNn').textContent=A.n;
+vDraw();gDraw();
 aGen();aDraw();bDraw();cDraw();
 })();
 </script>

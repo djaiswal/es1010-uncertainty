@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quantifying Uncertainty in Tree Biomass — Student Guide</title>
+<style>
+/* Source of the student guide PDF. Print with Chrome (see README). A4, plain-language edition. */
+@page{size:A4;margin:16mm 16mm 20mm 16mm}
+:root{--ink:#1a1f1c;--muted:#555e58;--line:#cfd4cc;--accent:#1f6f5f;--accent-soft:#e4f0ec;--warm:#b85c1e;--warm-soft:#fbeadb;--grey-soft:#f3f4f1}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font:10.5pt/1.5 "Helvetica Neue",Helvetica,Arial,"Segoe UI",sans-serif;color:var(--ink);background:#fff}
+.page{max-width:180mm;margin:0 auto;padding:12mm 0}
+@media print{.page{max-width:none;padding:0}}
+h1{font-size:24pt;line-height:1.15;margin:0 0 4pt;font-weight:700}
+h2{font-size:16pt;line-height:1.2;margin:0 0 8pt;padding-bottom:4pt;border-bottom:2px solid var(--accent);color:var(--accent);page-break-after:avoid}
+h3{font-size:12pt;margin:14pt 0 4pt;page-break-after:avoid}
+h4{font-size:10.5pt;margin:10pt 0 3pt;page-break-after:avoid}
+p{margin:0 0 7pt}
+ul,ol{margin:0 0 7pt;padding-left:18pt}
+li{margin-bottom:3pt}
+.byline{color:var(--muted);margin-bottom:10pt}
+.part{page-break-before:always}
+.box{border:1px solid var(--line);border-left:4px solid var(--accent);background:var(--accent-soft);padding:8pt 10pt;margin:8pt 0 10pt;page-break-inside:avoid}
+.box.warm{border-left-color:var(--warm);background:var(--warm-soft)}
+.box.grey{border-left-color:#8a948d;background:var(--grey-soft)}
+.box h4{margin-top:0}
+.box p:last-child,.box ul:last-child,.box ol:last-child{margin-bottom:0}
+.eq{font-family:"Times New Roman",Times,serif;font-size:12.5pt;text-align:center;margin:6pt 0 8pt;page-break-inside:avoid}
+.ex{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:9.5pt;background:var(--grey-soft);border:1px solid var(--line);padding:6pt 8pt;margin:4pt 0 8pt;white-space:pre-wrap;page-break-inside:avoid}
+table{border-collapse:collapse;width:100%;font-size:9.3pt;margin:4pt 0 10pt;page-break-inside:auto}
+th,td{border:1px solid var(--line);padding:3.5pt 5pt;vertical-align:top;text-align:left}
+th{background:var(--grey-soft);font-weight:700}
+tr{page-break-inside:avoid}
+td.n,th.n{text-align:right;white-space:nowrap}
+.small{font-size:9pt;color:var(--muted)}
+.toc li{margin-bottom:2pt}
+figure{margin:8pt 0 10pt;page-break-inside:avoid}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-size:9pt;color:var(--muted);margin-top:4pt}
+.check li{list-style:none;position:relative;padding-left:16pt}
+.check li::before{content:"☐";position:absolute;left:0;top:0}
+.qa li{margin-bottom:6pt}
+.ans{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>Quantifying Uncertainty in Tree Biomass<br>Student Guide</h1>
+<p class="byline">Ecology &amp; Environment 2026 · Deepak Jaiswal · plain-language edition, 1 November 2026</p>
+
+<p>You measured a tree once. You put the numbers into an equation and got a biomass, a carbon content, and an amount of CO₂. This guide shows how to say, honestly, how sure you are about those numbers. It shows how to put an "error bar" on one tree and on the total of your 25 trees.</p>
+<p><b>The short answer:</b> one tree is uncertain by about a factor of two (its true biomass could be half the number, or double it). The total of 25 trees is uncertain by about ± 12 %. Most of that uncertainty comes from the equation, not from your tape measure.</p>
+
+<div class="box">
+<h4>How to use this guide</h4>
+<ul>
+<li><b>For the project:</b> read Parts 4 to 7 and follow the checklist in 8.2. Each step of the checklist points back to the part that explains it.</li>
+<li><b>For the exam:</b> Parts 1 to 3 are the ideas. 8.3 has practice questions with answers. 8.4 is the glossary (list of words).</li>
+<li><b>If statistics feels difficult:</b> start at Part 1. Do not skip 1.4 (the √n rule) and 1.9 (how errors combine). Everything else in this guide is these two ideas, used again and again.</li>
+<li><b>Interactive pages:</b> four short web pages let you watch the methods work. Open them on a phone or laptop. No account is needed. Each part names its page.</li>
+</ul>
+</div>
+
+<h3>Short forms and symbols used in this guide</h3>
+<p>Every short form is also explained where it first appears. This table is for quick reference.</p>
+<table>
+<tr><th style="width:22%">Short form</th><th>Full name and plain meaning</th></tr>
+<tr><td>AGB</td><td><b>Above-ground biomass.</b> The dry weight of the trunk, branches and leaves of a tree, in kg. "Dry" means after all the water has been removed in an oven.</td></tr>
+<tr><td>D, DBH</td><td><b>Diameter at breast height.</b> The thickness of the trunk at 1.3 m above the ground, in cm. You measure the circumference (distance around the trunk) with a tape and divide by π (3.14).</td></tr>
+<tr><td>H</td><td><b>Height</b> of the tree, in m.</td></tr>
+<tr><td>ρ (rho)</td><td><b>Wood density</b>, in g/cm³. How heavy the wood is for its size. Usually taken from a table or database, not measured.</td></tr>
+<tr><td>Mean, x̄</td><td>The <b>average</b>. Add all the values, divide by how many there are.</td></tr>
+<tr><td>Median</td><td>The <b>middle value</b> when all values are sorted from smallest to largest.</td></tr>
+<tr><td>Spread</td><td>How far the values are from each other. Small spread = values close together. Large spread = values far apart.</td></tr>
+<tr><td>SD, s</td><td><b>Standard deviation.</b> One number that measures the spread. Roughly the typical distance of a value from the mean.</td></tr>
+<tr><td>SE</td><td><b>Standard error.</b> The SD of an average. It tells you how much the average would change if you repeated all the measurements.</td></tr>
+<tr><td>CV</td><td><b>Coefficient of variation.</b> SD ÷ mean, written as a percentage. The "relative error".</td></tr>
+<tr><td>95 % interval, 95 % CI</td><td>The range that holds the middle 95 % of possible values. CI = confidence interval. Also called the 95 % range.</td></tr>
+<tr><td>σ (sigma)</td><td>The SD of the scatter of real trees around the equation line, measured on the log scale. For our equation σ = 0.357.</td></tr>
+<tr><td>ε (epsilon)</td><td>The random scatter of one particular tree around the line, on the log scale. Its SD is σ.</td></tr>
+<tr><td>e, e<sup>x</sup></td><td>The number 2.718…, used in "natural" logarithms. e<sup>0.357</sup> = 1.43. If ε = 0.357, the tree is 1.43 times heavier than the line predicts.</td></tr>
+<tr><td>ln, log</td><td><b>Logarithm.</b> A way of writing numbers so that "times" becomes "plus". We use the natural logarithm, ln.</td></tr>
+<tr><td>√n</td><td>The <b>square root</b> of n. √4 = 2, √24 = 4.9, √25 = 5, √100 = 10.</td></tr>
+<tr><td>Σ (capital sigma)</td><td>"Add up all of these."</td></tr>
+<tr><td>n</td><td>The number of values (readings, trees, draws).</td></tr>
+<tr><td>t, ha</td><td>Tonne (1,000 kg); hectare (10,000 m², a square of 100 m × 100 m).</td></tr>
+<tr><td>Monte Carlo</td><td>A computer method: roll dice for every uncertain input, calculate the result, repeat thousands of times, look at the pile of results. Named after a famous casino.</td></tr>
+<tr><td>Bootstrap</td><td>A computer method: draw new pretend samples from your own data (with replacement) to see how much an average can change.</td></tr>
+</table>
+
+<h3>Table of contents</h3>
+<ol class="toc">
+<li><b>Part 1</b> · Revision: the little statistics you need (mean, SD, SE, bell curve, 95 % interval, random and systematic errors, how errors combine)</li>
+<li><b>Part 2</b> · Two computer methods that replace formulas: bootstrap and Monte Carlo</li>
+<li><b>Part 3</b> · Where a biomass equation comes from, and the two ways it can be wrong</li>
+<li><b>Part 4</b> · One tree: are the numbers you wrote down right? Every source of error</li>
+<li><b>Part 5</b> · Bootstrap and Monte Carlo applied to one tree (tree #406)</li>
+<li><b>Part 6</b> · The Chave (2014) equation, term by term, with best guesses for the missing numbers</li>
+<li><b>Part 7</b> · From one tree to a plot: 25 trees added together, per hectare, why the error gets smaller</li>
+<li><b>Part 8</b> · Assumptions, project checklist, practice questions, glossary, references</li>
+</ol>
+
+<h3>Interactive pages</h3>
+<table>
+<tr><th style="width:24%">Page</th><th>What you will see</th><th style="width:14%">Goes with</th></tr>
+<tr><td>1 · Dice to Bootstrap</td><td>A die rolled 10,000 times. The average of k dice, with a spread that shrinks by √k. The 24 height readings of tree #406 drawn from a bag with replacement, 10,000 times, until a 95 % interval appears.</td><td>Parts 1 and 2</td></tr>
+<tr><td>2 · How an Equation Is Born</td><td>Trees cut down, weighed and plotted. The best line drawn. New sets of trees give new lines (the line hardly moves). The band of scatter that never gets narrower.</td><td>Part 3</td></tr>
+<tr><td>3 · Monte Carlo, One Tree</td><td>Five dice (H, D, ρ, equation numbers, scatter) rolled one draw at a time. The pile of 20,000 answers. One die at a time, to find which source matters most.</td><td>Parts 4 to 6</td></tr>
+<tr><td>4 · From 25 Trees to a Plot</td><td>Each tree's ± 40 % whisker. The total built up round by round to ± 12 %. The error-versus-number-of-trees curve. Per m² and per hectare, with the warnings.</td><td>Part 7</td></tr>
+</table>
+<p>Each page works on a phone. Each has Play, Step and Fast-forward buttons, and a "Words used on this page" box at the top. You can change the assumed uncertainties and see what happens. All numbers on the pages are examples. Replace them with your own data for the project.</p>
+
+<!-- ===================================================== PART 1 -->
+<section class="part">
+<h2>Part 1 · Revision: the little statistics you need</h2>
+<p>You need only six ideas: the mean, the standard deviation, the standard error, the bell curve, the 95 % interval, and how errors combine. Each one is explained with the same example: the 24 height readings of tree #406. Interactive page: <b>1 · Dice to Bootstrap</b>.</p>
+
+<h3>1.1 Sample and truth: why we never see the true value</h3>
+<p>The true height of tree #406 is one number. Nobody knows it. What we have is a <b>sample</b>: 24 groups of students each read a height, and the readings are different from each other (5.0 m, 7.3 m, 6.1 m, …). Statistics is the skill of saying something honest about the true value, using a sample whose values disagree with each other.</p>
+
+<h3>1.2 The mean: the centre of the pile</h3>
+<p>Add the values. Divide by how many there are.</p>
+<div class="eq">mean &nbsp;x̄ = (x₁ + x₂ + … + xₙ) ÷ n</div>
+<div class="ex">Example with three readings: 5, 6, 7
+mean = (5 + 6 + 7) ÷ 3 = 18 ÷ 3 = 6</div>
+<p>For the 24 height readings of tree #406, the mean is 6.14 m. The mean is our best single guess of the true height.</p>
+
+<h3>1.3 The standard deviation (SD): how big the spread is</h3>
+<p>Readings 5, 6, 7 are close together: small spread. Readings 2, 6, 10 are far apart: large spread. Both sets have the same mean, 6. The <b>standard deviation</b> (short form SD, symbol s) is one number that measures the spread. Here is how to calculate it:</p>
+<ol>
+<li>Take each reading and subtract the mean. This gives the "difference from the mean".</li>
+<li>Square each difference (multiply it by itself). This makes all the differences positive, so they cannot cancel each other.</li>
+<li>Add the squares. Divide by n − 1 (one less than the number of readings).</li>
+<li>Take the square root.</li>
+</ol>
+<div class="eq">SD &nbsp;s = √[ Σ (xᵢ − x̄)² ÷ (n − 1) ]</div>
+<p class="small">Read it as: "the square root of: the sum of the squared differences, divided by n − 1". xᵢ means "each reading in turn".</p>
+<div class="ex">Example with readings 5, 6, 7 (mean 6, n = 3):
+differences from the mean:   5 − 6 = −1,   6 − 6 = 0,   7 − 6 = +1
+squares:                     1,  0,  1
+sum of squares:              2
+divide by n − 1 = 2:         1
+square root:                 s = 1
+
+Same steps with readings 2, 6, 10 (mean 6):
+differences: −4, 0, +4   squares: 16, 0, 16   sum: 32   ÷ 2 = 16   s = 4</div>
+<p>So the first set has SD 1 and the second set has SD 4. The SD is roughly the typical distance of a reading from the mean. For the 24 heights of tree #406, s = 0.68 m. Read it like this: one reading, picked at random, is usually about 0.68 m away from the mean. A small SD means the readers agree with each other. A large SD means they do not.</p>
+<p>The <b>coefficient of variation</b> (short form CV) is the same spread written as a percentage of the mean: CV = s ÷ x̄. For the heights, CV = 0.68 ÷ 6.14 = 11 %. The CV lets you compare the spread of heights (in metres) with the spread of diameters (in centimetres), because a percentage has no unit. In this guide and on the web pages, a spread written as a percentage is always a CV. An SD always carries a unit (m, cm, kg). So "CV 10 %" for a 6.0 m tree means SD = 0.6 m.</p>
+
+<h3>1.4 The standard error (SE): how sure we are about the mean</h3>
+<p>The SD tells you how much <i>one reading</i> can differ from another. But we do not report one reading. We report the mean of 24 readings. The mean is much more stable than one reading, because high readings and low readings partly cancel each other. The rule:</p>
+<div class="eq">SE = s ÷ √n</div>
+<p>For tree #406: SE = 0.68 ÷ √24 = 0.68 ÷ 4.9 = 0.14 m. This is the <b>standard error</b> of the mean. It is the SD that the mean itself would have, if many different groups of 24 students measured the tree and we compared their means.</p>
+<p>Notice: doubling the number of readings does not halve the error. To halve the error you need <b>four times</b> as many readings, because √4 = 2. This √n rule is the single most important formula in this guide. It returns in Part 7 when we add 25 trees.</p>
+
+<h3>1.5 The bell curve and the 68–95 rule</h3>
+<p>When many small, independent causes push a measurement up or down, the pile of readings takes a bell shape: most readings near the middle, fewer far away, the same on both sides. This shape is called the <b>normal distribution</b> or the bell curve. For a bell curve:</p>
+<ul>
+<li>about 68 % of the values lie within ± 1 SD of the mean,</li>
+<li>about 95 % lie within ± 2 SD (more exactly ± 1.96 SD),</li>
+<li>about 99.7 % lie within ± 3 SD.</li>
+</ul>
+<p>You do not need the formula of the curve. You need the 95 % rule, because that is what a 95 % interval is built from.</p>
+
+<h3>1.6 The 95 % confidence interval (CI)</h3>
+<p>There are two ways to get it. They agree when the pile is bell-shaped.</p>
+<p><b>Formula way:</b> mean ± 1.96 × SE. For tree #406: 6.14 ± 1.96 × 0.14, which gives <b>5.87 to 6.41 m</b>.</p>
+<p><b>Counting way (no formula):</b> make a long list of possible values of the mean (Part 2 shows how). Sort the list. Cut off the lowest 2.5 % and the highest 2.5 %. What remains, the middle 95 %, is the interval. The counting way also works when the pile is not bell-shaped, and biomass piles never are.</p>
+<p><b>How to read a 95 % CI:</b> if we repeated the whole exercise many times, about 95 of every 100 intervals built this way would contain the true value. It is a statement about the method, not a promise about this one tree.</p>
+
+<h3>1.7 Piles that are not symmetric: the log-normal</h3>
+<p>Biomass errors <b>multiply</b>; they do not add. A tree is 1.4 times heavier than predicted, or 1.4 times lighter. It is not "+ 5 kg" or "− 5 kg". A pile of multiplying errors is squeezed on the left and stretched on the right: a tree cannot be 150 % too light (its weight would be below zero), but it can easily be 150 % too heavy. Such a pile is called <b>log-normal</b>.</p>
+<p>Taking the logarithm turns "times" into "plus" and makes the pile bell-shaped again. That is why the Chave equation is fitted on log axes, and why its scatter σ = 0.357 is given in log units. In plain numbers: e<sup>0.357</sup> = 1.43, so "σ = 0.357" means "about ± 40 %".</p>
+
+<h3>1.8 Random error and systematic error</h3>
+<ul>
+<li><b>Random error</b> goes both ways around the truth, with no pattern. Sometimes too high, sometimes too low. Averaging many readings makes it smaller (by √n).</li>
+<li><b>Systematic error</b> (also called <b>bias</b>) pushes the same way every time. Example: a bathroom scale that always reads 2 kg too heavy. Averaging does not make it smaller. Only a better instrument, a better equation, or a correction removes it.</li>
+</ul>
+<p>In this guide, the scatter of the equation and the differences between readers are random. The wood-density value from a table, the carbon fraction, and the equation's tendency to read 5 % too high are systematic.</p>
+
+<h3>1.9 How errors combine</h3>
+<p>When a result is calculated from several uncertain inputs, the uncertainties do not simply add up. For independent random errors, the rule is: <b>square each one, add the squares, take the square root</b>.</p>
+<div class="eq">total error = √( error₁² + error₂² + error₃² + … )</div>
+<div class="ex">Example: 37 % (equation) and 10 % (height) and 5 % (diameter)
+√(37² + 10² + 5²) = √(1369 + 100 + 25) = √1494 ≈ 38.6 %   (not 37 + 10 + 5 = 52 %)</div>
+<p>The biggest term decides the result almost alone. The small terms almost disappear.</p>
+<p>Three more rules you will use:</p>
+<ul>
+<li><b>Multiplying or dividing:</b> the percentage errors combine by the square-add-root rule above.</li>
+<li><b>Powers:</b> multiply the percentage error by the exponent. D² has twice the percentage error of D. A 3 % error in D becomes a 6 % error in D².</li>
+<li><b>Adding independent quantities</b> (25 trees): the absolute errors (in kg) combine by the square-add-root rule. This is exactly why the percentage error of a total gets smaller like 1 ÷ √n.</li>
+</ul>
+<p>These rules are all you need to check a computer result by hand. The computer methods in Part 2 do the same job without any formula, and without assuming that errors are independent or bell-shaped.</p>
+</section>
+
+<!-- ===================================================== PART 2 -->
+<section class="part">
+<h2>Part 2 · Two computer methods that replace formulas: bootstrap and Monte Carlo</h2>
+<p>Both methods rest on one idea: <b>probability means "how often, in the long run"</b>. If you can repeat something many times, or make a computer repeat it, you can count how often each outcome happens instead of calculating it with a formula. Interactive page: <b>1 · Dice to Bootstrap</b>.</p>
+
+<h3>2.1 The picture to keep in mind: a die, rolled many times</h3>
+<p>Roll a fair die 10,000 times. Each face comes up about 1,667 times, never exactly. Watch the running average (the mean of all rolls so far). After 10 rolls it may be 2.9 or 4.1. After 10,000 rolls it sits within a few hundredths of 3.5. The spread of the running average gets smaller like 1 ÷ √n, the rule from 1.4.</p>
+<p>Now roll two dice each time and write down their average. The pile of averages is narrower: SD 1.21 instead of 1.71. Roll ten dice and average them: narrower still, SD 0.54 = 1.71 ÷ √10. Nothing about the dice changed. Averaging did the work.</p>
+<p>Now think of a measurement as a roll of a die that you did not design. The die is the whole measuring process: the person, the tape, the angle reader, the leaves in the way, the light. One group's reading of tree #406 (say 6.1 m) is one roll. The faces of the die are all the heights that this process could produce. We have 24 rolls, one per group. Can we learn the shape of the die from only 24 rolls?</p>
+
+<h3>2.2 Bootstrap: when you have data but no formula</h3>
+<p>Yes, by re-rolling the 24 rolls we already have. This is the <b>bootstrap</b> (Efron, 1979; the "bag of chips" picture is from Efron &amp; Tibshirani, 1993).</p>
+<ol>
+<li><b>Bag.</b> Write each of the 24 height readings on a chip. Put the chips in a bag.</li>
+<li><b>Draw.</b> Pull out one chip, write down its value, <b>put it back</b>. Repeat 24 times. You now have a pretend sample of 24 readings. Some original readings appear twice or three times. Some do not appear at all.</li>
+<li><b>Calculate.</b> Take the mean of the pretend sample.</li>
+<li><b>Repeat.</b> Do steps 2 and 3 ten thousand times. You get 10,000 pretend means.</li>
+<li><b>Read off.</b> The SD of the 10,000 pretend means is the standard error. Sort them and cut 2.5 % off each end: the middle 95 % is the confidence interval.</li>
+</ol>
+<p>For tree #406 (24 readings, mean 6.14 m, SD 0.68 m) the bootstrap gives SE ≈ 0.14 m and a 95 % interval of about 5.88 to 6.40 m. The formula s ÷ √n also gives 0.14 m. They agree. No formula was needed, only counting.</p>
+<p><b>Why put the chip back?</b> We are pretending that the 24 chips are the die. A die can show the same face twice in a row. So a chip must be allowed to come out twice. If we did not put the chips back, every pretend sample would be the same 24 values in a different order, and every pretend mean would be exactly 6.14 m. We would learn nothing.</p>
+<div class="box grey">
+<h4>Assumptions the bootstrap makes (write them in your report)</h4>
+<ul>
+<li>The 24 readings are a fair sample of what the measuring process can produce. If every group used the same wrong eye height, the bootstrap cannot see that bias.</li>
+<li>The readings are independent of each other. Groups did not copy each other's numbers.</li>
+<li>24 readings are enough to sketch the shape of the die. With 5 readings the sketch is rough. With 3 it is useless.</li>
+<li>The bootstrap tells you about <b>precision</b> (spread), never about <b>accuracy</b> (bias). A method that always gives the same wrong answer will bootstrap to a tiny interval around that wrong answer.</li>
+</ul>
+</div>
+
+<h3>2.3 Monte Carlo: when you know the dice and want the result</h3>
+<p>The bootstrap learns the shape of a die from data. Monte Carlo goes the other way: you already know (or assume) the shape of each die, and you want to know how their combination behaves. The name comes from the Monte Carlo casino. The method was invented in the 1940s by physicists whose formulas had become too hard to solve.</p>
+<p>For biomass the "dice" are the uncertain inputs: height H, diameter D, wood density ρ, the two fitted numbers of the equation, and the equation's leftover scatter ε. The recipe:</p>
+<ol>
+<li><b>Roll every die once.</b> Pick one possible H, one D, one ρ, one pair (a, b), and one ε, each from its own range of possible values.</li>
+<li><b>Calculate.</b> AGB = a × (ρ × D² × H)<sup>b</sup> × e<sup>ε</sup>.</li>
+<li><b>Write the answer down.</b></li>
+<li><b>Repeat</b> 20,000 times.</li>
+<li><b>Read off.</b> The middle of the pile (the median) is the estimate. The SD or CV is the uncertainty. The middle 95 % of the pile is the interval.</li>
+</ol>
+<p><b>Where do the dice come from?</b> From data when you have it (the bootstrap of 24 readings gives the H die). From published papers when you do not (σ = 0.357 for the scatter; four published values for ρ). From a best guess when neither exists (± 20 % for a height measured only once). Part 6 lists each die for the Chave equation.</p>
+
+<h3>2.4 Which method, when?</h3>
+<table>
+<tr><th>Your situation</th><th>Use</th><th>Example in this project</th></tr>
+<tr><td>You have repeated readings and want the uncertainty of their mean</td><td>Bootstrap</td><td>24 group readings of tree #406; the 10 reference trees measured by every team</td></tr>
+<tr><td>You have one reading and a guess at its spread</td><td>Monte Carlo with an assumed bell curve</td><td>H measured once, CV assumed 10 % (SD = 10 % of the reading)</td></tr>
+<tr><td>You know several uncertain inputs and want the uncertainty of a calculated result</td><td>Monte Carlo</td><td>AGB of one tree; total of 25 trees</td></tr>
+<tr><td>You want to know which input matters most</td><td>Monte Carlo, one die at a time</td><td>Part 5.3</td></tr>
+</table>
+
+<h3>2.5 How many repeats?</h3>
+<p>A Monte Carlo result has its own small uncertainty, which gets smaller like 1 ÷ √N, where N is the number of repeats. With N = 10,000 the ends of the 95 % interval are known to about ± 1 %. A laptop does 20,000 repeats of the biomass equation in less than a second, so N is never the problem. Use at least 5,000. Use 20,000 for the report.</p>
+</section>
+
+<!-- ===================================================== PART 3 -->
+<section class="part">
+<h2>Part 3 · Where a biomass equation comes from, and the two ways it can be wrong</h2>
+<p>You cannot weigh a living tree. So you predict its weight from its shape. Every such prediction carries two separate uncertainties from the equation itself: the fitted numbers could be slightly off (a small effect), and real trees scatter around any line (a large effect). Interactive page: <b>2 · How an Equation Is Born</b>.</p>
+
+<h3>3.1 Cut, dry, weigh</h3>
+<p>An <b>allometric equation</b> predicts something hard to measure (dry weight) from things that are easy to measure (diameter D, height H, wood density ρ). To build one, researchers:</p>
+<ol>
+<li>Choose trees of many sizes and species.</li>
+<li>Measure D and H while the tree is standing. Take a piece of wood to measure ρ.</li>
+<li>Cut the tree down. Cut it into pieces. Weigh everything above the ground: trunk, branches, leaves.</li>
+<li>Dry small pieces in an oven to find out how much of the fresh weight was water. Water is not biomass.</li>
+<li>Plot dry weight against size and fit a curve.</li>
+</ol>
+<p>Chave et al. (2014) collected 4,004 such trees from 58 sites across the tropics, from 5 cm saplings to giants of 100 tonnes, and fitted one equation to all of them:</p>
+<div class="eq">AGB = 0.0673 × (ρ × D² × H)<sup>0.976</sup></div>
+<p>AGB is in kg of oven-dry matter, ρ in g/cm³, D in cm, H in m. The bracket ρ × D² × H is roughly the mass of a cylinder as wide and as tall as the tree. A real tree weighs about 7 % of that cylinder, because it gets thinner towards the top and splits into branches. The two numbers 0.0673 and 0.976 are not theory. They are the position and slope of a straight line fitted through 4,004 points on log–log axes (logs turn "times" into "plus" and make the scatter bell-shaped; see 1.7).</p>
+
+<h3>3.2 Doubt 1: where exactly is the line? (parameter uncertainty)</h3>
+<p>Cut down a different 4,004 trees and fit again, and you get slightly different numbers, say 0.0681 and 0.975. The fitted numbers (the <b>parameters</b>) are themselves estimates, each with its own standard error. On the interactive page, fitting a new set of 50 trees moves the line a lot. Fitting a new set of 4,000 trees hardly moves it. With 4,004 trees behind it, the Chave line is fixed to well under 1 % for a tree the size of ours.</p>
+<p>Two properties of this doubt:</p>
+<ul>
+<li><b>It is systematic.</b> If the true slope is 0.980 rather than 0.976, every tree you calculate is off in the same direction. Measuring more of your own trees does not cancel it.</li>
+<li><b>It is small here.</b> In this project we carry it as a shared ± 1 % and move on.</li>
+</ul>
+
+<h3>3.3 Doubt 2: real trees are not on the line (scatter)</h3>
+<p>Even with a perfect line, real trees land above or below it. Two trees with the same D, H and ρ do not weigh the same. One has more branches. One lost its top years ago. The vertical spread of the cloud of points around the line is called the <b>residual scatter</b>, written σ (sigma). For the Chave equation, σ = 0.357 in natural-log units.</p>
+<p>What 0.357 means in plain numbers: e<sup>0.357</sup> = 1.43. So for one tree, the true weight is usually (68 % of the time) between 0.7 and 1.4 times the prediction, and 95 % of the time between 0.5 and 2.0 times the prediction. For tree #406, predicted at 13.6 kg, that is roughly 7 to 28 kg. <b>This is by far the biggest single uncertainty in the whole project.</b></p>
+<p>Two properties, the opposite of Doubt 1:</p>
+<ul>
+<li><b>It is random.</b> Each tree lands above or below the line independently of the others. Add 25 trees, and the highs and lows partly cancel (Part 7).</li>
+<li><b>It does not get smaller when more trees are cut down to build the equation.</b> It belongs to the trees, not to the sample size. A million cut-down trees would fix the line perfectly, and the cloud around it would be exactly as wide.</li>
+</ul>
+
+<h3>3.4 Side by side</h3>
+<table>
+<tr><th style="width:30%"></th><th>Doubt 1: parameter uncertainty</th><th>Doubt 2: scatter</th></tr>
+<tr><td>The question</td><td>Where is the best line?</td><td>How far is one tree from the line?</td></tr>
+<tr><td>Size for our trees</td><td>below 1 %</td><td>about ± 40 % (1 SD); a factor of 2 (95 %)</td></tr>
+<tr><td>Gets smaller with more cut-down trees?</td><td>Yes, like 1 ÷ √n</td><td>No</td></tr>
+<tr><td>Gets smaller when we add up many of our trees?</td><td>No (systematic)</td><td>Yes, partly (random)</td></tr>
+<tr><td>How we carry it in Monte Carlo</td><td>one shared multiplying factor, CV 1 %</td><td>one independent draw per tree, ε from a bell curve with mean 0 and SD 0.357, on the log scale</td></tr>
+</table>
+
+<h3>3.5 Two more things the paper admits</h3>
+<ul>
+<li><b>Bias.</b> Averaged over the 58 sites, the equation guesses about 5 % too heavy for ordinary trees and about 20 % too light for giants over 30 tonnes. A bias is systematic: it stays however many trees we measure. For honesty we name it. We do not correct for it, because we do not know whether it applies to young planted trees.</li>
+<li><b>Tested range.</b> Every one of the 4,004 trees had D ≥ 5 cm and grew in natural forest. Our 5-year-old, densely planted Miyawaki trees sit right at that edge, and the paper's smallest trees had its largest errors. Using an equation at the edge of its data is allowed. Pretending that the only error is σ is not. Say so in the report.</li>
+</ul>
+
+<h3>3.6 The sentence to remember</h3>
+<p>Chave et al. (2014) write that their method "provides estimates – not direct measurements – and model error should always be carefully examined and propagated through to the quantity of interest." "Propagated through" means: carried along into the final answer. Parts 5 to 7 do exactly that.</p>
+</section>
+
+<!-- ===================================================== PART 4 -->
+<section class="part">
+<h2>Part 4 · One tree: are the numbers you wrote down right?</h2>
+<p>Your field sheet says: tree #406, circumference C = 25.1 cm, so D = 8.0 cm; H = 6.0 m. Before using any equation, ask: if a classmate measured the same tree five minutes later, would they write down the same numbers? If not, by how much would they differ? That difference is your <b>input uncertainty</b>. It has to be put into words and then into a number.</p>
+
+<h3>4.1 Three ways to put a number on "not sure"</h3>
+<p><b>(a) Several people measured it.</b> Tree #406 was measured by all 24 groups. The heights ran from 5.0 to 7.3 m (mean 6.14 m, SD 0.68 m, CV 11 %). The diameters ran from 7.5 to 8.5 cm (mean 7.98 cm, SD 0.26 cm, CV 3 %). The SD across people is the die for that measurement. Bootstrap it (2.2). This is the best case. It is why the project has reference trees measured by every team.</p>
+<p><b>(b) You measured it once, but you know your instrument and your method.</b> Then build the uncertainty from its parts. Height by tape and angle: H = d × tan θ + eye height, where d is the distance to the tree and θ is the angle to the top. With d = 10 m and θ = 30°: an angle error of 1° changes H by about 0.24 m (4 %); a distance error of 0.3 m changes H by 0.17 m (3 %); choosing a different twig as "the top" can change H by 0.5 m (8 %). Combine by square-add-root: √(4² + 3² + 8²) ≈ 9 to 10 % for one careful reading. Diameter by tape: reading to 1 mm on an 8 cm trunk is 1 %; holding the tape 10 cm higher or lower on a tapering trunk adds 1 to 2 %; an oval trunk adds a few percent. Together 2 to 3 %.</p>
+<p><b>(c) You have nothing but experience: a best guess.</b> State it and defend it. Reasonable default values for this project, which we use in Parts 6 and 7 whenever repeat readings are missing:</p>
+<table>
+<tr><th>Input</th><th>Best guess (95 % range)</th><th>As an SD for Monte Carlo</th><th>Why</th></tr>
+<tr><td>Height H, tape and angle, measured once</td><td class="n">± 20 %</td><td>10 % of H</td><td>matches the 11 % spread seen across 24 groups; height is measured from a distance and calculated</td></tr>
+<tr><td>Diameter D, tape at 1.3 m</td><td class="n">± 5 %</td><td>2.5 % of D</td><td>matches the 3 % spread across groups; the tape touches the trunk</td></tr>
+<tr><td>Wood density ρ from a database</td><td class="n">± 20 %</td><td>10 % (log-normal)</td><td>four published values for <i>Pongamia</i> run from 0.54 to 0.64; young wood is lighter than mature timber</td></tr>
+</table>
+<p>A ± 20 % range that covers 95 % of readings corresponds to an SD of about 10 % (1.5: 95 % is ± 1.96 SD). A best guess is not cheating. It is an assumption, written down, that a reader can question and that you can replace with data later.</p>
+
+<h3>4.2 Height is much harder to measure than diameter</h3>
+<p>Diameter is a contact measurement: you touch the trunk, make one decision (where is 1.3 m?), and pull the tape tight. Different people get almost the same number. Height is measured from a distance and then calculated: you never touch the top, you guess which twig is the top in a thick canopy, you read an angle, you measure a distance with a tape, and you add your eye height. Each step has its own error, and the tan θ in the formula makes angle errors bigger. Typical result: 2 to 3 % spread in D, 10 to 20 % in H.</p>
+<p>But D is squared in the equation, so a 3 % error in D becomes a 6 % error in AGB, while a 10 % error in H stays 10 %. Even so, height remains the larger field error.</p>
+
+<h3>4.3 Random or systematic? Ask for each input</h3>
+<ul>
+<li>A different reader each time, a different standing position, a different twig chosen as the top: <b>random</b>. Averages out over many trees.</li>
+<li>Everyone used the same stick with the mark at 1.25 m instead of 1.30 m; everyone added an eye height 10 cm too large; the tape counts bark as wood; the angle method under-reads leaning trees; the true top is hidden in a thick canopy: <b>systematic</b>. Averages out over nothing.</li>
+</ul>
+<p>For a single tree the difference hardly matters: both kinds make the interval wider. For 25 trees (Part 7) it matters a great deal.</p>
+
+<h3>4.4 The full list of places where the number can go wrong</h3>
+<p>The number "23.5 kg CO₂" for tree #406 passes through a chain: tape and angle → D and H → ρ from a table → the equation (a, b) → the scatter of the equation → the carbon fraction → the CO₂ factor. Every link in the chain adds some error.</p>
+<table>
+<tr><th>#</th><th>Source</th><th>Where in the chain</th><th>Type</th><th>Rough size (1 SD, one tree)</th><th>How to make it smaller</th></tr>
+<tr><td>1</td><td>Tape and angle reader: smallest step they can show</td><td>instrument</td><td>random</td><td class="n">≈ 1 %</td><td>already fine</td></tr>
+<tr><td>2</td><td>Person-to-person spread in D</td><td>input</td><td>random</td><td class="n">2–3 % (→ 4–6 % in AGB)</td><td>same stick, training</td></tr>
+<tr><td>3</td><td>Person-to-person spread in H</td><td>input</td><td>random</td><td class="n">10–20 %</td><td>measure twice, compare between groups</td></tr>
+<tr><td>4</td><td>Oval trunk, bark, leaning tree, hidden top</td><td>tree shape</td><td>systematic for that tree</td><td class="n">a few %</td><td>note it on the sheet</td></tr>
+<tr><td>5</td><td>Wood density ρ from a database</td><td>input</td><td>systematic (same for a species)</td><td class="n">± 8–10 %, more for young wood</td><td>take a wood sample; use regional values</td></tr>
+<tr><td>6</td><td>Equation parameters 0.0673, 0.976</td><td>equation</td><td>systematic</td><td class="n">&lt; 1 %</td><td>nothing (needs more cut-down trees)</td></tr>
+<tr><td>7</td><td>Scatter of the equation, σ = 0.357</td><td>equation</td><td>random per tree</td><td class="n">≈ 40 %</td><td>nothing for one tree; averages out over many trees</td></tr>
+<tr><td>8</td><td>Equation used outside its tested range (D ≈ 5 cm, plantation)</td><td>equation</td><td>systematic, unknown</td><td class="n">unknown, possibly large</td><td>name it; compare with a second equation</td></tr>
+<tr><td>9</td><td>Carbon fraction 0.47</td><td>conversion</td><td>systematic</td><td class="n">± 5 %</td><td>species-specific value</td></tr>
+<tr><td>10</td><td>C → CO₂ factor 44 ÷ 12 = 3.67</td><td>conversion</td><td>exact</td><td class="n">0 %</td><td>—</td></tr>
+</table>
+<p>Do not memorise the numbers. Look at which rows are big. Row 7 (the scatter of the equation) is far bigger than everything else. Row 3 (height) is the largest field item. Rows 5, 6 and 9 are small but never average away.</p>
+
+<h3>4.5 What "error in the inputs" means for the result</h3>
+<p>The Chave equation needs three inputs: D, H and ρ. We measured two of them (with error) and looked the third one up (with spread). The equation then makes each error bigger or smaller: D is squared (× 2), H and ρ enter with the power 0.976 (× 1). So, in percent, an error of 2.5 % in D, 10 % in H and 10 % in ρ becomes about √((2 × 2.5)² + 10² + 10²) = √(25 + 100 + 100) ≈ 15 % in AGB, before the scatter of the equation is added. Part 5 lets the computer do this arithmetic by rolling dice.</p>
+</section>
+
+<!-- ===================================================== PART 5 -->
+<section class="part">
+<h2>Part 5 · Bootstrap and Monte Carlo applied to one tree</h2>
+<p>For tree #406 the honest answer is AGB ≈ 14 kg with a 95 % interval of 6.4 to 29 kg. That is a factor of two each way. About 92 % of that spread comes from the scatter of the equation. Interactive page: <b>3 · Monte Carlo, One Tree</b>.</p>
+
+<h3>5.1 Step 1: turn the 24 readings into dice (bootstrap)</h3>
+<p>From the 24 group readings: mean H = 6.14 m, bootstrap SE 0.14 m, 95 % interval 5.88 to 6.40 m; mean D = 7.98 cm, SE 0.05 cm. Two different things are now available, and you must choose the right one:</p>
+<ul>
+<li>If you want the AGB of tree #406 <b>as the class knows it</b> (all 24 readings pooled), the H die is narrow: SD 0.14 m (2 %). The class mean is well known.</li>
+<li>If you want the AGB <b>as one group would report it</b> (one reading), the H die is the spread of single readings: SD 0.68 m (11 %). This is the die for your own 25 trees, each measured once.</li>
+</ul>
+<p>This guide uses the second one, because it is your project's situation. We round it to the default best guess of 10 %.</p>
+
+<h3>5.2 Step 2: roll all the dice (Monte Carlo)</h3>
+<p>The five dice and their shapes:</p>
+<table>
+<tr><th>Die</th><th>Shape used</th><th>Where it comes from</th></tr>
+<tr><td>H</td><td>bell curve, mean 6.0 m, CV 10 % (SD 0.6 m)</td><td>spread of single readings across groups</td></tr>
+<tr><td>D</td><td>bell curve, mean 8.0 cm, CV 2.5 % (SD 0.2 cm)</td><td>spread across groups</td></tr>
+<tr><td>ρ</td><td>log-normal, median 0.60 g/cm³, CV 10 % (SD about 0.06 g/cm³)</td><td>four database entries 0.54 to 0.64, plus doubt about young wood</td></tr>
+<tr><td>a, b (0.0673, 0.976)</td><td>one shared multiplying factor, CV 1 %</td><td>fitting again on new sets of trees; Chave does not print standard errors, so this is a guess on the safe side</td></tr>
+<tr><td>ε (scatter)</td><td>bell curve with mean 0 and SD 0.357 on the log scale; AGB × e<sup>ε</sup></td><td>residual standard error of Chave et al. (2014)</td></tr>
+</table>
+<div class="ex">One draw:  H = 6.4,  D = 7.9,  ρ = 0.57,  a = 0.0675,  ε = −0.21
+AGB = 0.0675 × (0.57 × 7.9² × 6.4)^0.976 × e^(−0.21) ≈ 10.9 kg
+Write it down. Repeat 20,000 times. The pile of 20,000 answers is the result.</div>
+
+<h3>5.3 Step 3: read the pile, then roll one die at a time</h3>
+<p>Results of 20,000 draws for tree #406 (your numbers will differ slightly; that is normal for this method):</p>
+<table>
+<tr><th>Dice switched on</th><th class="n">CV of AGB</th><th>95 % interval (kg)</th></tr>
+<tr><td>H only</td><td class="n">10 %</td><td>11.0 – 16.2</td></tr>
+<tr><td>D only</td><td class="n">5 %</td><td>12.3 – 14.9</td></tr>
+<tr><td>ρ only</td><td class="n">10 %</td><td>11.3 – 16.5</td></tr>
+<tr><td>a, b only</td><td class="n">1 %</td><td>13.3 – 13.9</td></tr>
+<tr><td>scatter ε only</td><td class="n">37 %</td><td>6.7 – 27.6</td></tr>
+<tr><td><b>all five together</b></td><td class="n"><b>40 %</b></td><td><b>6.4 – 29.0</b> (median 13.5)</td></tr>
+</table>
+<p>Check by hand with the square-add-root rule of 1.9: √(37² + 10² + 10² + 5² + 1²) = √1595 ≈ 40 %. The computer and the formula agree. Now notice what the arithmetic says: a perfect tape and a perfect height instrument (rows H and D set to zero) would only reduce 40 % to √(37² + 10² + 1²) ≈ 38 %. Careful field work cannot fix the scatter of the equation. Only averaging many trees can.</p>
+<p>Converted: carbon = 0.47 × AGB → 6.4 kg (95 % interval 3.0 to 13.6); CO₂ = 3.67 × C → 23 kg (11 to 50). Note that we held 0.47 fixed; adding its ± 5 % would make the interval slightly wider.</p>
+
+<h3>5.4 Why the median, not the mean</h3>
+<p>The pile is not symmetric (1.7). Its median, 13.5 kg, sits at the plain-equation answer of 13.6 kg. Its mean is about 6 % higher, because the factor e<sup>ε</sup> with σ = 0.357 has an average of e<sup>σ²/2</sup> = 1.066, not 1. (A factor of 2 adds 100 %; a factor of 0.5 removes only 50 %; so on average the factor adds a little.) Statisticians argue about which to report: the mean is the expected weight; the median is the typical tree. For this course: report the median and the 95 % interval, and say which you used.</p>
+
+<h3>5.5 How to write the result</h3>
+<p><b>Wrong:</b> "AGB = 13.608 kg." Four digits after the point, claimed from a tape, a height reading and an equation with 40 % scatter.</p>
+<p><b>Right:</b> "AGB ≈ 14 kg (95 % interval 6.4 to 29 kg). Interval from 20,000 Monte Carlo draws, carrying the group-to-group spread in H (10 %) and D (2.5 %), a 10 % log-normal spread in the database wood density, 1 % on the fitted parameters, and the published scatter of the equation (σ = 0.357). Most of the uncertainty comes from the scatter of the equation. Carbon fraction fixed at 0.47."</p>
+<div class="box warm"><p>A number without an uncertainty is not a measurement. It is an opinion.</p></div>
+</section>
+
+<!-- ===================================================== PART 6 -->
+<section class="part">
+<h2>Part 6 · The Chave (2014) equation, term by term</h2>
+<p>The equation has five uncertain terms (a, b, ρ, D, H) plus the scatter ε. The original paper gives you a number for ε and for the bias. It does not give you numbers for the others. So you must bring them from elsewhere, or make a best guess, and say which you did.</p>
+
+<h3>6.1 The general form</h3>
+<p>Written the way it was fitted, on the log scale:</p>
+<div class="eq">ln(AGB) = ln a + b × ln(ρ × D² × H) + ε, &nbsp;&nbsp; where ε follows a bell curve with mean 0 and SD σ</div>
+<p>and back on the ordinary scale:</p>
+<div class="eq">AGB = a × (ρ × D² × H)<sup>b</sup> × e<sup>ε</sup></div>
+<p>with a = 0.0673, b = 0.976, σ = 0.357 (Chave et al. 2014, Model 4, n = 4,004 trees, 58 sites). The term e<sup>ε</sup> is the part most people forget. Leaving it out gives a single number. Keeping it gives the honest spread.</p>
+
+<h3>6.2 Each term and where its uncertainty comes from</h3>
+<table>
+<tr><th>Term</th><th>Meaning</th><th>What Chave et al. (2014) give</th><th>What is missing</th><th>Our best guess or substitute (state it in the report)</th></tr>
+<tr><td>a = 0.0673</td><td>scale: a tree is about 7 % of its cylinder</td><td>the fitted value</td><td>its standard error</td><td>shared multiplying factor, CV 1 % (with 4,004 trees the true SE is far below this)</td></tr>
+<tr><td>b = 0.976</td><td>how weight grows with size (close to 1 = nearly proportional)</td><td>the fitted value</td><td>its standard error, and how it moves together with a</td><td>included in the same shared 1 %</td></tr>
+<tr><td>ρ (g/cm³)</td><td>wood density, from a database, not measured</td><td>nothing (they used values from each site)</td><td>spread between database entries; difference between mature timber and 5-year-old wood</td><td>log-normal, CV 10 % per species. Chave et al. (2004) assume 10 %. The Global Wood Density Database gives a species SD you can use instead.</td></tr>
+<tr><td>D (cm)</td><td>diameter at 1.3 m, from tape circumference ÷ π</td><td>nothing (assumed exact)</td><td>your reading error</td><td>CV 2.5 % (± 5 % range); or Chave et al. (2004): SD = 0.0062 × D + 0.0904 cm for 95 % of trees, and a big mistake of 4.6 cm on 5 % of trees</td></tr>
+<tr><td>H (m)</td><td>total height, calculated from distance and angle</td><td>nothing (assumed exact)</td><td>your reading error</td><td>CV 10 % (± 20 % range). Chave et al. (2004) assume 10 %. Replace with the bootstrap SD of the reference trees when you have it.</td></tr>
+<tr><td>ε, σ = 0.357</td><td>one tree's distance from the line, log scale</td><td>given: σ = 0.357; CV ≈ 56 % averaged over sites; bias ≈ + 5 % for ordinary trees, − 20 % above 30 t</td><td>nothing</td><td>use as given; one independent draw per tree</td></tr>
+<tr><td>tested range</td><td>D ≥ 5 cm, natural forest, no plantations</td><td>given</td><td>how wrong it is for 5 cm planted trees</td><td>cannot be put into a number; name it, and compare with a second equation as a test</td></tr>
+<tr><td>carbon fraction 0.47</td><td>not in Chave; IPCC default value</td><td>—</td><td>a species value</td><td>± 5 %, systematic</td></tr>
+<tr><td>44 ÷ 12 = 3.67</td><td>kg CO₂ per kg carbon</td><td>—</td><td>nothing; exact</td><td>0 %</td></tr>
+</table>
+
+<h3>6.3 The version without height, for trees whose top you could not see</h3>
+<p>Chave et al. (2014) also fitted a version without H. It uses a climate index E (from the site's climate) in place of height:</p>
+<div class="eq">ln(AGB) = −1.803 − 0.976 E + 0.976 ln ρ + 2.673 ln D − 0.0299 (ln D)² + ε</div>
+<p>It has more fitted numbers (each with its own unprinted standard error) and a slightly larger scatter. The same logic applies: each fitted number is a die, E is a die (it depends on how well the climate maps describe Palakkad), and ε is the big die. If you use it, say so, and expect a wider interval, not a narrower one. Taking height out of the equation does not remove the uncertainty that height carried. It moves that uncertainty into the scatter.</p>
+
+<h3>6.4 A rule for every missing number</h3>
+<p>When the paper does not give an uncertainty for a term, do the following in order, and write down which step you reached:</p>
+<ol>
+<li><b>Measure it yourself</b> (repeat readings, bootstrap). Best.</li>
+<li><b>Find it in another paper</b> that measured the same thing (Chave et al. 2004 for D and H errors; the wood density database for ρ).</li>
+<li><b>Make a best guess</b>, a little on the pessimistic side (± 20 % for a height measured once, ± 5 % for a diameter). Then test whether the final answer changes much if you double the guess. If it does not, the guess does not matter. If it does, say that it does.</li>
+</ol>
+<p>What you may never do is set a term's uncertainty to zero because nobody gave you a number.</p>
+</section>
+
+<!-- ===================================================== PART 7 -->
+<section class="part">
+<h2>Part 7 · From one tree to a plot: 25 trees added together</h2>
+<p>Each of the 25 trees on its own is uncertain by about ± 40 % (a factor of two at 95 %). But their total is uncertain by only about ± 12 %: point total 286 kg, 95 % interval 244 to 387 kg. Interactive page: <b>4 · From 25 Trees to a Plot</b>.</p>
+
+<h3>7.1 The example plot</h3>
+<p>The species are the first 25 trees of group B1 from the class tree list. The D and H values are examples typical of a 5-year-old Miyawaki plot (replace them with your own sheet). The wood densities are approximate species means from the Global Wood Density Database; look up your own species and record the source. Dice as in Part 6: H 10 %, D 2.5 %, ρ 10 % per species (shared by all trees of that species), parameters 1 % (shared by all trees), scatter σ = 0.357 per tree.</p>
+<table>
+<tr><th class="n">Tree</th><th>Species</th><th class="n">D (cm)</th><th class="n">H (m)</th><th class="n">ρ (g/cm³)</th><th class="n">AGB point (kg)</th><th>95 % interval (kg)</th><th class="n">CV</th></tr>
+<tr><td class="n">1</td><td><i>Terminalia bellirica</i></td><td class="n">4.9</td><td class="n">4.4</td><td class="n">0.62</td><td class="n">4.0</td><td>1.9 – 8.5</td><td class="n">40 %</td></tr>
+<tr><td class="n">2</td><td><i>Phyllanthus emblica</i></td><td class="n">3.0</td><td class="n">3.3</td><td class="n">0.70</td><td class="n">1.3</td><td>0.6 – 2.7</td><td class="n">40 %</td></tr>
+<tr><td class="n">3</td><td><i>Azadirachta indica</i></td><td class="n">7.8</td><td class="n">6.1</td><td class="n">0.69</td><td class="n">15.1</td><td>7.1 – 32.1</td><td class="n">40 %</td></tr>
+<tr><td class="n">4</td><td><i>Terminalia bellirica</i></td><td class="n">5.9</td><td class="n">5.2</td><td class="n">0.62</td><td class="n">6.7</td><td>3.2 – 14.4</td><td class="n">40 %</td></tr>
+<tr><td class="n">5</td><td><i>Prosopis cineraria</i></td><td class="n">6.0</td><td class="n">4.9</td><td class="n">0.75</td><td class="n">7.9</td><td>3.7 – 16.8</td><td class="n">40 %</td></tr>
+<tr><td class="n">6</td><td><i>Simarouba glauca</i></td><td class="n">7.9</td><td class="n">6.8</td><td class="n">0.39</td><td class="n">9.9</td><td>4.6 – 20.8</td><td class="n">40 %</td></tr>
+<tr><td class="n">7</td><td><i>Syzygium cumini</i></td><td class="n">6.4</td><td class="n">5.3</td><td class="n">0.70</td><td class="n">9.1</td><td>4.2 – 19.1</td><td class="n">40 %</td></tr>
+<tr><td class="n">8</td><td><i>Psidium guajava</i></td><td class="n">6.8</td><td class="n">5.2</td><td class="n">0.70</td><td class="n">10.0</td><td>4.7 – 21.2</td><td class="n">40 %</td></tr>
+<tr><td class="n">9</td><td><i>Terminalia arjuna</i></td><td class="n">5.7</td><td class="n">5.1</td><td class="n">0.73</td><td class="n">7.3</td><td>3.4 – 15.5</td><td class="n">40 %</td></tr>
+<tr><td class="n">10</td><td><i>Simarouba glauca</i></td><td class="n">6.2</td><td class="n">4.3</td><td class="n">0.39</td><td class="n">3.9</td><td>1.9 – 8.3</td><td class="n">40 %</td></tr>
+<tr><td class="n">11</td><td><i>Terminalia arjuna</i></td><td class="n">5.5</td><td class="n">5.1</td><td class="n">0.73</td><td class="n">6.8</td><td>3.1 – 14.4</td><td class="n">40 %</td></tr>
+<tr><td class="n">12</td><td><i>Syzygium cumini</i></td><td class="n">6.0</td><td class="n">5.0</td><td class="n">0.70</td><td class="n">7.6</td><td>3.5 – 16.0</td><td class="n">40 %</td></tr>
+<tr><td class="n">13</td><td><i>Azadirachta indica</i></td><td class="n">7.8</td><td class="n">7.7</td><td class="n">0.69</td><td class="n">18.9</td><td>9.0 – 39.6</td><td class="n">39 %</td></tr>
+<tr><td class="n">14</td><td><i>Prosopis cineraria</i></td><td class="n">5.1</td><td class="n">5.1</td><td class="n">0.75</td><td class="n">6.0</td><td>2.8 – 12.7</td><td class="n">40 %</td></tr>
+<tr><td class="n">15</td><td><i>Bombax ceiba</i></td><td class="n">4.0</td><td class="n">3.6</td><td class="n">0.33</td><td class="n">1.2</td><td>0.6 – 2.5</td><td class="n">40 %</td></tr>
+<tr><td class="n">16</td><td><i>Terminalia bellirica</i></td><td class="n">4.2</td><td class="n">4.3</td><td class="n">0.62</td><td class="n">2.9</td><td>1.3 – 6.1</td><td class="n">40 %</td></tr>
+<tr><td class="n">17</td><td><i>Cleistanthus collinus</i></td><td class="n">8.2</td><td class="n">7.5</td><td class="n">0.80</td><td class="n">23.5</td><td>11.0 – 49.6</td><td class="n">40 %</td></tr>
+<tr><td class="n">18</td><td><i>Swietenia mahagoni</i></td><td class="n">4.7</td><td class="n">4.4</td><td class="n">0.60</td><td class="n">3.6</td><td>1.7 – 7.6</td><td class="n">40 %</td></tr>
+<tr><td class="n">19</td><td><i>Terminalia bellirica</i></td><td class="n">5.5</td><td class="n">4.4</td><td class="n">0.62</td><td class="n">5.0</td><td>2.3 – 10.6</td><td class="n">40 %</td></tr>
+<tr><td class="n">20</td><td><i>Terminalia bellirica</i></td><td class="n">7.5</td><td class="n">6.7</td><td class="n">0.62</td><td class="n">13.8</td><td>6.4 – 29.2</td><td class="n">40 %</td></tr>
+<tr><td class="n">21</td><td><i>Terminalia arjuna</i></td><td class="n">6.9</td><td class="n">5.3</td><td class="n">0.73</td><td class="n">10.9</td><td>5.1 – 23.0</td><td class="n">40 %</td></tr>
+<tr><td class="n">22</td><td><i>Pongamia pinnata</i></td><td class="n">4.8</td><td class="n">4.9</td><td class="n">0.60</td><td class="n">4.1</td><td>1.9 – 8.7</td><td class="n">40 %</td></tr>
+<tr><td class="n">23</td><td><i>Terminalia bellirica</i></td><td class="n">7.7</td><td class="n">6.8</td><td class="n">0.62</td><td class="n">14.7</td><td>6.9 – 31.4</td><td class="n">40 %</td></tr>
+<tr><td class="n">24</td><td><i>Azadirachta indica</i></td><td class="n">10.9</td><td class="n">7.6</td><td class="n">0.69</td><td class="n">35.9</td><td>16.8 – 76.5</td><td class="n">40 %</td></tr>
+<tr><td class="n">25</td><td><i>Cassia fistula</i></td><td class="n">11.6</td><td class="n">10.0</td><td class="n">0.73</td><td class="n">56.0</td><td>25.6 – 117.8</td><td class="n">40 %</td></tr>
+<tr><td></td><td><b>Total, 13 species</b></td><td></td><td></td><td></td><td class="n"><b>286</b></td><td><b>244 – 387</b> (median 303)</td><td class="n"><b>12 %</b></td></tr>
+</table>
+<p>Every single tree has the same 40 % CV, because the scatter of the equation is the biggest source and it is the same for every tree. The total has 12 %. Nothing was measured better. The highs and lows of 25 independent scatters partly cancelled each other.</p>
+
+<h3>7.2 Why the total is better than any single tree</h3>
+<figure>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 330" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="11" role="img" aria-label="CV of the plot total versus number of trees added"><text x="54" y="16" font-size="13" font-weight="700" fill="#1a1f1c">Adding trees makes the error smaller: 40 % for one tree, about 12 % for all 25</text><line x1="54" x2="560" y1="282.0" y2="282.0" stroke="#8a948d"/><text x="48" y="286.0" text-anchor="end" fill="#555e58">0</text><line x1="54" x2="560" y1="228.2" y2="228.2" stroke="#e3e6e1"/><text x="48" y="232.2" text-anchor="end" fill="#555e58">10</text><line x1="54" x2="560" y1="174.4" y2="174.4" stroke="#e3e6e1"/><text x="48" y="178.4" text-anchor="end" fill="#555e58">20</text><line x1="54" x2="560" y1="120.7" y2="120.7" stroke="#e3e6e1"/><text x="48" y="124.7" text-anchor="end" fill="#555e58">30</text><line x1="54" x2="560" y1="66.9" y2="66.9" stroke="#e3e6e1"/><text x="48" y="70.9" text-anchor="end" fill="#555e58">40</text><text x="54.0" y="298" text-anchor="middle" fill="#555e58">1</text><text x="138.3" y="298" text-anchor="middle" fill="#555e58">5</text><text x="243.8" y="298" text-anchor="middle" fill="#555e58">10</text><text x="349.2" y="298" text-anchor="middle" fill="#555e58">15</text><text x="454.6" y="298" text-anchor="middle" fill="#555e58">20</text><text x="560.0" y="298" text-anchor="middle" fill="#555e58">25</text><text x="307.0" y="322" text-anchor="middle" fill="#1a1f1c">number of trees added together, n</text><text transform="translate(14 161.0) rotate(-90)" text-anchor="middle" fill="#1a1f1c">CV % of the total</text><path d="M54.0,66.4 L59.3,89.1 L64.5,105.9 L69.8,119.0 L75.1,129.5 L80.4,138.2 L85.6,145.6 L90.9,152.0 L96.2,157.5 L101.4,162.4 L106.7,166.7 L112.0,170.6 L117.3,174.2 L122.5,177.4 L127.8,180.3 L133.1,183.1 L138.3,185.6 L143.6,187.9 L148.9,190.0 L154.1,192.1 L159.4,194.0 L164.7,195.7 L170.0,197.4 L175.2,199.0 L180.5,200.5 L185.8,201.9 L191.0,203.3 L196.3,204.5 L201.6,205.8 L206.9,206.9 L212.1,208.0 L217.4,209.1 L222.7,210.1 L227.9,211.1 L233.2,212.0 L238.5,212.9 L243.8,213.8 L249.0,214.6 L254.3,215.4 L259.6,216.2 L264.8,217.0 L270.1,217.7 L275.4,218.4 L280.6,219.1 L285.9,219.7 L291.2,220.4 L296.5,221.0 L301.7,221.6 L307.0,222.2 L312.3,222.8 L317.5,223.3 L322.8,223.8 L328.1,224.4 L333.4,224.9 L338.6,225.4 L343.9,225.8 L349.2,226.3 L354.4,226.8 L359.7,227.2 L365.0,227.7 L370.3,228.1 L375.5,228.5 L380.8,228.9 L386.1,229.3 L391.3,229.7 L396.6,230.1 L401.9,230.5 L407.1,230.8 L412.4,231.2 L417.7,231.5 L423.0,231.9 L428.2,232.2 L433.5,232.5 L438.8,232.8 L444.0,233.2 L449.3,233.5 L454.6,233.8 L459.9,234.1 L465.1,234.4 L470.4,234.7 L475.7,234.9 L480.9,235.2 L486.2,235.5 L491.5,235.8 L496.8,236.0 L502.0,236.3 L507.3,236.5 L512.6,236.8 L517.8,237.0 L523.1,237.3 L528.4,237.5 L533.6,237.7 L538.9,238.0 L544.2,238.2 L549.5,238.4 L554.7,238.7 L560.0,238.9 " fill="none" stroke="#8a948d" stroke-width="1.5" stroke-dasharray="6 4"/><path d="M54.0,66.4 L75.1,111.0 L96.2,117.4 L117.3,146.5 L138.3,166.4 L159.4,179.8 L180.5,190.0 L201.6,197.6 L222.7,202.9 L243.8,205.6 L264.8,209.9 L285.9,213.2 L307.0,212.6 L328.1,215.3 L349.2,215.9 L370.3,217.5 L391.3,216.9 L412.4,218.5 L433.5,220.2 L454.6,221.8 L475.7,223.9 L496.8,225.0 L517.8,226.6 L538.9,222.8 L560.0,218.5 " fill="none" stroke="#1f6f5f" stroke-width="2.5" stroke-linejoin="round"/><circle cx="54.0" cy="66.4" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="75.1" cy="111.0" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="96.2" cy="117.4" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="117.3" cy="146.5" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="138.3" cy="166.4" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="159.4" cy="179.8" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="180.5" cy="190.0" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="201.6" cy="197.6" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="222.7" cy="202.9" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="243.8" cy="205.6" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="264.8" cy="209.9" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="285.9" cy="213.2" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="307.0" cy="212.6" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="328.1" cy="215.3" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="349.2" cy="215.9" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="370.3" cy="217.5" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="391.3" cy="216.9" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="412.4" cy="218.5" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="433.5" cy="220.2" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="454.6" cy="221.8" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="475.7" cy="223.9" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="496.8" cy="225.0" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="517.8" cy="226.6" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="538.9" cy="222.8" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><circle cx="560.0" cy="218.5" r="3.5" fill="#1f6f5f" stroke="#fff" stroke-width="1.5"/><text x="64.0" y="60.4" fill="#1f6f5f" font-weight="700">40.1 % (one tree)</text><text x="568.0" y="222.5" fill="#1f6f5f" font-weight="700">11.8 % (25 trees)</text><text x="568.0" y="251.0" fill="#555e58">40 % ÷ √n = 8 %</text><text x="568.0" y="264.0" fill="#555e58">at n = 25 (dashed)</text></svg>
+<figcaption>Monte Carlo, 20,000 rounds, the 25 example trees of group B1, default dice of Part 6. Green line: CV % of the total as trees are added in table order. Grey dashed line: 40 % ÷ √n, the rule for n equal-sized trees with independent errors.</figcaption>
+</figure>
+<p>Three things to read off the curve:</p>
+<ol>
+<li><b>It falls like 1 ÷ √n at first.</b> Two trees: 32 %. Four trees: 25 %. Nine trees: 15 %. Averaging works exactly as the dice in 2.1 promised.</li>
+<li><b>It stays above the 40 % ÷ √n line.</b> That line assumes 25 trees of equal size. Ours range from 1.2 kg to 56 kg, and the largest tree alone is a fifth of the total. In effect, the plot behaves like only about 12 equal trees, not 25. Adding the two biggest trees last (n = 24 and 25) even pushes the CV back up a little. Rule: the error of a total is decided by the few trees that make up most of it. Measure the big trees most carefully.</li>
+<li><b>It will not go to zero.</b> The shared dice (ρ per species, the equation's parameters, the carbon fraction, the + 5 % bias) do not cancel between trees. Switch off the scatter and the reading errors completely, and about 4 to 5 % remains with 13 species; with a single species it would be about 10 %. More trees never remove a systematic error.</li>
+</ol>
+
+<h3>7.3 Median, mean and the point total</h3>
+<p>The point total (every tree calculated with the plain equation) is 286 kg. The Monte Carlo median is 303 kg and the mean 306 kg. The 6 % gap is the log-normal effect of 5.4: a sum of 25 non-symmetric piles is itself almost bell-shaped, so its median moves up to meet its mean, e<sup>σ²/2</sup> = 1.066 above the plain equation. All three values sit comfortably inside the 244 to 387 kg interval. Report the median with the interval, and mention the point total so that a reader can check it on a calculator.</p>
+
+<h3>7.4 Dividing by an area: per hectare</h3>
+<p>The lecture gives a typical Miyawaki planting density of about 3 trees per m², so 25 trees occupy roughly 8.3 m² (an assumption; replace it with your plot's measured area). Dividing by an area does not change the percentage uncertainty. It only changes the unit:</p>
+<table>
+<tr><th>Quantity</th><th class="n">Point value</th><th class="n">Median</th><th>95 % interval</th></tr>
+<tr><td>AGB of 25 trees</td><td class="n">286 kg</td><td class="n">303 kg</td><td>244 – 387 kg</td></tr>
+<tr><td>per m² (÷ 8.3 m²)</td><td class="n">34 kg/m²</td><td class="n">36 kg/m²</td><td>29 – 46 kg/m²</td></tr>
+<tr><td>per hectare (× 10,000 ÷ 8.3)</td><td class="n">343 t/ha</td><td class="n">364 t/ha</td><td>293 – 464 t/ha</td></tr>
+<tr><td>carbon per hectare (× 0.47)</td><td class="n">161 t C/ha</td><td class="n">171 t C/ha</td><td>138 – 218 t C/ha</td></tr>
+<tr><td>CO₂ per hectare (× 3.67)</td><td class="n">592 t/ha</td><td class="n">627 t/ha</td><td>506 – 800 t/ha</td></tr>
+</table>
+<p>Two warnings belong next to that table in any report:</p>
+<ul>
+<li><b>Going from 8 m² to a hectare is a big jump</b> (a multiplication by about 1,200). The interval above carries only the measurement and equation uncertainty. It does not include the <b>sampling</b> uncertainty: which 8 m² you happened to measure. Chave et al. (2004) found that sampling error alone is about 10 % for a 0.25 ha plot and 5 % for 1 ha, and far larger for a few square metres. Pooling all 24 groups (600 trees, about 200 m²) is the honest way to approach a per-hectare figure.</li>
+<li><b>Check whether the number makes sense.</b> 300 to 450 t/ha of above-ground biomass is what a fully grown tropical rainforest carries, not a 5-year-old planting. Either the density assumption is too high, or the example D and H are too large, or the equation (tested on natural forest, D ≥ 5 cm) gives too-high values for small, crowded, planted trees. A result that fails this check is a finding, not a failure: write it down and name the possible reasons. This is the kind of claim the AI-audit session taught you to test.</li>
+</ul>
+
+<h3>7.5 The error budget to put in your report</h3>
+<table>
+<tr><th>Source</th><th class="n">One tree alone</th><th>Total of 25 trees</th><th>Gets smaller with more trees?</th></tr>
+<tr><td>Scatter of the equation, σ = 0.357</td><td class="n">37 %</td><td>≈ 9 % (unequal sizes; 7 % if equal)</td><td>yes (random)</td></tr>
+<tr><td>Reading errors in H and D</td><td class="n">≈ 11 %</td><td>≈ 3 %</td><td>yes (random)</td></tr>
+<tr><td>Wood density (13 species, 10 % each)</td><td class="n">10 %</td><td>≈ 4 %</td><td>partly (cancels between species, not within a species)</td></tr>
+<tr><td>Equation parameters</td><td class="n">1 %</td><td>1 %</td><td>no</td></tr>
+<tr><td>Carbon fraction (held fixed here)</td><td class="n">(± 5 %)</td><td>(± 5 %)</td><td>no</td></tr>
+<tr><td>Equation outside its tested range; + 5 % bias</td><td class="n">not quantified</td><td>not quantified</td><td>no</td></tr>
+<tr><td><b>Combined (square-add-root)</b></td><td class="n"><b>≈ 40 %</b></td><td><b>≈ 12 %</b></td><td></td></tr>
+</table>
+<p>Name the biggest row. For one tree it is the equation's scatter. For the plot it is still the scatter, but now the systematic rows are catching up, and only better data (a local wood density, a local equation) can lower them.</p>
+</section>
+
+<!-- ===================================================== PART 8 -->
+<section class="part">
+<h2>Part 8 · Assumptions, project checklist, practice questions, glossary, references</h2>
+
+<h3>8.1 Every assumption this guide made, in one place</h3>
+<table>
+<tr><th>Assumption</th><th>Where</th><th>Why it is reasonable</th><th>What would break it</th></tr>
+<tr><td>The 24 readings of a reference tree are a fair, independent sample of the measuring process</td><td>bootstrap, 2.2</td><td>different groups, different days, no copying</td><td>a shared wrong eye height; groups comparing numbers</td></tr>
+<tr><td>Reading errors in H and D are bell-shaped with CV 10 % and 2.5 %</td><td>Parts 4 to 7</td><td>matches the spread across groups and Chave et al. (2004)</td><td>big mistakes (wrong tree, wrong unit) are not bell-shaped; clean them out first</td></tr>
+<tr><td>Wood density error is log-normal, CV 10 %, the same for all trees of a species</td><td>Parts 6 and 7</td><td>a database value is one number per species</td><td>variation within a species; young wood lighter than the table value</td></tr>
+<tr><td>Parameter error is 1 % and shared by all trees</td><td>Parts 3, 5 to 7</td><td>4,004 trees fix the line</td><td>using a different equation fitted on 50 trees</td></tr>
+<tr><td>Scatter ε is bell-shaped with SD 0.357 on the log scale, independent between trees</td><td>Parts 3, 5 to 7</td><td>reported by Chave et al. (2014)</td><td>neighbouring trees in a crowded plot may share a shape; σ may be larger at D ≈ 5 cm</td></tr>
+<tr><td>Errors from different sources are independent of each other</td><td>square-add-root rule, Monte Carlo</td><td>nothing links a tape slip to a database value</td><td>a group that reads both H and D too high</td></tr>
+<tr><td>The carbon fraction 0.47 and the factor 44 ÷ 12 are exact</td><td>Parts 5 and 7</td><td>0.47 is the IPCC default; 44 ÷ 12 is chemistry</td><td>a species with 0.44 or 0.50 would shift the carbon figure by ± 5 %</td></tr>
+<tr><td>25 trees stand on 8.3 m² (3 per m²)</td><td>7.4</td><td>typical Miyawaki density</td><td>measure the actual area of your block</td></tr>
+</table>
+
+<h3>8.2 Checklist for the project report</h3>
+<ul class="check">
+<li>Plot the H and D of the 10 reference trees, one bar per group. Is your group high, low or typical?</li>
+<li>Bootstrap the reference-tree readings: SD and 95 % interval of H and D. State the bootstrap assumptions (2.2).</li>
+<li>For one of your 25 trees, run Monte Carlo one die at a time, then all together. Report the CV per source and the 95 % interval. Check with the square-add-root rule.</li>
+<li>Add up your 25 trees with independent scatter draws and shared ρ and parameter draws. Report the point total, the median, the 95 % interval and the CV.</li>
+<li>Draw the error budget (one tree versus 25 trees) and name the biggest row.</li>
+<li>Convert to carbon and CO₂, and to per m² and per hectare with the measured area. Add the two warnings of 7.4.</li>
+<li>Write every number as: estimate + interval + one line on where the interval came from + what was held fixed.</li>
+<li>Answer: which single change to the field method makes the interval smallest, and why is it not a better tape?</li>
+<li>Put the prompts you gave any AI tool in the appendix, and say which of its outputs you checked and how.</li>
+</ul>
+
+<h3>8.3 Practice questions (answers in green)</h3>
+<ol class="qa">
+<li>Twenty-four readings of a height have mean 6.0 m and SD 0.6 m. What is the standard error of the mean, and the 95 % interval? <span class="ans">[SE = 0.6 ÷ √24 = 0.12 m; interval 6.0 ± 1.96 × 0.12 = 5.76 to 6.24 m]</span></li>
+<li>In the bootstrap, why are chips put back into the bag? <span class="ans">[The 24 chips stand in for the whole process (the die). The same value must be allowed to appear twice. Otherwise every pretend sample is the same set of values with the same mean.]</span></li>
+<li>A tree's AGB has independent uncertainties of 37 % (equation), 10 % (H), 6 % (D²) and 10 % (ρ). What is the combined CV? What if the height were known exactly? <span class="ans">[√(37² + 10² + 6² + 10²) ≈ 40 %; without H, √(37² + 6² + 10²) ≈ 39 %. Careful field work barely helps for one tree.]</span></li>
+<li>σ = 0.357 on the log scale. Between which factors does a single tree's true weight lie 95 % of the time? <span class="ans">[e<sup>± 1.96 × 0.357</sup> = 0.50 to 2.0 times the prediction]</span></li>
+<li>Name the two kinds of equation uncertainty. Which one gets smaller when more trees are cut down to build the equation? Which one gets smaller when more of our own trees are added together? <span class="ans">[Parameter uncertainty: smaller with more cut-down trees, not with adding ours (systematic). Scatter: never smaller with more cut-down trees, partly cancels when ours are added (random).]</span></li>
+<li>25 equal trees, each with 40 % random uncertainty: what is the CV of the total? Why is the real figure for our plot higher? <span class="ans">[40 ÷ √25 = 8 %. Our trees are unequal (effective number about 12) and some errors are shared.]</span></li>
+<li>The D of a tree is 3 % uncertain. How uncertain is D²? <span class="ans">[About 6 %: a power multiplies the percentage error by the exponent.]</span></li>
+<li>Give two systematic errors in this project and explain why measuring 1,000 trees would not remove them. <span class="ans">[Database wood density; carbon fraction; the equation's + 5 % bias; a stick marked at the wrong height. Each pushes every tree the same way, so the average keeps the push.]</span></li>
+<li>Why does the Monte Carlo mean of a single tree sit above the plain-equation value? <span class="ans">[Multiplying by e<sup>ε</sup>, with ε bell-shaped around 0, gives an average factor of e<sup>σ²/2</sup> = 1.066. The pile is not symmetric. The median matches the plain value.]</span></li>
+<li>A report says "CO₂ stored = 23.451 kg". Rewrite it correctly. <span class="ans">["CO₂ ≈ 23 kg (95 % interval 11 to 50 kg), from 20,000 Monte Carlo draws; most of the uncertainty comes from the scatter of the equation; carbon fraction fixed at 0.47."]</span></li>
+</ol>
+
+<h3>8.4 Glossary</h3>
+<table>
+<tr><th style="width:28%">Term</th><th>Plain meaning</th></tr>
+<tr><td>AGB</td><td>above-ground biomass: oven-dry weight of trunk, branches and leaves, in kg</td></tr>
+<tr><td>Allometric equation</td><td>a formula that predicts something hard to measure (weight) from easy measurements (D, H, ρ)</td></tr>
+<tr><td>Bias (systematic error)</td><td>an error that pushes the same way every time; averaging does not remove it</td></tr>
+<tr><td>Bootstrap</td><td>drawing new pretend samples from your own data, with replacement, to see how much a result such as a mean can change</td></tr>
+<tr><td>CI, 95 %</td><td>confidence interval: the range that would contain the true value in 95 of 100 repeats of the method</td></tr>
+<tr><td>CV</td><td>coefficient of variation: SD ÷ mean, as a percentage; the relative error</td></tr>
+<tr><td>DBH, D</td><td>diameter at breast height (1.3 m), in cm; tape circumference ÷ π</td></tr>
+<tr><td>Draw, round</td><td>one repeat of a Monte Carlo simulation: roll all the dice once and calculate one answer</td></tr>
+<tr><td>Independent</td><td>one error does not affect another; knowing one tells you nothing about the other</td></tr>
+<tr><td>Log-normal</td><td>a non-symmetric pile that becomes bell-shaped when you take logarithms; multiplying errors produce it</td></tr>
+<tr><td>Mean, median</td><td>the ordinary average; the middle value when sorted</td></tr>
+<tr><td>Monte Carlo</td><td>drawing every uncertain input from its range of possible values, calculating the result, repeating thousands of times</td></tr>
+<tr><td>Point value</td><td>the single number from the plain equation, ignoring all uncertainty</td></tr>
+<tr><td>Random error</td><td>an error with no pattern, sometimes up and sometimes down; averaging n readings makes it smaller by √n</td></tr>
+<tr><td>Residual scatter, σ</td><td>the vertical spread of real trees around the fitted line, in log units</td></tr>
+<tr><td>Sampling error</td><td>the error that comes from which trees or which piece of ground you happened to measure</td></tr>
+<tr><td>SD</td><td>standard deviation: the typical distance of one value from the mean</td></tr>
+<tr><td>SE</td><td>standard error: the SD of a mean = SD ÷ √n</td></tr>
+<tr><td>Spread</td><td>how far values are from each other; measured by the SD</td></tr>
+<tr><td>Square-add-root rule</td><td>how independent errors combine: square each, add, take the square root (also called "adding in quadrature")</td></tr>
+<tr><td>Systematic error</td><td>see bias</td></tr>
+<tr><td>ρ (rho)</td><td>wood density, g/cm³, usually from a database</td></tr>
+</table>
+
+<h3>8.5 References</h3>
+<ul>
+<li>Chave J. et al. (2014) Improved allometric models to estimate the aboveground biomass of tropical trees. <i>Global Change Biology</i> 20: 3177–3190. doi:10.1111/gcb.12629. Model 4: AGB = 0.0673 (ρD²H)<sup>0.976</sup>, σ = 0.357, n = 4,004, 58 sites; height-free Model 7 with the index E.</li>
+<li>Chave J. et al. (2004) Error propagation and scaling for tropical forest biomass estimates. <i>Philosophical Transactions of the Royal Society B</i> 359: 409–420. Four error sources; D error SD = 0.0062 × D + 0.0904 cm with 5 % big mistakes of 4.64 cm; H error 10 %; ρ error 10 %; plot-level sampling error 10 % at 0.25 ha, 5 % at 1 ha.</li>
+<li>Réjou-Méchain M. et al. (2017) BIOMASS: an R package for estimating above-ground biomass and its uncertainty in tropical forests. <i>Methods in Ecology and Evolution</i> 8: 1163–1167. Implements exactly the Monte Carlo of this guide (function AGBmonteCarlo).</li>
+<li>Zanne A.E. et al. (2009) Global Wood Density Database. Dryad. doi:10.5061/dryad.234.</li>
+<li>IPCC (2006) Guidelines for National Greenhouse Gas Inventories, Vol. 4, Ch. 4: default carbon fraction 0.47.</li>
+<li>Efron B. &amp; Tibshirani R. (1993) <i>An Introduction to the Bootstrap</i>. Chapman &amp; Hall.</li>
+<li>Larjavaara M. &amp; Muller-Landau H.C. (2013) Measuring tree height: a quantitative comparison of two common field methods in a moist tropical forest. <i>Methods in Ecology and Evolution</i> 4: 793–801.</li>
+<li>Lecture slides: From simple measures to a tonne of CO₂ (Ecology &amp; Environment 2026, lecture after the field visit); class tree list TreeSpecies_2026.xlsx.</li>
+</ul>
+</section>
+
+</div>
+</body>
+</html>

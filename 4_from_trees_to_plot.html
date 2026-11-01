@@ -94,6 +94,11 @@ details summary{cursor:pointer; font-weight:600; font-size:14px; color:var(--acc
 .bigstats .vs{font-family:var(--font-display); font-size:18px; color:var(--muted)}
 @media (max-width:420px){ .bigstats{grid-template-columns:1fr; } .bigstats .vs{display:none} }
 .note{background:var(--surface-2); border-radius:8px; padding:12px 14px; font-size:14px}
+.eq{font-family:var(--font-mono); font-size:13.5px; background:var(--surface-2); border-radius:6px; padding:8px 12px; overflow-x:auto; white-space:pre; line-height:1.55}
+.step{border-left:4px solid var(--point); background:var(--surface); border:1px solid var(--line); border-left-width:4px; border-radius:0 8px 8px 0; padding:10px 14px; display:grid; gap:8px}
+.step h3{margin:0; font-size:16px}
+.step p{margin:0; max-width:80ch}
+.step table{width:auto}
 .caution{background:var(--warn-bg); color:var(--warn-fg); border:1px solid var(--warn-line); border-radius:8px; padding:12px 14px; font-size:14px; display:grid; gap:6px}
 .caution b{color:inherit}
 .kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px}
@@ -104,6 +109,11 @@ details summary{cursor:pointer; font-weight:600; font-size:14px; color:var(--acc
 .notice{background:var(--accent-soft); border-radius:10px; padding:16px 18px; display:grid; gap:8px}
 .notice ul{margin:0; padding-left:20px; display:grid; gap:6px}
 .notice li{max-width:80ch}
+.words{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--point); border-radius:0 10px 10px 0; padding:14px 18px; display:grid; gap:8px}
+.words dl{margin:0; display:grid; grid-template-columns:max-content 1fr; gap:6px 14px}
+.words dt{font-weight:600}
+.words dd{margin:0; max-width:80ch}
+@media (max-width:560px){ .words dl{grid-template-columns:1fr} .words dd{margin-bottom:6px} }
 footer{color:var(--muted); font-size:13px; text-align:center; padding-top:8px}
 .mv{transition:transform .35s cubic-bezier(.3,1.3,.5,1)}
 @media (prefers-reduced-motion: reduce){ .mv{transition:none !important} }
@@ -113,35 +123,47 @@ footer{color:var(--muted); font-size:13px; text-align:center; padding-top:8px}
 <div class="wrap">
 
 <header style="display:grid;gap:10px">
-  <div class="eyebrow">Quantifying uncertainty in tree biomass · page 4</div>
+  <div class="eyebrow">Quantifying uncertainty in tree biomass · page 4 of 4</div>
   <h1>From 25 Trees to a Plot</h1>
-  <p class="lede"><strong>What you are looking at.</strong> On page 3 one tree had a biomass uncertainty of about ±40 %. Here we add up 25 measured trees from a Miyawaki plot. Each tree is still ±40 %, yet the total is known to about ±12 %. Why? Random errors partly cancel when you add many trees: one tree comes out high, another low. But some errors are <em>shared</em> (the same wood-density table, the same equation for every tree), and those do not cancel. This page lets you watch both effects.</p>
+  <p class="lede"><strong>What you are looking at.</strong> On page 3, the biomass of one tree was uncertain by about ± 40 %. Here we add up 25 measured trees from a Miyawaki plot. Each tree is still ± 40 %. But the total of the 25 trees is uncertain by only about ± 12 %. Why? Because random errors partly cancel when you add many trees: one tree comes out too high, another too low, and the total ends up close to the truth.</p>
+  <p class="lede">But not all errors cancel. Some errors are <em>shared</em> by many trees: the same wood-density value is used for every tree of a species, and the same equation is used for all 25 trees. If the equation is 1 % too high, every tree is 1 % too high, and the total is also 1 % too high. Shared errors do not cancel. This page lets you watch both effects.</p>
+  <section class="words" aria-label="Words used on this page">
+    <h3>Words used on this page</h3>
+    <dl>
+      <dt>AGB</dt><dd><b>Above-ground biomass.</b> The dry weight of trunk, branches and leaves, in kg.</dd>
+      <dt>Point value</dt><dd>The number from the plain equation with no uncertainty. The point total is the sum of the 25 point values: 286 kg.</dd>
+      <dt>Round</dt><dd>One round of the simulation: every one of the 25 trees gets one random set of errors, the 25 biomasses are added, and the sum goes into the pile. (Page 3 called this a "draw" for one tree.)</dd>
+      <dt>SD</dt><dd><b>Standard deviation.</b> One number that measures spread: roughly the typical distance of a value from the mean.</dd>
+      <dt>CV</dt><dd><b>Coefficient of variation.</b> SD ÷ mean × 100, a percentage. The relative error. On this page a spread written as a percentage is always a CV. An SD always has a unit (m, cm, kg).</dd>
+      <dt>Median</dt><dd>The middle value when all the rounds are sorted.</dd>
+      <dt>95 % interval</dt><dd>The range that holds the middle 95 % of the rounds. Also called the 95 % range.</dd>
+      <dt>Whisker</dt><dd>A horizontal line drawn through a dot to show its 95 % interval. A long whisker means a large uncertainty.</dd>
+      <dt>Shared error</dt><dd>An error that is the same for many trees at once. Example: the wood-density value for a species. Also called a systematic error.</dd>
+      <dt>Independent error</dt><dd>An error that is different for every tree, with no connection between trees. Example: a reading error in the height of one tree. Also called a random error.</dd>
+      <dt>√n</dt><dd>The square root of n. √25 = 5. Adding n equal, independent trees divides the relative error by √n.</dd>
+      <dt>Hectare (ha)</dt><dd>An area of 10,000 m² (100 m × 100 m). Forest results are usually reported per hectare.</dd>
+    </dl>
+  </section>
 </header>
 
 <section class="panel" aria-label="Controls">
   <div class="controls">
     <div class="ctl-group">
-      <h3>Sources of uncertainty (SD = standard deviation)</h3>
-      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onH" checked> Height H (per tree)</label><span class="val">SD <input type="number" id="sdH" value="10" step="0.5" min="0"> %</span></div>
-      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onD" checked> Diameter D (per tree)</label><span class="val">SD <input type="number" id="sdD" value="2.5" step="0.5" min="0"> %</span></div>
-      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onR" checked> Density ρ (per species)</label><span class="val">SD <input type="number" id="sdR" value="10" step="0.5" min="0"> %</span></div>
-      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onP" checked> Equation parameters (all trees)</label><span class="val">SD <input type="number" id="sdP" value="1" step="0.5" min="0"> %</span></div>
-      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onE" checked> Model scatter ε (per tree)</label><span class="val">σ <input type="number" id="sdE" value="0.357" step="0.01" min="0"> log</span></div>
+      <h3>The five dice: sources of uncertainty</h3>
+      <p class="caption">Each box gives the CV (coefficient of variation) of that source: the SD as a percentage of the value. For a 6.0 m tree, CV 10 % means SD = 0.6 m. "Per tree" = a different error for every tree. "Per species" = one error shared by all trees of that species. "All trees" = one error shared by all 25 trees.</p>
+      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onH" checked> Height H (per tree)</label><span class="val">CV <input type="number" id="sdH" value="10" step="0.5" min="0"> %</span></div>
+      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onD" checked> Diameter D (per tree)</label><span class="val">CV <input type="number" id="sdD" value="2.5" step="0.5" min="0"> %</span></div>
+      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onR" checked> Wood density ρ (per species)</label><span class="val">CV <input type="number" id="sdR" value="10" step="0.5" min="0"> %</span></div>
+      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onP" checked> Equation parameters a, b (all trees)</label><span class="val">CV <input type="number" id="sdP" value="1" step="0.5" min="0"> %</span></div>
+      <div class="ctl-row"><label class="lab"><input type="checkbox" id="onE" checked> Scatter of the equation ε (per tree)</label><span class="val">σ <input type="number" id="sdE" value="0.357" step="0.01" min="0"> log</span></div>
     </div>
     <div class="ctl-group">
-      <h3>How the errors are shared</h3>
-      <label class="toggle-box"><input type="checkbox" id="indep"><span><b>Treat ρ and parameter errors as independent per tree</b><br><span class="caption">Off (realistic): in each iteration, one ρ error per <em>species</em> moves all trees of that species together, and one parameter error moves all 25 trees together. On (wrong but instructive): every tree gets its own private ρ and parameter errors, so they cancel like the others.</span></span></label>
-      <p class="caption">Changing any control resets the animation and recomputes panels A, C and D.</p>
+      <h3>Shared or not shared?</h3>
+      <label class="toggle-box"><input type="checkbox" id="indep"><span><b>Give every tree its own ρ error and its own a, b error</b><br><span class="caption">Box empty (realistic): in each round, one ρ error moves all trees of a <em>species</em> together, and one a, b error moves all 25 trees together. Box ticked (not realistic, but useful to see): every tree gets its own private ρ error and a, b error. Then these errors cancel out like the others, and the total looks more certain than it really is.</span></span></label>
+      <p class="caption">Changing any control restarts the animation and recalculates panels A, C and D.</p>
     </div>
   </div>
-  <div class="buttons">
-    <button id="btnStep">Step (1 iteration)</button>
-    <button id="btnPlay" class="primary">Play</button>
-    <button id="btnFast">Fast-forward to 20,000</button>
-    <button id="btnReset">Reset</button>
-    <button id="btnSeed" title="Use a different random sequence">New seed</button>
-    <div class="speed"><label for="speed">Speed: <span id="speedLab">1.0 s per iteration</span></label><input type="range" id="speed" min="0.3" max="3" step="0.1" value="1"></div>
-  </div>
+  <p class="caption"><b>Where are the buttons?</b> Step, Play and Fast-forward are in Panel B below, next to the chart they drive.</p>
   <details>
     <summary>Show the 25 measured trees</summary>
     <div class="tbl-wrap" style="margin-top:8px"><table id="treeTable"><thead><tr><th>#</th><th class="sp">Species</th><th>D (cm)</th><th>H (m)</th><th>ρ (g/cm³)</th><th>AGB point (kg)</th></tr></thead><tbody></tbody></table></div>
@@ -151,52 +173,131 @@ footer{color:var(--muted); font-size:13px; text-align:center; padding-top:8px}
 <section class="panel" aria-label="Panel A">
   <div>
     <div class="panel-tag">PANEL A</div>
-    <h2>Each tree alone</h2>
-    <p class="caption">Each tree simulated on its own, 5,000 draws, sorted by size. Dot = point estimate from the equation; whisker = 95 % interval; right column = CV %. Every tree sits near 40 %, big or small: the relative error of one tree does not depend on its size.</p>
+    <h2>Each tree on its own</h2>
+    <p class="caption">Here each tree is simulated separately, as on page 3, with 5,000 draws. The trees are sorted from biggest to smallest. Orange dot = point value from the equation. Green whisker = 95 % interval. Right column = CV % (relative error). Every tree has a CV near 40 %, big or small: the relative error of one tree does not depend on its size.</p>
   </div>
-  <div class="buttons"><label><input type="checkbox" id="logA" checked> Log-scale x-axis</label><span class="caption">(on a log axis every whisker has the same length: same <em>relative</em> error)</span></div>
+  <div class="buttons"><label><input type="checkbox" id="logA" checked> Log scale on the horizontal axis</label><span class="caption">(on a log scale every whisker has the same length, because every tree has the same <em>relative</em> error)</span></div>
   <div class="chart" id="chartA"></div>
+</section>
+
+<section class="panel" aria-label="A small example with three trees">
+  <div>
+    <div class="panel-tag">BEFORE PANEL B · A SMALL EXAMPLE, BY HAND</div>
+    <h2>Three trees first</h2>
+    <p class="caption">Panel B does for 25 trees what this box does for three. Read this once, slowly, and Panel B will be easy. The three trees are real rows from the table above, and they are three different species.</p>
+  </div>
+
+  <div class="step">
+    <h3>Step 1 · The plain answer for each tree, then add</h3>
+    <p>Each tree gets its own weight from the same equation. The total of the plot is the three weights added together. That is all "adding up trees" means.</p>
+    <div class="eq">AGB = 0.0673 × (ρ × D² × H)^0.976
+
+Tree #1   T. bellirica    D = 4.9 cm   H = 4.4 m   ρ = 0.62   size value = 0.62 × 4.9² × 4.4 =  65.5   AGB =  4.0 kg
+Tree #14  P. cineraria    D = 5.1 cm   H = 5.1 m   ρ = 0.75   size value = 0.75 × 5.1² × 5.1 =  99.5   AGB =  6.0 kg
+Tree #8   P. gujava       D = 6.8 cm   H = 5.2 m   ρ = 0.70   size value = 0.70 × 6.8² × 5.2 = 168.3   AGB = 10.0 kg
+
+Point total = 4.0 + 6.0 + 10.0 = 20.0 kg</div>
+  </div>
+
+  <div class="step">
+    <h3>Step 2 · Each tree alone is uncertain by about ± 40 %</h3>
+    <p>On page 3 we saw that one tree's weight from the equation has a CV of about 40 %, almost all of it from the scatter die (a real tree is not on the line). Written as an SD in kg, and as a 95 % interval (from ÷ 2 to × 2):</p>
+    <div class="eq">Tree #1    4.0 kg   SD = 0.40 ×  4.0 = 1.6 kg   95 % interval about 2.0 to  8.0 kg
+Tree #14   6.0 kg   SD = 0.40 ×  6.0 = 2.4 kg   95 % interval about 3.0 to 12.0 kg
+Tree #8   10.0 kg   SD = 0.40 × 10.0 = 4.0 kg   95 % interval about 5.0 to 20.0 kg</div>
+    <p>The bigger tree has the bigger SD in kg, although all three have the same 40 %. This is what Panel A showed: on a log scale every whisker is the same length.</p>
+  </div>
+
+  <div class="step">
+    <h3>Step 3 · One round: roll a die for every tree, multiply, then add</h3>
+    <p>A round is one possible world. In a round, every tree gets its own roll of the scatter die. The roll is a multiplying factor: a factor of 1.4 means "this tree is really 40 % heavier than the equation says", a factor of 0.7 means "30 % lighter". We multiply each tree's weight by its own factor, then add the three results. (To keep the arithmetic short, this box rolls only the scatter die. The page rolls all five.)</p>
+    <div class="eq">Total of a round = (4.0 × factor for #1) + (6.0 × factor for #14) + (10.0 × factor for #8)
+
+Round 1   #1: 4.0 × 1.4 = 5.6     #14: 6.0 × 0.7 = 4.2     #8: 10.0 × 1.0 = 10.0
+          total = 5.6 + 4.2 + 10.0 = 19.8 kg      1 % below 20.0
+
+Round 2   #1: 4.0 × 1.2 = 4.8     #14: 6.0 × 1.3 = 7.8     #8: 10.0 × 1.1 = 11.0
+          total = 4.8 + 7.8 + 11.0 = 23.6 kg     18 % above 20.0
+
+Round 3   #1: 4.0 × 0.8 = 3.2     #14: 6.0 × 0.9 = 5.4     #8: 10.0 × 0.7 =  7.0
+          total = 3.2 + 5.4 +  7.0 = 15.6 kg     22 % below 20.0
+
+Round 4   #1: 4.0 × 0.6 = 2.4     #14: 6.0 × 1.5 = 9.0     #8: 10.0 × 0.9 =  9.0
+          total = 2.4 + 9.0 +  9.0 = 20.4 kg      2 % above 20.0</div>
+    <p><b>Round 1:</b> tree #1 went up by 40 %, tree #14 went down by 30 %, tree #8 did not move. One up and one down: they <b>cancelled</b>, and the total is only 1 % away from 20.0 kg. <b>Round 4:</b> the same thing, tree #1 far down and tree #14 far up, total 2 % away.</p>
+    <p><b>Round 2:</b> all three went up. <b>Round 3:</b> all three went down. Nothing cancelled in these rounds, so the total moved a lot, by 18 % and 22 %. This can happen, but it is not common: for three independent dice to all go the same way is like three coins all landing heads, about 1 round in 4. With 25 trees it is like 25 coins all landing heads, which almost never happens. That is why the total of many trees stays close to the point total.</p>
+    <p>Now do this 20,000 times and write down every total. That list of 20,000 totals is the pile in Panel B. Its median is close to 20.0 kg, and its spread is the uncertainty of the plot total.</p>
+  </div>
+
+  <div class="step">
+    <h3>Step 4 · How big is the spread of the total? Square, add, square root</h3>
+    <p>We do not need 20,000 rounds to guess the answer. When the errors are independent (every tree rolls its own die), the SDs in kg combine by the same rule as on page 3:</p>
+    <div class="eq">SD of total = √(SD₁² + SD₁₄² + SD₈²) = √(1.6² + 2.4² + 4.0²) = √(2.6 + 5.8 + 16.0) = √24.4 = 4.9 kg
+
+CV of total = 4.9 ÷ 20.0 = 25 %        (each tree alone was 40 %)
+
+95 % interval of the total: roughly 20.0 − 2 × 4.9 to 20.0 + 2 × 4.9 = about 10 to 30 kg</div>
+    <p>So three trees added together are known to 25 %, better than any one of them at 40 %. Not as good as the textbook 40 % ÷ √3 = 23 %, because that rule is for three <b>equal</b> trees. Here tree #8 is half the total, so its die matters most, and the plot behaves like 2.6 equal trees, not 3. Panel C shows the same thing for 25 trees: the green curve stays above the dashed √n line.</p>
+  </div>
+
+  <div class="step">
+    <h3>Step 5 · A shared error does not cancel</h3>
+    <p>So far every tree rolled its own die. Some errors are not like that. The equation (a and b) is the same for all three trees. If it is 1 % too high, all three trees are 1 % too high in the same round. They move together, never one up and one down. There is nothing to cancel.</p>
+    <div class="eq">Equation 1 % too high   →   #1: 4.0 × 1.01 = 4.04    #14: 6.0 × 1.01 = 6.06    #8: 10.0 × 1.01 = 10.10    total = 20.2 kg   (+1 %)</div>
+    <p>For a shared error the total moves by the same percentage as each tree. It does not shrink by the square-add-root rule, and it does not shrink however many trees you add. Add 1,000 trees that all use the same equation, and the 1 % is still there. That is why the green curve in Panel C never reaches zero: the shared part is a floor.</p>
+    <p><b>Wood density is shared too, but only within a species.</b> Our three trees are three different species, so each uses its own density value from the table, and their density errors are independent, like the scatter: they cancel. On the full page it is different: six of the 25 trees are T. bellirica and all six use the same value 0.62. If that value is 10 % too high, all six go up by 10 % together. In Panel B you can watch trees of one species move in the same direction in every round.</p>
+  </div>
+
+  <div class="note"><b>The whole page in three lines.</b> Each round: weight of every tree with its own rolled errors, then add them up. Independent errors shrink in the total by the square-add-root rule. Shared errors do not shrink. Panel B shows the rounds, Panel C shows the shrinking, and the "give every tree its own error" box above switches the shared errors off so you can see the difference.</div>
 </section>
 
 <section class="panel" aria-label="Panel B">
   <div>
     <div class="panel-tag">PANEL B</div>
     <h2>Adding them up</h2>
-    <p class="caption">One iteration = one possible "world": all 25 trees get their drawn values at once (dots jiggle to the new positions; the grey tick is each tree's point value), the 25 values are summed, and the sum drops into the histogram of plot totals. Trees of the same species share their ρ error, so watch them move together.</p>
+    <p class="caption">One round = one possible "world". In each round, all 25 trees get their random errors at the same time. The green dots move to the new values (the grey tick on each row is the tree's point value). The 25 values are added up, exactly as in Step 3 of the three-tree example: total of the round = AGB₁ + AGB₂ + … + AGB₂₅, each with its own rolled errors. The sum drops into the histogram of plot totals below. Trees of the same species share the same ρ error, so watch them move together, in the same direction.</p>
   </div>
-  <div class="counter">Iterations so far: <b id="nIter">0</b> of 20,000</div>
+  <div class="buttons">
+    <button id="btnStep">Step (1 round)</button>
+    <button id="btnPlay" class="primary">Play</button>
+    <button id="btnFast">Fast-forward to 20,000</button>
+    <button id="btnReset">Reset</button>
+    <button id="btnSeed" title="Use a different random sequence">New random numbers</button>
+    <div class="speed"><label for="speed">Speed: <span id="speedLab">1.0 s per round</span></label><input type="range" id="speed" min="0.3" max="3" step="0.1" value="1"></div>
+  </div>
+  <div class="counter">Rounds so far: <b id="nIter">0</b> of 20,000</div>
   <div class="chart" id="strip"></div>
-  <div class="sumline"><span>Σ of 25 trees =</span><span class="big" id="sumVal">286 kg</span></div>
+  <div class="sumline"><span>Sum of the 25 trees =</span><span class="big" id="sumVal">286 kg</span></div>
   <div class="arrow" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 3v18M6 14l8 8 8-8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
   <div class="chart" id="histB"></div>
   <div class="legend">
-    <span style="--sw:var(--hist)">Pile of plot totals</span>
-    <span style="--sw:var(--band)">Middle 95 %</span>
-    <span style="--sw:var(--point)">Point total</span>
-    <span style="--sw:var(--marker)">Median</span>
+    <span style="--sw:var(--hist)">Pile of plot totals (histogram)</span>
+    <span style="--sw:var(--band)">Middle 95 % of rounds (95 % interval)</span>
+    <span style="--sw:var(--point)">Point total (plain equation)</span>
+    <span style="--sw:var(--marker)">Median of the rounds</span>
   </div>
   <div class="kpis" id="kpisB"></div>
   <div class="bigstats">
-    <div class="cell"><div class="v" id="bigTree">40 %</div><div class="l">average CV of one tree</div></div>
+    <div class="cell"><div class="v" id="bigTree">40 %</div><div class="l">average CV of one tree on its own</div></div>
     <div class="vs">versus</div>
-    <div class="cell"><div class="v" id="bigTotal" style="color:var(--accent)">– %</div><div class="l">CV of the 25-tree total</div></div>
+    <div class="cell"><div class="v" id="bigTotal" style="color:var(--accent)">– %</div><div class="l">CV of the total of all 25 trees</div></div>
   </div>
   <div class="note" id="noteMean">
-    <b>Why is the mean above the point total?</b> The point total is 286 kg, but the mean of the draws comes out near 306 kg. The equation gives the <em>median</em> tree; the real tree is median × e<sup>ε</sup>. With σ = 0.357, e<sup>ε</sup> averages e<sup>σ²/2</sup> = e<sup>0.064</sup> ≈ 1.066, so on average each tree is 6.6 % heavier than the equation says (a log-normal effect: doubling adds more than halving removes). The median of the draws is the fairer "middle" to report; it stays near the point total.
+    <b>Why is the mean of the rounds higher than the point total?</b> The point total is 286 kg, but the mean of the rounds comes out near 306 kg, about 7 % higher. Reason: the scatter factor e<sup>ε</sup> is not symmetric. Its 95 % range runs from factor 0.5 (half as heavy) to factor 2.0 (twice as heavy). A factor of 2.0 adds 100 %; a factor of 0.5 removes only 50 %. So, averaged over many rounds, each tree comes out about 7 % heavier than the plain equation says (the exact factor is e<sup>σ²/2</sup> = 1.066). The median of the rounds is the fairer "middle value" to report. It stays close to the point total.
   </div>
 </section>
 
 <section class="panel" aria-label="Panel C">
   <div>
     <div class="panel-tag">PANEL C</div>
-    <h2>Why the error shrinks</h2>
-    <p class="caption">Add the trees one at a time, in table order, and watch the CV % of the running total fall. The dashed reference is 40 %/√n, the textbook rule for n <em>equal</em> and <em>independent</em> trees.</p>
+    <h2>Why the error gets smaller</h2>
+    <p class="caption">Add the trees one at a time, in the order of the table, and watch the CV % of the running total fall. Horizontal axis: how many trees have been added so far. Vertical axis: CV % of their total. The grey dashed line is 40 % ÷ √n, the textbook rule for n trees that are all <em>equal in size</em> and have <em>independent</em> errors.</p>
   </div>
   <div class="chart" id="chartC"></div>
   <div class="legend">
-    <span class="ln" style="--sw:var(--accent)">ρ shared per species, parameters shared by all (realistic)</span>
-    <span class="ln" style="--sw:var(--indep)">All errors independent per tree</span>
-    <span class="ln" style="--sw:var(--muted)">40 % / √n reference</span>
+    <span class="ln" style="--sw:var(--accent)">Green: ρ error shared per species, a, b error shared by all trees (realistic)</span>
+    <span class="ln" style="--sw:var(--indep)">Blue: every error independent for every tree</span>
+    <span class="ln" style="--sw:var(--muted)">Grey dashed: 40 % ÷ √n</span>
   </div>
   <div class="note" id="noteC"></div>
 </section>
@@ -205,31 +306,32 @@ footer{color:var(--muted); font-size:13px; text-align:center; padding-top:8px}
   <div>
     <div class="panel-tag">PANEL D</div>
     <h2>Per hectare</h2>
-    <p class="caption">Field plots are small; reports are "per hectare". Dividing by the plot area and multiplying by 10,000 m² keeps the same <em>percentage</em> uncertainty, so the interval scales with the number.</p>
+    <p class="caption">Field plots are small. Reports give results "per hectare" (10,000 m²). To convert, divide by the plot area and multiply by 10,000. This keeps the same <em>percentage</em> uncertainty. The numbers get bigger, and the interval gets bigger with them.</p>
   </div>
   <div class="controls">
     <div class="ctl-group">
       <div class="ctl-row"><span class="lab">Trees in the plot</span><span class="val"><input type="number" id="nTrees" value="25" step="1" min="1"> trees</span></div>
       <div class="ctl-row"><span class="lab">Planting density</span><span class="val"><input type="number" id="dens" value="3" step="0.1" min="0.05"> trees / m²</span></div>
-      <div class="ctl-row"><span class="lab">… or plot area directly</span><span class="val"><input type="number" id="area" value="8.33" step="0.1" min="0.1"> m²</span></div>
-      <p class="caption" id="areaNote">Area = trees ÷ density. Edit either density or area; the other follows. If you change the number of trees away from 25, the total is scaled by (trees ÷ 25), assuming the 25 measured trees are typical.</p>
+      <div class="ctl-row"><span class="lab">… or type the plot area directly</span><span class="val"><input type="number" id="area" value="8.33" step="0.1" min="0.1"> m²</span></div>
+      <p class="caption" id="areaNote">Area = number of trees ÷ density. Change either the density or the area; the other one is updated. If you change the number of trees away from 25, the total is multiplied by (trees ÷ 25). This assumes the 25 measured trees are typical of the others.</p>
     </div>
     <div class="kpis" id="kpisD"></div>
   </div>
   <div class="caution">
-    <b>Caution: this is an extrapolation.</b>
-    <span>Scaling about 8 m² up to 10,000 m² multiplies by roughly 1,200. The interval shown is only the measurement + model uncertainty of <em>these</em> 25 trees. It says nothing about the <em>sampling</em> uncertainty: had you measured a different 8 m² of the same planting, you would have got a different total. Chave et al. (2004) found that sampling error alone is about 10 % for a 0.25 ha plot and about 5 % for a 1 ha plot; for a plot of a few square metres it is far larger. A per-hectare number from one tiny plot should be reported with that warning attached. <b>Sanity check:</b> at 3 trees per m² these 25 illustrative trees give roughly 340 t/ha, which is what a mature tropical rainforest carries, not a 5-year-old planting. Either the density is lower, the illustrative D and H are too generous, or the equation (tested on natural forest, D ≥ 5 cm) overestimates small crowded planted trees. A result that fails a sanity check is a finding to report, with the suspects named.</span>
+    <b>Caution: this is a big jump from a small plot.</b>
+    <span>Going from about 8 m² to 10,000 m² means multiplying by roughly 1,200. The interval shown covers only the measurement and equation uncertainty of <em>these</em> 25 trees. It says nothing about a second kind of uncertainty, the <em>sampling</em> uncertainty: if you had measured a different 8 m² of the same planting, you would have got a different total. Chave et al. (2004) found that sampling error alone is about 10 % for a plot of 0.25 hectare and about 5 % for 1 hectare. For a plot of a few square metres it is far larger. A per-hectare number from one tiny plot must be reported with this warning next to it.</span>
+    <span><b>Sanity check (does the number make sense?):</b> at 3 trees per m², these 25 example trees give roughly 340 tonnes per hectare. That is what a fully grown tropical rainforest carries, not a 5-year-old planting. So something is off. Possible reasons: the real density is lower than 3 per m²; the example D and H values are too large; or the equation (built from natural forest trees with D ≥ 5 cm) gives too-high values for small, crowded, planted trees. A result that fails a sanity check is not a failure. It is a finding: write it down and name the possible reasons.</span>
   </div>
 </section>
 
 <section class="notice" aria-label="What to notice">
   <h2>What to notice</h2>
   <ul>
-    <li><b>Adding shrinks random error.</b> Each tree is ±40 %, the 25-tree total is about ±12 %. High and low draws cancel. This is why foresters measure many trees instead of measuring one tree very carefully.</li>
-    <li><b>But not as fast as 1/√n.</b> With 25 equal trees the CV would be 40/√25 = 8 %. Our trees are very unequal (the two biggest are a third of the total), so the "effective" number of trees is smaller than 25, and the curve in panel C sits above the dashed line.</li>
-    <li><b>Shared errors do not shrink.</b> Flip the "independent per tree" switch: the curve drops further. In reality every tree of a species uses the same density value and every tree uses the same equation, so that part of the error is systematic and stays, however many trees you add. This becomes a floor when n is large.</li>
-    <li><b>Mean ≠ median for lopsided piles.</b> The log-normal scatter pushes the mean about 6–7 % above the point total. Report the median and the 95 % interval.</li>
-    <li><b>Per-hectare numbers from tiny plots are extrapolations.</b> The interval covers measurement and model error only; the sampling error of "which 8 m² did we pick" is extra and probably bigger.</li>
+    <li><b>Adding up trees makes random error smaller.</b> Each tree is ± 40 %; the total of 25 trees is about ± 12 %. High and low errors cancel. This is why foresters measure many trees instead of measuring one tree very carefully.</li>
+    <li><b>But the error does not fall as fast as 40 % ÷ √n.</b> With 25 equal trees the CV would be 40 ÷ √25 = 8 %. Our trees are very unequal: the two biggest make up a third of the total. So the plot behaves like fewer than 25 trees, and the green curve in Panel C stays above the dashed line.</li>
+    <li><b>Shared errors do not get smaller.</b> Tick the "give every tree its own error" box: the curve drops further. In reality, every tree of a species uses the same density value and every tree uses the same equation. That part of the error is systematic. It stays the same however many trees you add. With very many trees it becomes a floor below which the CV cannot go.</li>
+    <li><b>Mean and median are different when the pile is not symmetric.</b> The scatter pushes the mean about 6 to 7 % above the point total. Report the median and the 95 % interval.</li>
+    <li><b>Per-hectare numbers from tiny plots are a big jump.</b> The interval covers measurement and equation error only. The sampling error ("which 8 m² did we pick?") is extra, and probably bigger.</li>
   </ul>
 </section>
 
@@ -339,7 +441,7 @@ function drawA(){
     s += `<circle cx="${px(t.point)}" cy="${y}" r="4.5" fill="var(--point)" stroke="var(--surface)" stroke-width="1.5"/>`;
     s += `<text x="${width-mR+8}" y="${y+4}" font-size="12.5" fill="var(--fg)" font-family="var(--font-mono)">${fmt(st.cv*100,0)}</text>`; });
   s += `<line x1="${mL}" x2="${width-mR}" y1="${mT+rowH*NT}" y2="${mT+rowH*NT}" stroke="var(--fg)"/>`;
-  s += `<text x="${(mL+width-mR)/2}" y="${height-6}" font-size="13" text-anchor="middle" fill="var(--fg)">AGB of one tree (kg)${log?' — log scale':''}</text></svg>`;
+  s += `<text x="${(mL+width-mR)/2}" y="${height-6}" font-size="13" text-anchor="middle" fill="var(--fg)">AGB of one tree (kg)${log?', log scale':''}</text></svg>`;
   el.innerHTML = s;
   const avg = perTree.reduce((a,t)=>a+t.st.cv,0)/NT; $('bigTree').textContent = fmt(avg*100,0)+' %';
   return avg;
@@ -357,7 +459,7 @@ function buildStrip(){
     s += `<text x="${mL-6}" y="${y+3.5}" font-size="10.5" text-anchor="end" fill="var(--muted)"><tspan font-family="var(--font-mono)">#${t.id}</tspan>${narrow ? '' : ' <tspan font-style="italic">'+abbrev(t.species)+'</tspan>'}</text>`;
     s += `<line x1="${px(t.point)}" x2="${px(t.point)}" y1="${y-5}" y2="${y+5}" stroke="var(--muted)" stroke-width="1.5"/>`;
     s += `<g class="mv" id="dot${i}" transform="translate(${px(t.point)} ${y})"><circle r="4" fill="var(--hist)" stroke="var(--surface)" stroke-width="1"/></g>`; });
-  s += `<text x="${(mL+width-mR)/2}" y="${height-4}" font-size="12.5" text-anchor="middle" fill="var(--fg)">AGB drawn for each tree (kg, log scale)</text></svg>`;
+  s += `<text x="${(mL+width-mR)/2}" y="${height-4}" font-size="12.5" text-anchor="middle" fill="var(--fg)">AGB of each tree in this round (kg, log scale)</text></svg>`;
   el.innerHTML = s; stripGeom = { px };
 }
 function showRow(row){ for (let i=0;i<NT;i++){ const g = $('dot'+i); const tr = g.getAttribute('transform').match(/translate\(([-\d.]+) ([-\d.]+)\)/); g.setAttribute('transform', `translate(${stripGeom.px(row[i]).toFixed(1)} ${tr[2]})`); } }
@@ -378,8 +480,8 @@ function drawHist(st){
   s += `<line x1="${mL}" x2="${width-mR}" y1="${py(0)}" y2="${py(0)}" stroke="var(--fg)"/>`;
   niceTicks(x0, x1, 7).forEach(t => { if (t<x0||t>x1) return; s += `<line x1="${px(t)}" x2="${px(t)}" y1="${py(0)}" y2="${py(0)+5}" stroke="var(--fg)"/><text x="${px(t)}" y="${py(0)+19}" font-size="12" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)">${t}</text>`; });
   s += `<text x="${(mL+width-mR)/2}" y="${height-6}" font-size="13" text-anchor="middle" fill="var(--fg)">Total AGB of the 25 trees (kg)</text>`;
-  s += `<text transform="translate(13 ${(mT+py(0))/2}) rotate(-90)" font-size="13" text-anchor="middle" fill="var(--fg)">Iterations</text>`;
-  s += `<line x1="${px(POINT_TOTAL)}" x2="${px(POINT_TOTAL)}" y1="${mT}" y2="${py(0)}" stroke="var(--point)" stroke-width="2"/><text x="${px(POINT_TOTAL)-5}" y="${mT+12}" font-size="12" text-anchor="end" fill="var(--point)" font-weight="600">point ${fmt(POINT_TOTAL,0)} kg</text>`;
+  s += `<text transform="translate(13 ${(mT+py(0))/2}) rotate(-90)" font-size="13" text-anchor="middle" fill="var(--fg)">Number of rounds</text>`;
+  s += `<line x1="${px(POINT_TOTAL)}" x2="${px(POINT_TOTAL)}" y1="${mT}" y2="${py(0)}" stroke="var(--point)" stroke-width="2"/><text x="${px(POINT_TOTAL)-5}" y="${mT+12}" font-size="12" text-anchor="end" fill="var(--point)" font-weight="600">point total ${fmt(POINT_TOTAL,0)} kg</text>`;
   if (st && n>=20){ s += `<line x1="${px(st.median)}" x2="${px(st.median)}" y1="${mT}" y2="${py(0)}" stroke="var(--marker)" stroke-width="1.5" stroke-dasharray="5 3"/><text x="${px(st.median)+5}" y="${mT+12}" font-size="12" fill="var(--fg)">median ${fmt(st.median,0)} kg</text>`;
     s += `<text x="${px(st.lo)}" y="${py(0)+34}" font-size="11.5" text-anchor="middle" fill="var(--accent)" font-weight="600">2.5 %: ${fmt(st.lo,0)}</text><text x="${px(st.hi)}" y="${py(0)+34}" font-size="11.5" text-anchor="middle" fill="var(--accent)" font-weight="600">97.5 %: ${fmt(st.hi,0)}</text>`; }
   if (out) s += `<text x="${width-mR}" y="${py(0)-8}" font-size="11.5" text-anchor="end" fill="var(--muted)">${out} outside the axis</text>`;
@@ -390,11 +492,11 @@ function kpi(l, v, r){ return `<div class="kpi"><div class="l">${l}</div><div cl
 function updateB(){
   const st = n >= 2 ? stats(totals.subarray(0,n)) : null; lastSt = st;
   $('nIter').textContent = n.toLocaleString('en-US');
-  $('kpisB').innerHTML = kpi('Point total', fmt(POINT_TOTAL,0)+' kg', 'sum of the 25 equation values')
-    + kpi('Median of draws', st ? fmt(st.median,0)+' kg' : '–', 'report this')
-    + kpi('Mean of draws', st ? fmt(st.mean,0)+' kg' : '–', st ? `+${fmt((st.mean/POINT_TOTAL-1)*100,1)} % above point` : '')
-    + kpi('95 % interval', st ? `${fmt(st.lo,0)}–${fmt(st.hi,0)} kg` : '–', st ? `−${fmt((1-st.lo/st.median)*100,0)} % / +${fmt((st.hi/st.median-1)*100,0)} % of median` : '')
-    + kpi('CV % of total', st ? fmt(st.cv*100,1)+' %' : '–', st ? `SD ${fmt(st.sd,0)} kg` : '');
+  $('kpisB').innerHTML = kpi('Point total', fmt(POINT_TOTAL,0)+' kg', 'sum of the 25 plain-equation values')
+    + kpi('Median of the rounds', st ? fmt(st.median,0)+' kg' : '–', 'this is the value to report')
+    + kpi('Mean of the rounds', st ? fmt(st.mean,0)+' kg' : '–', st ? `${fmt((st.mean/POINT_TOTAL-1)*100,1)} % above the point total` : '')
+    + kpi('95 % interval', st ? `${fmt(st.lo,0)}–${fmt(st.hi,0)} kg` : '–', st ? `−${fmt((1-st.lo/st.median)*100,0)} % / +${fmt((st.hi/st.median-1)*100,0)} % around the median` : '')
+    + kpi('CV % of the total', st ? fmt(st.cv*100,1)+' %' : '–', st ? `SD ${fmt(st.sd,0)} kg` : '');
   $('bigTotal').textContent = st ? fmt(st.cv*100,0)+' %' : '– %';
   drawHist(st); updateD();
 }
@@ -455,11 +557,11 @@ function drawC(avgCv){
   const labs = [ {v:curveSys[NT-1], col:'var(--accent)', w:600}, {v:curveInd[NT-1], col:'var(--indep)', w:600}, {v:ref[NT-1], col:'var(--muted)', w:400} ].sort((a,b)=>b.v-a.v);
   labs.forEach(l => { l.y = py(l.v)+4; }); for (let i=1;i<labs.length;i++){ if (labs[i].y - labs[i-1].y < 14) labs[i].y = labs[i-1].y + 14; }
   labs.forEach(l => { s += `<text x="${px(NT)+8}" y="${l.y}" font-size="12" fill="${l.col}" font-weight="${l.w}" font-family="var(--font-mono)">${fmt(l.v,1)} %</text>`; });
-  s += `<text x="${(mL+width-mR)/2}" y="${height-6}" font-size="13" text-anchor="middle" fill="var(--fg)">Number of trees added (table order)</text>`;
-  s += `<text transform="translate(13 ${(mT+py(0))/2}) rotate(-90)" font-size="13" text-anchor="middle" fill="var(--fg)">CV % of running total</text></svg>`;
+  s += `<text x="${(mL+width-mR)/2}" y="${height-6}" font-size="13" text-anchor="middle" fill="var(--fg)">Number of trees added so far (in table order)</text>`;
+  s += `<text transform="translate(13 ${(mT+py(0))/2}) rotate(-90)" font-size="13" text-anchor="middle" fill="var(--fg)">CV % of the total so far</text></svg>`;
   el.innerHTML = s;
   const biggest = Math.max(...TREES.map(t=>t.point));
-  $('noteC').innerHTML = `<b>Reading the curves.</b> For 25 equal, independent trees the CV would be ${fmt(avgCv*100,0)}/√25 = ${fmt(avgCv*100/5,1)} %. Our trees are unequal: the biggest (#25, ${fmt(biggest,0)} kg) is ${fmt(biggest/POINT_TOTAL*100,0)} % of the total, so it dominates the sum. The "effective" number of trees, n<sub>eff</sub> = (Σw)² / Σw², is only <b>${fmt(nEff,1)}</b>, and ${fmt(avgCv*100,0)}/√${fmt(nEff,1)} ≈ ${fmt(avgCv*100/Math.sqrt(nEff),1)} % is close to the independent curve (${fmt(curveInd[NT-1],1)} %). The realistic curve ends higher (${fmt(curveSys[NT-1],1)} %) because the shared ρ and parameter errors never cancel: add 1,000 more trees of the same species mix and it would flatten towards a floor of about ${fmt(floorPct,0)} %, set by the systematic sources alone (each species' shared ρ error, weighted by its share of the total, plus the shared parameter error).`;
+  $('noteC').innerHTML = `<b>How to read the curves.</b> If all 25 trees were equal in size and all errors were independent, the CV of the total would be ${fmt(avgCv*100,0)} ÷ √25 = ${fmt(avgCv*100/5,1)} %. But our trees are very unequal. The biggest one (#25, ${fmt(biggest,0)} kg) alone is ${fmt(biggest/POINT_TOTAL*100,0)} % of the total, so its error matters much more than the others. The plot behaves like only <b>${fmt(nEff,1)}</b> equal trees (this "effective number" is calculated as (sum of weights)² ÷ (sum of squared weights)). Check: ${fmt(avgCv*100,0)} ÷ √${fmt(nEff,1)} ≈ ${fmt(avgCv*100/Math.sqrt(nEff),1)} %, close to the end of the blue curve (${fmt(curveInd[NT-1],1)} %). The green (realistic) curve ends higher, at ${fmt(curveSys[NT-1],1)} %, because the shared ρ and a, b errors never cancel. If you added 1,000 more trees with the same mix of species, the green curve would flatten out at a floor of about ${fmt(floorPct,0)} %. That floor comes from the shared errors alone.`;
 }
 
 // ---------- Panel D ----------
@@ -471,8 +573,8 @@ function updateD(){
   const scale = nTrees/NT;
   const med = (st ? st.median : POINT_TOTAL)*scale, lo = st ? st.lo*scale : NaN, hi = st ? st.hi*scale : NaN;
   const perM2 = med/area, loM2 = lo/area, hiM2 = hi/area; const ha = 10000/area; const tHa = perM2*10000/1000, tLo = loM2*10000/1000, tHi = hiM2*10000/1000;
-  const rng = (a,b,d,u) => st ? `95 %: ${fmt(a,d)}–${fmt(b,d)} ${u}` : 'run the simulation for an interval';
-  $('kpisD').innerHTML = kpi('Plot area', fmt(area,2)+' m²', `× ${fmt(ha,0)} to reach one hectare`)
+  const rng = (a,b,d,u) => st ? `95 % interval: ${fmt(a,d)}–${fmt(b,d)} ${u}` : 'run at least 200 rounds to get an interval';
+  $('kpisD').innerHTML = kpi('Plot area', fmt(area,2)+' m²', `one hectare is ${fmt(ha,0)} times bigger`)
     + kpi(st ? 'Biomass per m² (median)' : 'Biomass per m² (point)', fmt(perM2,2)+' kg/m²', rng(loM2, hiM2, 2, 'kg/m²'))
     + kpi('Biomass per hectare', fmt(tHa,1)+' t/ha', rng(tLo, tHi, 1, 't/ha'))
     + kpi('Carbon per hectare', fmt(tHa*CF,1)+' t C/ha', rng(tLo*CF, tHi*CF, 1, 't C/ha'))
@@ -488,7 +590,7 @@ $('btnPlay').addEventListener('click', () => { if (playing) stopPlay(); else sta
 $('btnFast').addEventListener('click', fastForward);
 $('btnReset').addEventListener('click', reset);
 $('btnSeed').addEventListener('click', () => { seed = (Math.random()*4294967295)>>>0; reset(); });
-$('speed').addEventListener('input', () => { $('speedLab').textContent = fmt(speedSec(),1)+' s per iteration'; });
+$('speed').addEventListener('input', () => { $('speedLab').textContent = fmt(speedSec(),1)+' s per round'; });
 ['onH','onD','onR','onP','onE','sdH','sdD','sdR','sdP','sdE','indep'].forEach(id => $(id).addEventListener('change', reset));
 $('logA').addEventListener('change', drawA);
 $('nTrees').addEventListener('input', updateD); $('dens').addEventListener('input', () => { areaMode = 'density'; updateD(); }); $('area').addEventListener('input', () => { areaMode = 'area'; updateD(); });

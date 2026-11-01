@@ -1,11 +1,38 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Uncertainty in Tree Biomass</title>
-<style>:root{--bg:#fff;--fg:#1a1a1a;--mut:#555;--card:#f4f6f3;--acc:#1f6f50}@media(prefers-color-scheme:dark){:root{--bg:#141614;--fg:#eee;--mut:#aaa;--card:#1f241f;--acc:#7fd1a8}}
-body{margin:0;padding:24px 16px;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif;max-width:760px;margin-inline:auto}h1{font-size:1.6rem}a.card{display:block;background:var(--card);border-radius:10px;padding:14px 16px;margin:10px 0;text-decoration:none;color:inherit}a.card b{color:var(--acc)}small{color:var(--mut)}</style></head><body>
+<style>:root{--bg:#fff;--fg:#1a1a1a;--mut:#555;--card:#f4f6f3;--acc:#1f6f50;--line:#d9ded8}@media(prefers-color-scheme:dark){:root{--bg:#141614;--fg:#eee;--mut:#aaa;--card:#1f241f;--acc:#7fd1a8;--line:#333a33}}
+body{margin:0;padding:24px 16px;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif;max-width:760px;margin-inline:auto}h1{font-size:1.6rem}h2{font-size:1.2rem;margin-top:28px}
+a.card{display:block;background:var(--card);border-radius:10px;padding:14px 16px;margin:10px 0;text-decoration:none;color:inherit}a.card b{color:var(--acc)}a.card .step{display:inline-block;font-size:.8rem;color:var(--mut);margin-bottom:2px}
+small{color:var(--mut)}.how{border:1px solid var(--line);border-radius:10px;padding:12px 16px}.how ol,.how ul{margin:6px 0 0;padding-left:22px}.how li{margin:4px 0}</style></head><body>
 <h1>Quantifying uncertainty in tree biomass</h1><p><small>Ecology &amp; Environment 2026 · material for the class after the Miyawaki field visit and for the class project</small></p>
-<a class="card" href="Quantifying_Uncertainty_Tree_Biomass_Student_Guide.pdf"><b>Student guide (PDF, 26 pages)</b><br>Read Parts 1–3 before class; Parts 4–8 for the project. Contains the checklist and exam practice.</a>
-<h2>Interactive pages</h2>
-<a class="card" href="1_dice_bootstrap.html"><b>1 · Dice to Bootstrap</b><br>Probability as long-run frequency; averages of dice; the bootstrap of 24 readings of tree #406. (Parts 1–2)</a>
-<a class="card" href="2_equation_born.html"><b>2 · How an Equation Is Born</b><br>Felled trees, the fitted line, parameter uncertainty vs residual scatter. (Part 3)</a>
-<a class="card" href="3_one_tree_montecarlo.html"><b>3 · Monte Carlo, One Tree</b><br>Roll five dice, build the pile of 20,000 answers, find the culprit. (Parts 4–6)</a>
-<a class="card" href="4_from_trees_to_plot.html"><b>4 · From 25 Trees to a Plot</b><br>Each tree ±40 %, the total ±12 %; per m² and per hectare. (Part 7)</a>
-<p><small>The pages run entirely in your browser; nothing is uploaded. Numbers on them are illustrative — replace with your own field data for the project.</small></p></body></html>
+
+<p>Four interactive pages. They take you from a dice roll to a biomass number for a whole plot, with an honest statement of how sure you are. They prepare you for the class project.</p>
+
+<h2>Read the pages in this order</h2>
+<p><small>Each page builds on the one before it. Do not skip ahead. Open the pages on a laptop or tablet if you can; the charts are small on a phone.</small></p>
+<a class="card" href="1_dice_bootstrap.html"><span class="step">Page 1 · start here</span><br><b>From Dice to a Tree</b><br>What "probability 1/6" really means; guessing a hidden die from its rolls; expected value; why an average has less spread than a single roll; all of it applied to 250 hypothetical readings of one tree; then the bootstrap, and Monte Carlo for a tree measured only once.</a>
+<a class="card" href="2_equation_born.html"><span class="step">Page 2 · after page 1</span><br><b>How an Equation Is Born</b><br>The tree weight equation read one piece at a time, seen as a picture on log axes, then built from harvested trees. Its two kinds of doubt: a and b are not known exactly, and a real tree is not on the line.</a>
+<a class="card" href="3_one_tree_montecarlo.html"><span class="step">Page 3 · after page 2</span><br><b>Monte Carlo, One Tree</b><br>Roll five dice, build a pile of 20,000 possible answers for one tree, read the pile, find out which source of error matters most, and learn how to write the result.</a>
+<a class="card" href="4_from_trees_to_plot.html"><span class="step">Page 4 · after page 3</span><br><b>From 25 Trees to a Plot</b><br>Each tree is ± 40 %, but the total of 25 trees is only ± 12 %. A three-tree example worked by hand shows why, then the 25 trees, then what the per-hectare number means.</a>
+
+<h2>How to use each page</h2>
+<div class="how">
+<ol>
+<li><b>Read the "Words used on this page" box first.</b> It is at the top of every page and explains every word and short form used below it.</li>
+<li><b>Press Step once or twice</b> and watch what a single step does. Only then press <b>Play</b> at slow speed.</li>
+<li><b>Press Fast-forward</b> once you understand one step. It does all the draws of that panel at once, from a few hundred on page 1 to 20,000 on pages 3 and 4.</li>
+<li><b>Change the numbers and play.</b> Type a different tree, switch a die off, make an error bigger or smaller, and watch what happens to the pile. Nothing you do can break a page; <b>Reset</b> brings it back.</li>
+<li><b>Read the "What to notice" box</b> at the bottom before moving to the next page.</li>
+</ol>
+</div>
+
+<h2>For the project</h2>
+<div class="how">
+<ul>
+<li>Page 2 shows how species, diameter, height and wood density go into the equation.</li>
+<li>Page 3 is the method for one tree: choose the size of each die from your own readings, run the dice, report the median and the 95 % interval, and name the biggest source of error.</li>
+<li>Page 4 is the method for the whole plot: add the trees round by round, keeping shared errors (the equation, the density value of a species) apart from independent errors (your readings, the scatter of each tree).</li>
+<li>Write the result the way page 3, Panel E shows. If you convert to per hectare, add the warning from page 4, Panel D.</li>
+</ul>
+</div>
+
+<p><small>The pages run entirely in your browser. Nothing is uploaded. The numbers on them are examples. Replace them with your own field data for the project.</small></p></body></html>

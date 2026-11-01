@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Dice to Bootstrap</title>
+<title>From Dice to a Tree</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
 /* Layout: one column of stacked panels, each panel = picture(s) + a side column of live numbers + controls; chalkboard-and-paper feel */
@@ -80,6 +80,70 @@ figcaption{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.4}
 .notice{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--accent);padding:14px 16px;margin:8px 0 22px}
 .notice ol{margin:0;padding-left:20px}
 .notice li{margin-bottom:6px}
+/* "Words used on this page" box */
+.words{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--orange);padding:14px 16px;margin:0 0 22px}
+.words h3{margin:0 0 8px;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--orange)}
+.words dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:6px 14px}
+.words dt{font-weight:700;color:var(--fg)}
+.words dd{margin:0;max-width:75ch}
+@media (max-width:560px){.words dl{grid-template-columns:1fr}.words dd{margin-bottom:6px}}
+.ex{font-family:var(--mono);font-size:14px;background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+/* intro: probability with a die and a coin */
+.rule{font-family:var(--mono);font-size:14px;background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:8px 10px;max-width:none;margin:0 0 14px}
+.demo{border:1px dashed var(--line);border-radius:6px;padding:14px;display:grid;grid-template-columns:140px minmax(0,1fr);gap:14px;align-items:start;min-width:0}
+@media (max-width:560px){.demo{grid-template-columns:1fr}}
+.demo h4{margin:0 0 6px;font-size:17px;font-family:var(--display)}
+.demo .formula{font-family:var(--mono);font-size:14px;line-height:1.6;margin:8px 0}
+.demo .formula b{color:var(--orange);font-size:17px}
+.demo .say{min-height:3em;margin:0 0 4px}
+.demo .say b{color:var(--orange)}
+.demo .controls{margin:8px 0 0;padding:8px}
+.stage{display:flex;align-items:center;justify-content:center;height:150px;perspective:700px}
+.die.big{width:96px;height:96px;padding:12px;gap:4px;border-radius:16px;box-shadow:0 7px 0 -3px var(--line)}
+.opts{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 2px}
+.opt{display:flex;flex-direction:column;align-items:center;gap:3px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.die.sm{width:34px;height:34px;padding:5px;gap:2px;border-radius:7px;border-width:1.5px}
+.opt.hit .die,.opt.hit .cs{border-color:var(--orange);background:var(--orange-soft);box-shadow:0 0 0 3px var(--orange-soft)}
+.opt.hit{color:var(--orange);font-weight:700}
+.coin{width:96px;height:96px;position:relative;transform-style:preserve-3d}
+.coin .face{position:absolute;inset:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:44px;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:3px solid #a8780a;background:radial-gradient(circle at 35% 30%,#ffe9a0,#e6b63c 60%,#b3830c);color:#4a3200}
+.coin .back{transform:rotateY(180deg);border-color:#6f6f6f;background:radial-gradient(circle at 35% 30%,#f1f1f1,#bfbfbf 60%,#878787);color:#2b2b2b}
+.cs{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--fg);background:var(--panel);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:17px;color:var(--fg)}
+/* words section, spread slider, calculations */
+.words .lead{margin-bottom:10px}
+.words+.words{margin-top:-8px}
+.try{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px}
+.try-head{margin-bottom:6px}
+.try .controls{margin-top:0}
+.grp{font-family:var(--display);font-size:17px;margin:16px 0 8px}
+.confuse{margin-top:6px;border:1px solid var(--line);border-left:5px solid var(--accent);padding:12px 14px;border-radius:0 6px 6px 0}
+.confuse h4{margin:0 0 8px;font-size:16px;font-family:var(--display)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:6px 8px;border-bottom:1px solid var(--line)}
+th{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.confuse td:first-child{white-space:nowrap}
+.tablewrap{overflow-x:auto}
+table.calc td:first-child{min-width:150px}
+table.calc td{font-variant-numeric:tabular-nums}
+.stepbox{border:1px solid var(--line);border-left:5px solid var(--orange);padding:10px 12px;border-radius:0 6px 6px 0;min-height:120px}
+.stepbox h4{margin:0 0 6px;font-size:16px;font-family:var(--display)}
+.stepbox p{margin:0;font-size:15px}
+/* mystery die */
+.mystery{width:72px;height:72px;border:2px solid var(--fg);border-radius:12px;background:var(--fg);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:38px;flex:none}
+.mystery.shown{background:var(--panel);color:var(--fg)}
+/* expected value cards */
+.ev3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:6px}
+@media (max-width:760px){.ev3{grid-template-columns:minmax(0,1fr)}}
+.evcard{border:1px dashed var(--line);border-radius:6px;padding:10px 12px;min-width:0}
+.evcard h4{margin:0 0 6px;font-size:16px;font-family:var(--display)}
+.evcard svg{display:block;width:100%;height:auto}
+.evcard .formula{font-family:var(--mono);font-size:13px;line-height:1.6;margin:6px 0}
+.evcard .formula b{color:var(--orange);font-size:16px}
+/* 250-chip bag */
+.chips.big{grid-template-columns:repeat(10,minmax(0,1fr));gap:3px}
+.chips.big .chip{font-size:10px;padding:3px 0;border-width:1px;border-color:var(--grey);transition:none}
+.chips.big .chip.done{background:var(--orange-soft);border-color:var(--orange)}
+.chips.big .chip.lit{background:var(--orange);border-color:var(--orange);color:#fff;transform:scale(1.25);z-index:1}
 footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:12px}
 /* die */
 .die{width:72px;height:72px;border:2px solid var(--fg);border-radius:12px;background:var(--panel);display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:9px;gap:3px;flex:none}
@@ -118,24 +182,139 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 <body>
 <div class="wrap">
 <header>
-  <div class="eyebrow">Quantifying uncertainty · page 1 of 2</div>
-  <h1>Dice to Bootstrap</h1>
-  <p class="sub">From a single die to the uncertainty of a tree measurement, in three steps.</p>
+  <div class="eyebrow">Quantifying uncertainty · page 1 of 4</div>
+  <h1>From Dice to a Tree</h1>
+  <p class="sub">We start with one die. We end with a real tree. The question is the same for both: what can many readings tell us about the thing that produced them?</p>
   <div class="toprow">
-    <button id="newseed" class="primary" title="Use a different random sequence">New seed</button>
-    <span class="small" id="seedlabel">seed 2026 (same story every time you open the page)</span>
-  </div>
-  <div class="intro">
-    <h3>What you are looking at</h3>
-    <p>Three experiments, each with its own Play, Step and Reset. Panel A rolls one die and shows that a probability is simply what happens in the long run. Panel B averages several dice at once and shows that averages wobble less than single rolls, by a predictable amount. Panel C replaces the die by a bag of 24 real height readings of tree #406 and uses the same idea, called the <b>bootstrap</b>, to find out how uncertain the average of those 24 readings is. Press Play at slow speed first; press Fast-forward when you have understood one step.</p>
+    <button id="newseed" class="primary" title="Use a different random sequence">New random numbers</button>
+    <span class="small" id="seedlabel">The page uses the same random numbers every time you open it. Press the button to get new ones.</span>
   </div>
 </header>
+
+<!-- ============ INTRO: PROBABILITY ============ -->
+<section class="panel" id="p0">
+  <div class="eyebrow">Before we start</div>
+  <h2>Revisiting probability using a die and a coin</h2>
+  <p class="lead">Probability is a number between 0 and 1. It says how likely a result is. 0 means "never". 1 means "always". 1/2 means "half of the time". When every result has the same chance, the rule is simple:</p>
+  <p class="rule">Probability of a result = number of ways to get that result &divide; total number of possible results</p>
+  <div class="grid">
+    <div class="demo">
+      <div class="stage"><div class="die big f1" id="iDie" aria-label="die being rolled"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div>
+        <h4>A die has 6 faces</h4>
+        <p class="say" id="iDieSay">Rolling&hellip;</p>
+        <div class="opts" id="iFaces" aria-label="the six possible faces, each with probability 1/6">
+          <div class="opt" id="iFace1"><div class="die sm f1"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>1/6</div>
+          <div class="opt" id="iFace2"><div class="die sm f2"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>1/6</div>
+          <div class="opt" id="iFace3"><div class="die sm f3"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>1/6</div>
+          <div class="opt" id="iFace4"><div class="die sm f4"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>1/6</div>
+          <div class="opt" id="iFace5"><div class="die sm f5"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>1/6</div>
+          <div class="opt" id="iFace6"><div class="die sm f6"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>1/6</div>
+        </div>
+        <p class="formula">Probability of any one number, for example 4<br>= 1 &divide; 6 = <b>1/6</b> &asymp; 0.167 &asymp; 16.7 %</p>
+        <p class="small">Each face has the same probability, 1/6. The six probabilities add up to 6/6 = 1, because some face must come up.</p>
+        <div class="controls"><button id="iDiePlay">Pause</button><button id="iDieOnce">Roll once</button></div>
+      </div>
+    </div>
+    <div class="demo">
+      <div class="stage"><div class="coin" id="iCoin" aria-label="coin being flipped"><div class="face front">H</div><div class="face back">T</div></div></div>
+      <div>
+        <h4>A coin has 2 faces</h4>
+        <p class="say" id="iCoinSay">Flipping&hellip;</p>
+        <div class="opts" aria-label="the two possible faces, each with probability 1/2">
+          <div class="opt" id="iSideH"><div class="cs">H</div>1/2</div>
+          <div class="opt" id="iSideT"><div class="cs">T</div>1/2</div>
+        </div>
+        <p class="formula">Probability of head (H) = 1 &divide; 2 = <b>1/2</b> = 0.5 = 50 %<br>Probability of tail (T) = 1 &divide; 2 = <b>1/2</b> = 0.5 = 50 %</p>
+        <p class="small">Head or tail: 1/2 + 1/2 = 1. One of the two must come up.</p>
+        <div class="controls"><button id="iCoinPlay">Pause</button><button id="iCoinOnce">Flip once</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="small" style="margin-top:12px">Careful: 1/6 does <b>not</b> mean "4 comes up exactly once in every 6 rolls". In 6 rolls, 4 may come up 0 times, or 1 time, or 3 times. The probability 1/6 tells you what happens over <b>many</b> rolls: about one roll in six shows a 4. The next sections show this with many rolls.</p>
+</section>
+
+<!-- ============ WORDS USED ON THIS PAGE ============ -->
+<section class="panel" id="pW">
+  <div class="eyebrow">Words used on this page</div>
+  <h2>The words, in the order you will meet them</h2>
+  <p class="lead">Read this once now, and come back whenever a word is unclear. Every word is explained with the same tiny example: three readings, 5, 6 and 7. A later section, "Simple calculations", works out all the numbers by hand.</p>
+
+  <div class="words">
+    <h3>1 · The data</h3>
+    <dl>
+      <dt>Reading</dt><dd>One measured number. Also called a value or an observation. Example: one student measures the tree and writes 6.4 m. That is one reading.</dd>
+      <dt>n</dt><dd>The number of readings. For 5, 6, 7 n is 3. For 2, 6, 10 n is also 3.</dd>
+    </dl>
+  </div>
+
+  <div class="words">
+    <h3>2 · The middle of the data</h3>
+    <dl>
+      <dt>Mean</dt><dd>The average. Add all the readings, then divide by n. (5 + 6 + 7) ÷ 3 = 18 ÷ 3 = 6. On this page "mean" and "average" are the same thing.</dd>
+      <dt>Running mean</dt><dd>The mean of the readings you have <i>so far</i>. It changes after every new reading or roll. If you roll a die again and again, the running mean after 10 rolls is the mean of those 10 rolls. After 100 rolls it is the mean of those 100.</dd>
+    </dl>
+  </div>
+
+  <div class="words">
+    <h3>3 · How far apart the readings are</h3>
+    <dl>
+      <dt>Spread</dt><dd>An everyday word, not a number. It means how far the readings are from each other and from the mean. 5, 6, 7 have a small spread. 2, 6, 10 have a large spread. Both have mean 6. "Less spread" means the readings stay closer to the mean.</dd>
+      <dt>SD</dt><dd><b>Standard deviation.</b> The number that measures the spread. It is roughly the typical distance of a reading from the mean. 5, 6, 7: SD = 1. 2, 6, 10: SD = 4. SD has the same unit as the readings (metres for heights, centimetres for diameters). SD = 0 means all readings are the same.</dd>
+      <dt>CV</dt><dd><b>Coefficient of variation.</b> SD as a percentage of the mean: CV = SD ÷ mean × 100. For 5, 6, 7: 1 ÷ 6 = 16.7 %. CV has no unit, so you can compare the spread of heights (in m) with the spread of diameters (in cm).</dd>
+    </dl>
+    <div class="try">
+      <div class="try-head"><b>Try it: spread and SD.</b> Move the slider. Three readings sit on a number line, always with mean 6. The slider changes how far apart they are. Watch the SD change with them.</div>
+      <div class="grid">
+        <figure><svg id="wSvg" viewBox="0 0 400 150" role="img" aria-label="three readings on a number line, with the mean and the standard deviation"></svg></figure>
+        <div>
+          <div class="controls">
+            <label class="ctl">Spread <input type="range" id="wK" min="0" max="4" step="0.5" value="2"></label>
+            <button id="wPlay">Play</button>
+          </div>
+          <p class="meanline" id="wRead"></p>
+          <p class="small" id="wWord"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="words">
+    <h3>4 · How sure we are about the mean</h3>
+    <dl>
+      <dt>√n</dt><dd>The square root of n. √4 = 2, √9 = 3, √25 = 5, √100 = 10. √3 is about 1.73 and √10 is about 3.16.</dd>
+      <dt>SE</dt><dd><b>Standard error.</b> The SD of a <i>mean</i>. It says how much the mean would typically move if you threw away all the readings and measured n new ones. If you could collect many such means, the SE would be their SD. Formula: SE = SD ÷ √n. For 5, 6, 7: SD = 1, so SE = 1 ÷ √3 = 1 ÷ 1.73 = 0.58. More readings make √n bigger and SE smaller.</dd>
+      <dt>95 % range</dt><dd>Two numbers, a low one and a high one, between which the true mean very probably lies. Quick rule: from mean − 2 × SE to mean + 2 × SE. For 5, 6, 7: 6 ± 2 × 0.58 = 6 ± 1.15, so 4.85 to 7.15. Also called a 95 % interval. There is a second way to find it, used later on this page: sort many values, then cut off the lowest 2.5 % and the highest 2.5 %.</dd>
+    </dl>
+  </div>
+
+  <div class="words">
+    <h3>5 · Chance</h3>
+    <dl>
+      <dt>Probability</dt><dd>A number between 0 and 1 that says how likely a result is (see the die and coin above). A fair die: 1/6 for each face. A fair coin: 1/2 for each side.</dd>
+      <dt>Share so far</dt><dd>How often a result has actually come up, divided by the number of rolls so far. 21 fours in 100 rolls is a share of 21 %. With many rolls the share gets close to the probability.</dd>
+    </dl>
+  </div>
+
+  <div class="confuse">
+    <h4>Easy to confuse</h4>
+    <table>
+      <tr><th>These two</th><th>How they differ</th></tr>
+      <tr><td><b>Spread</b> and <b>SD</b></td><td>Spread is the idea: how far apart the readings are. SD is the number that measures it. "Large spread" and "large SD" mean the same thing. You can see spread; you calculate SD.</td></tr>
+      <tr><td><b>SD</b> and <b>SE</b></td><td>SD is the spread of the <i>readings</i>. SE is the spread of the <i>mean</i>: how much the mean would move if you measured everything again. SE is always smaller: SE = SD ÷ √n. For 5, 6, 7: SD = 1 but SE = 0.58. Note that an SE is itself an SD: "SE" is just the special name for the SD of a mean.</td></tr>
+      <tr><td><b>SD</b> and <b>CV</b></td><td>Both measure spread. SD has a unit (for example 1 m). CV has no unit, it is a percentage (for example 16.7 %). Use CV to compare two things measured in different units.</td></tr>
+      <tr><td><b>Mean</b> and <b>running mean</b></td><td>The mean uses all the readings. The running mean uses the readings so far and keeps changing. When all readings are in, the two are the same.</td></tr>
+      <tr><td><b>SE</b> and <b>95 % range</b></td><td>SE is one number, a distance. The 95 % range is two numbers, a low end and a high end, about 2 × SE on each side of the mean.</td></tr>
+      <tr><td><b>Probability</b> and <b>share so far</b></td><td>Probability (1/6) is what theory says <i>before</i> rolling. The share so far (for example 21 fours in 100 rolls = 21 %) is what actually happened. With many rolls the share gets close to the probability. You will see this below, when a die is rolled thousands of times.</td></tr>
+    </table>
+  </div>
+</section>
 
 <!-- ============ PANEL A ============ -->
 <section class="panel" id="pA">
   <div class="eyebrow">Panel A</div>
-  <h2>Probability is a long-run frequency</h2>
-  <p class="lead">A fair die shows each face with probability 1/6. You cannot see 1/6 in one roll. You see it after thousands of rolls, when every bar settles near the dashed line and the running mean settles at 3.5.</p>
+  <h2>Probability means "how often, in the long run"</h2>
+  <p class="lead">A fair die shows each face (1, 2, 3, 4, 5 or 6) with probability 1/6. You cannot see "1/6" in one roll. One roll gives one face, nothing more. After thousands of rolls, each face has come up close to 1 time in 6. Then every bar in the left chart is close to the dashed line, and the running mean is close to 3.5 (the average of 1, 2, 3, 4, 5, 6).</p>
   <div class="controls">
     <button id="aPlay" class="primary">Play</button>
     <button id="aStep">Step</button>
@@ -150,24 +329,188 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
   </div>
   <div class="grid">
     <figure><svg id="aHist" viewBox="0 0 400 280" role="img" aria-label="Histogram of die faces"></svg>
-      <figcaption>How often each face came up, as a share of all rolls. Dashed line: the probability 1/6 ≈ 16.7 %.</figcaption></figure>
+      <figcaption>How often each face came up, as a share of all rolls so far. Dashed line: the probability 1/6, which is about 16.7 %.</figcaption></figure>
     <figure><svg id="aMean" viewBox="0 0 400 280" role="img" aria-label="Running mean of die rolls"></svg>
-      <figcaption>Running mean after n rolls (log axis for n). Shaded band: 3.5 ± 1.71/√n, the typical wobble expected after n rolls (1.71 is the SD of one roll). The mean settles down roughly as 1/√n: 100× more rolls, 10× less wobble.</figcaption></figure>
+      <figcaption>The running mean after n rolls. The horizontal axis is a log scale: 1, 10, 100, 1,000, 10,000. Shaded band: 3.5 ± 1.71 ÷ √n. This band shows how far from 3.5 the running mean usually is after n rolls (1.71 is the SD of a single roll). The band gets narrower as n grows: 100 times more rolls makes the band 10 times narrower.</figcaption></figure>
   </div>
   <div class="stats">
-    <div class="stat"><div class="k">Running mean</div><div class="v" id="aM">–</div></div>
-    <div class="stat"><div class="k">Expected</div><div class="v">3.500</div></div>
-    <div class="stat"><div class="k">SD of the faces so far</div><div class="v" id="aSD">–</div></div>
-    <div class="stat"><div class="k">Theory SD of one roll</div><div class="v">1.708</div></div>
-    <div class="stat"><div class="k">Largest gap to 16.7 %</div><div class="v" id="aGap">–</div></div>
+    <div class="stat"><div class="k">Running mean (so far)</div><div class="v" id="aM">–</div></div>
+    <div class="stat"><div class="k">Expected mean (theory)</div><div class="v">3.500</div></div>
+    <div class="stat"><div class="k">SD of the rolls so far</div><div class="v" id="aSD">–</div></div>
+    <div class="stat"><div class="k">SD of one roll (theory)</div><div class="v">1.708</div></div>
+    <div class="stat"><div class="k">Largest gap between a bar and 16.7 %</div><div class="v" id="aGap">–</div></div>
+  </div>
+  <p class="small">The SD of one die roll is 1.708. This is the "typical distance" of a roll from 3.5: a roll of 2 is 1.5 below, a roll of 6 is 2.5 above, and so on. As you roll more, the "SD of the rolls so far" moves close to 1.708. How 1.708 is calculated from the six faces is shown later on this page, in the section on expected value.</p>
+</section>
+
+<!-- ============ PANEL B: GUESS THE DIE ============ -->
+<section class="panel" id="pG">
+  <div class="eyebrow">Panel B</div>
+  <h2>Turn it around: guess the die from its rolls</h2>
+  <p class="lead">In Panel A we could see the die. We knew it had six faces, 1 to 6, so we could calculate the probability 1/6 before rolling even once. After many rolls, the share of each face matched that probability, and the running mean settled at 3.5.</p>
+  <p class="lead">Now suppose you <b>cannot see the die</b>. Somebody rolls it behind a screen and only tells you the number. Can you work out what the die looks like? How many faces does it have? Which numbers are on them? Is every number equally likely? Below are three mystery dice. One may be an ordinary die. One may have faces 1, 2, 3, 4, 5, 5. One may have eight faces, 1 to 8. Choose a die, roll it many times, study the shares, and make your guess. Then press "Reveal the die".</p>
+  <div class="controls">
+    <label class="ctl">Mystery die:</label>
+    <span class="toggle" role="group" aria-label="choose a mystery die">
+      <button id="gD1" aria-pressed="true">Die 1</button><button id="gD2" aria-pressed="false">Die 2</button><button id="gD3" aria-pressed="false">Die 3</button></span>
+    <button id="gPlay" class="primary">Play</button>
+    <button id="gStep">Step</button>
+    <button id="gFF">Fast-forward to 2,000</button>
+    <button id="gReset">Reset</button>
+    <label class="ctl">Speed <input type="range" id="gSpeed" min="1" max="100" value="20"></label>
+    <span class="counter" id="gCount">rolls: 0</span>
+  </div>
+  <div class="dierow">
+    <div class="mystery" id="gBox" aria-label="mystery die">?</div>
+    <div class="say" id="gSay">Press Play or Step. The number that comes up is shown here.</div>
+  </div>
+  <div class="grid3">
+    <figure><svg id="gHist" viewBox="0 0 420 280" role="img" aria-label="Share of rolls for each number from 1 to 8"></svg>
+      <figcaption>Share of rolls for each number from 1 to 8. A number that never comes up has no bar. After "Reveal the die", dashed marks show the true probability of each number.</figcaption></figure>
+    <div>
+      <div class="stats" style="grid-template-columns:1fr 1fr">
+        <div class="stat"><div class="k">Numbers seen so far</div><div class="v" id="gSeen">–</div></div>
+        <div class="stat"><div class="k">Running mean</div><div class="v" id="gM">–</div></div>
+        <div class="stat"><div class="k">SD of the rolls so far</div><div class="v" id="gSD">–</div></div>
+        <div class="stat"><div class="k">Biggest share ÷ smallest share</div><div class="v" id="gRatio">–</div></div>
+      </div>
+      <p class="small" id="gHint" style="margin-top:8px">Three questions to answer from the rolls: (1) How many different numbers appear? (2) Do all the bars become equally high? (3) Is one bar about twice as high as the others?</p>
+      <div class="controls"><button id="gReveal">Reveal the die</button></div>
+      <p class="small" id="gTruth"></p>
+    </div>
+  </div>
+  <div class="why">
+    <h4>What this has to do with trees</h4>
+    <p>For the mystery die, the hidden thing is the set of faces and how likely each one is. The rolls are what we get to see. For a tree, the hidden thing is its true height. Each measurement is one "roll": it comes out a little different every time, because of the person measuring, the instrument, the angle and the ground. In both cases we never see the hidden thing directly. We only see readings.</p>
+    <p>From the readings we make three guesses: a <b>middle</b> (the mean), a <b>spread</b> (the SD), and a <b>range</b> inside which the hidden value very probably lies. And in both cases more readings make the guesses better: the shares settle down, the running mean settles down. The rest of this page builds exactly these three guesses, first with dice, then with a real tree.</p>
   </div>
 </section>
 
-<!-- ============ PANEL B ============ -->
+<!-- ============ EXPECTED VALUE ============ -->
+<section class="panel" id="pE">
+  <div class="eyebrow">After Panel B</div>
+  <h2>Expected value: the long-run average, calculated before rolling</h2>
+  <p class="lead">In Panel A the running mean settled at 3.5. In Panel B each mystery die settled at its own number. These numbers can be calculated in advance, from the faces and their probabilities, without rolling at all. The result is called the <b>expected value</b>. It is the long-run average: the number the running mean settles at after many rolls.</p>
+  <p class="rule">Expected value = (value × probability of that value), added up over all the possible values</p>
+  <p class="lead">Every possible value takes part. A value with a high probability pulls the expected value toward itself more strongly. A picture helps: draw the probabilities as bars standing on the number line. The expected value is the <b>balance point</b>, the place where the bars would balance on a pivot (the small triangle).</p>
+  <div class="ev3">
+    <div class="evcard">
+      <h4>Die 3, an ordinary die</h4>
+      <svg id="eSvg3" viewBox="0 0 230 152" role="img" aria-label="probabilities of an ordinary die with the balance point at 3.5"></svg>
+      <p class="small">Faces 1, 2, 3, 4, 5, 6. Each value has probability 1/6.</p>
+      <p class="formula">1 × 1/6 + 2 × 1/6 + 3 × 1/6 + 4 × 1/6 + 5 × 1/6 + 6 × 1/6<br>= (1 + 2 + 3 + 4 + 5 + 6) ÷ 6 = 21 ÷ 6 = <b>3.5</b></p>
+      <p class="small">When all values are equally likely, the expected value is simply the plain average of the faces.</p>
+    </div>
+    <div class="evcard">
+      <h4>Die 1, faces 1, 2, 3, 4, 5, 5</h4>
+      <svg id="eSvg1" viewBox="0 0 230 152" role="img" aria-label="probabilities of die 1 with the balance point at 3.33"></svg>
+      <p class="small">Values 1 to 4 have probability 1/6 each. Value 5 is on two faces, so its probability is 2/6. Value 6 has probability 0.</p>
+      <p class="formula">1 × 1/6 + 2 × 1/6 + 3 × 1/6 + 4 × 1/6 + 5 × 2/6 + 6 × 0<br>= (1 + 2 + 3 + 4 + 10) ÷ 6 = 20 ÷ 6 = <b>3.33</b></p>
+      <p class="small">The second 5 and the missing 6 pull the balance point down from 3.5 to 3.33. The tall bar at 5 pulls harder than any other bar.</p>
+    </div>
+    <div class="evcard">
+      <h4>Die 2, faces 1 to 8</h4>
+      <svg id="eSvg2" viewBox="0 0 230 152" role="img" aria-label="probabilities of an eight-faced die with the balance point at 4.5"></svg>
+      <p class="small">Eight values, each with probability 1/8.</p>
+      <p class="formula">1 × 1/8 + 2 × 1/8 + … + 8 × 1/8<br>= (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8) ÷ 8 = 36 ÷ 8 = <b>4.5</b></p>
+      <p class="small">More faces with bigger numbers move the balance point to the right.</p>
+    </div>
+  </div>
+  <p class="meanline" id="eLive" style="margin-top:12px"></p>
+  <p class="lead" style="margin-top:12px">Two things to notice. First, "expected" does not mean "the value you expect on the next roll". No face shows 3.5 or 4.5. The expected value is about the <b>average of many rolls</b>, not about one roll. Second, the mean of the rolls (from data) and the expected value (from the probabilities) are two routes to the same number. With few rolls they differ. With thousands of rolls they almost agree. Go back to Panel B and compare "Running mean" with the numbers above.</p>
+  <div class="why">
+    <h4>What this means for readings of a tree</h4>
+    <p>For a die we know the faces, so we can calculate the expected value exactly. For a tree we do not know the "faces": we do not know which readings are possible or how likely each one is. So we cannot calculate the expected value. We can only <b>estimate</b> it, with the mean of the readings we have. If the measuring method is fair, pulling neither up nor down, the expected value of a reading is the true height of the tree. The mean of our readings is our best guess for it, and the more readings, the better the guess.</p>
+  </div>
+  <h4 class="grp">The same recipe gives the SD from theory: where 1.71 comes from</h4>
+  <p>The SD of the rolls so far in Panel A settles at 1.71. That number can also be calculated in advance, with the same recipe as the expected value. Instead of "value × probability" use "(distance from the expected value)² × probability", add up, and take the square root.</p>
+  <p class="rule">SD from theory = √[ (value − expected value)² × probability, added up over all the possible values ]</p>
+  <div class="tablewrap">
+  <table class="calc">
+    <tr><th>Step, for an ordinary die (expected value 3.5)</th><th>Working</th></tr>
+    <tr><td>1. Distance of each value from 3.5</td><td>1 − 3.5 = −2.5, 2 − 3.5 = −1.5, 3 − 3.5 = −0.5, 4 − 3.5 = +0.5, 5 − 3.5 = +1.5, 6 − 3.5 = +2.5</td></tr>
+    <tr><td>2. Square each distance</td><td>6.25, 2.25, 0.25, 0.25, 2.25, 6.25</td></tr>
+    <tr><td>3. Multiply each square by its probability, 1/6, and add</td><td>(6.25 + 2.25 + 0.25 + 0.25 + 2.25 + 6.25) ÷ 6 = 17.5 ÷ 6 = 2.917</td></tr>
+    <tr><td>4. Square root. This is the SD of one roll</td><td>√2.917 = <b>1.708</b>, written 1.71</td></tr>
+  </table>
+  </div>
+  <p class="small">Here we divide by 6, not by n − 1. The n − 1 correction is for data, where the mean had to be estimated from the readings. Here the expected value 3.5 is exact, so no correction is needed.</p>
+  <p class="small">The same steps for the mystery dice. <b>Die 1</b> (expected value 3.33): distances −2.33, −1.33, −0.33, +0.67, +1.67, +1.67; squares 5.44, 1.78, 0.11, 0.44, 2.78, 2.78; add and divide by 6: 13.33 ÷ 6 = 2.22; square root: <b>1.49</b>. <b>Die 2</b> (expected value 4.5): distances ±0.5, ±1.5, ±2.5, ±3.5; squares 0.25, 2.25, 6.25, 12.25, each twice; add and divide by 8: 42 ÷ 8 = 5.25; square root: <b>2.29</b>. Compare these three numbers with "SD of the rolls so far" in Panel B after many rolls.</p>
+</section>
+
+<!-- ============ SIMPLE CALCULATIONS ============ -->
+<section class="panel" id="pCalc">
+  <div class="eyebrow">Simple calculations</div>
+  <h2>Every word, worked out by hand</h2>
+  <p class="lead">Two tiny data sets with the same mean, 6, but different spread. Follow the steps with a pen and a calculator. Then the same recipe is applied to ten rolls of an ordinary die.</p>
+  <div class="grid3">
+    <figure><svg id="kSvg" viewBox="0 0 440 230" role="img" aria-label="readings on a number line, built up step by step"></svg>
+      <figcaption id="kCap">Each dot is one reading. Dots with the same value are stacked.</figcaption></figure>
+    <div>
+      <div class="controls">
+        <span class="toggle" role="group" aria-label="choose the data set">
+          <button id="kS1" aria-pressed="true">5, 6, 7</button><button id="kS2" aria-pressed="false">2, 6, 10</button><button id="kS3" aria-pressed="false">10 die rolls</button>
+        </span>
+      </div>
+      <div class="controls">
+        <button id="kPrev">◀ Back</button>
+        <button id="kNext" class="primary">Next step ▶</button>
+        <button id="kAuto">Play all</button>
+        <span class="counter" id="kCount">step 1 of 6</span>
+      </div>
+      <div class="stepbox">
+        <h4 id="kTitle"></h4>
+        <p id="kText"></p>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="grp">The same steps as a table</h4>
+  <div class="tablewrap">
+  <table class="calc">
+    <tr><th>Step</th><th>Set 1: 5, 6, 7</th><th>Set 2: 2, 6, 10</th></tr>
+    <tr><td>1. Count the readings, n</td><td>n = 3</td><td>n = 3</td></tr>
+    <tr><td>2. <b>Mean</b> = sum ÷ n</td><td>(5 + 6 + 7) ÷ 3 = 18 ÷ 3 = <b>6</b></td><td>(2 + 6 + 10) ÷ 3 = 18 ÷ 3 = <b>6</b></td></tr>
+    <tr><td>3. Distance of each reading from the mean</td><td>5 − 6 = −1, 6 − 6 = 0, 7 − 6 = +1</td><td>2 − 6 = −4, 6 − 6 = 0, 10 − 6 = +4</td></tr>
+    <tr><td>4. Square each distance (the minus signs disappear)</td><td>1, 0, 1</td><td>16, 0, 16</td></tr>
+    <tr><td>5. Add the squares</td><td>1 + 0 + 1 = 2</td><td>16 + 0 + 16 = 32</td></tr>
+    <tr><td>6. Divide by n − 1</td><td>2 ÷ 2 = 1</td><td>32 ÷ 2 = 16</td></tr>
+    <tr><td>7. Square root. This is the <b>SD</b></td><td>√1 = <b>1</b></td><td>√16 = <b>4</b></td></tr>
+    <tr><td>8. <b>CV</b> = SD ÷ mean × 100</td><td>1 ÷ 6 × 100 = <b>16.7 %</b></td><td>4 ÷ 6 × 100 = <b>66.7 %</b></td></tr>
+    <tr><td>9. <b>SE</b> = SD ÷ √n</td><td>1 ÷ √3 = 1 ÷ 1.73 = <b>0.58</b></td><td>4 ÷ √3 = 4 ÷ 1.73 = <b>2.31</b></td></tr>
+    <tr><td>10. <b>95 % range</b> for the mean ≈ mean ± 2 × SE</td><td>6 ± 1.15 → <b>4.85 to 7.15</b></td><td>6 ± 4.62 → <b>1.38 to 10.62</b></td></tr>
+  </table>
+  </div>
+  <p class="small">Why divide by n − 1 and not n in step 6? With n readings, the mean was calculated from those same readings, so the distances are a little too small. Dividing by n − 1 corrects for that. For large n it makes almost no difference.</p>
+
+  <div class="why">
+    <h4>The same recipe for 10 rolls of an ordinary die</h4>
+    <p>The rolls were 2, 5, 3, 6, 1, 4, 4, 2, 6, 3. n = 10. Sum = 36. <b>Mean</b> = 36 ÷ 10 = <b>3.6</b>.</p>
+    <p>Distances from the mean: −1.6, +1.4, −0.6, +2.4, −2.6, +0.4, +0.4, −1.6, +2.4, −0.6. Squares: 2.56, 1.96, 0.36, 5.76, 6.76, 0.16, 0.16, 2.56, 5.76, 0.36. Sum of the squares = 26.4. Divide by n − 1 = 9: 2.93. Square root: <b>SD = 1.71</b>.</p>
+    <p><b>CV</b> = 1.71 ÷ 3.6 × 100 = <b>48 %</b>. √10 = 3.16, so <b>SE</b> = 1.71 ÷ 3.16 = <b>0.54</b>.</p>
+    <p><b>95 % range</b> for the mean ≈ 3.6 ± 2 × 0.54 = 3.6 ± 1.08, so <b>2.52 to 4.68</b>.</p>
+    <p>Now compare with what we know about an ordinary die. Its true mean is 3.5 and the SD of one roll is 1.71. Ten rolls gave a mean of 3.6, not exactly 3.5, but the 95 % range 2.52 to 4.68 contains 3.5. The ten rolls did not tell us the exact answer. They gave us a range, and the true value is inside it. That is what readings can do, for a die and for a tree.</p>
+  </div>
+</section>
+
+<div class="intro">
+  <h3>Where we go next</h3>
+  <p>So far: one die and its probabilities, a mystery die guessed from its rolls, and the recipe for mean, SD, SE and the 95 % range. Four experiments remain. Each has its own Play, Step and Reset buttons.</p>
+  <p><b>Panel C</b> rolls several dice at once and keeps only their average. It shows that an average has less spread than a single roll, and by how much. This is the reason why more readings make a guess better.</p>
+  <p><b>Panel D</b> moves to a real tree. We are 250 students in the class. Let us assume that, hypothetically, every one of us measured the height and the DBH of a single tree. (DBH is the diameter at breast height: the diameter of the trunk measured 1.3 m above the ground.) These readings are the "rolls" of the tree. The numbers are made up for this page, but they are the kind a class would get. Panel D is a revision: every idea from the dice, applied to the tree, ending with a 95 % confidence interval for its height.</p>
+  <p><b>Panel E</b> finds the same 95 % interval a second way, without the formula, by "rolling the bag" of readings. This is called the <b>bootstrap</b>. <b>Panel F</b> asks what to do when a tree has only one reading, as in our project. The answer is the <b>Monte Carlo</b> method: build the bag yourself from an assumed error, and then roll it.</p>
+  <p>Press Play at slow speed first. Press Fast-forward only after you have understood one step.</p>
+</div>
+
+
+<!-- ============ PANEL C: AVERAGES ============ -->
 <section class="panel" id="pB">
-  <div class="eyebrow">Panel B</div>
-  <h2>Averages behave better than single rolls</h2>
-  <p class="lead">Now roll k dice at once and record only their <b>average</b>. One die gives a flat spread from 1 to 6. The average of 25 dice almost never leaves 3 to 4. The spread (SD) shrinks as 1/√k. This is the single most useful fact in this course.</p>
+  <div class="eyebrow">Panel C</div>
+  <h2>An average has less spread than a single roll</h2>
+  <p class="lead">Now roll k dice at the same time and write down only their <b>average</b>. Compare two cases. One die (k = 1): the result can be anything from 1 to 6, and every value is equally likely. The average of 25 dice (k = 25): the result is usually between 3 and 4, and almost always between 2.8 and 4.2. It practically never goes below 2.5 or above 4.5. That is what "less spread" means: the values stay closer to the middle.</p>
+  <p class="lead"><b>Why does the average stay in the middle?</b> For the average of 25 dice to be 1, every one of the 25 dice must show 1 at the same time. The chance of that is 1/6 × 1/6 × … × 1/6, twenty-five times, which is about 1 in 3 × 10<sup>19</sup>, practically zero. For the average to be 6, all 25 dice must show 6, equally impossible. Even an average of 2 needs almost every die to show a low number, which is very unlikely. But there are very many ways to get an average near 3.5: some dice show high numbers, some show low numbers, and the high and low ones cancel each other out. So the average of many dice is pulled toward the middle, and its spread is small.</p>
+  <p class="lead">How much less spread? The SD of the averages is the SD of one die divided by √k. The SD of one ordinary die is 1.71, calculated from its six faces in the expected value section above. So with 4 dice the SD of the averages is half of 1.71, with 25 dice one fifth, with 100 dice one tenth. This rule is the most useful fact in this course.</p>
+  <p class="lead"><b>One number, two names.</b> The SD of the averages has a special name: the <b>standard error, SE</b>. An SE is simply the SD of a mean. Here we can find it in two ways: measure it from the histogram of many averages, or calculate it from the formula SE = SD of one value ÷ √k. The two green boxes below show both. They give the same number.</p>
   <div class="controls">
     <label class="ctl">Dice per roll, k
       <select id="bK"><option value="1">1</option><option value="2">2</option><option value="5" selected>5</option><option value="10">10</option><option value="25">25</option></select></label>
@@ -181,77 +524,252 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
   <div class="dierow" id="bDice"></div>
   <div class="grid3">
     <figure><svg id="bHist" viewBox="0 0 420 300" role="img" aria-label="Histogram of the average of k dice"></svg>
-      <figcaption>Histogram of the average of k dice. The faint grey outline is the k = 1 case (one die, flat) for comparison. Orange line: the mean of all averages so far.</figcaption></figure>
+      <figcaption>Histogram (bar chart of counts) of the average of k dice. Each bar shows how often an average fell in that small range. The faint grey dashed outline shows the one-die case (k = 1) for comparison: flat, from 1 to 6. Orange line: the mean of all the averages so far. The orange bracket at the top shows ± 1 SE (one SD of the averages) around it.</figcaption></figure>
     <div>
       <div class="stats" style="grid-template-columns:1fr 1fr">
-        <div class="stat"><div class="k">Mean of averages</div><div class="v" id="bM">–</div></div>
-        <div class="stat"><div class="k">Expected</div><div class="v">3.500</div></div>
-        <div class="stat hi"><div class="k">SD of the histogram</div><div class="v" id="bSD">–</div></div>
-        <div class="stat hi"><div class="k">Formula 1.71/√k</div><div class="v" id="bF">–</div></div>
-        <div class="stat"><div class="k">95 % of averages lie in</div><div class="v" id="bPI">–</div></div>
-        <div class="stat"><div class="k">CV = SD / mean</div><div class="v" id="bCV">–</div></div>
+        <div class="stat"><div class="k">Mean of all the averages</div><div class="v" id="bM">–</div></div>
+        <div class="stat"><div class="k">Expected mean (theory)</div><div class="v">3.500</div></div>
+        <div class="stat hi"><div class="k">SE, measured: SD of the averages in the histogram</div><div class="v" id="bSD">–</div></div>
+        <div class="stat hi"><div class="k">SE, from the formula 1.71 ÷ √k</div><div class="v" id="bF">–</div></div>
+        <div class="stat"><div class="k">95 % range of the averages</div><div class="v" id="bPI">–</div></div>
+        <div class="stat"><div class="k">CV = SD ÷ mean</div><div class="v" id="bCV">–</div></div>
       </div>
-      <p class="small" style="margin-top:8px">SD = standard deviation, the typical distance from the mean. CV = coefficient of variation, the SD as a percentage of the mean. "95 % interval" = from the 2.5th to the 97.5th percentile: 95 out of 100 rolls land inside it.</p>
-      <p class="small">Try each k with Fast-forward. The two highlighted numbers agree to about two decimals every time. The formula is not a coincidence: averaging k independent things divides the SD by √k.</p>
+      <p class="small" style="margin-top:8px"><b>How to read the two green boxes.</b> The left one is measured: the SD of all the averages in the histogram, which is the SE found by experiment. The right one is the SE predicted by the formula: 1.71 divided by √k. Try each k with Fast-forward. The two numbers agree to about two decimal places every time.</p>
+      <p class="small"><b>The rule:</b> when you average k independent values, the SD of the average (its SE) is the SD of one value divided by √k. "Independent" means one roll does not affect another.</p>
+      <p class="small"><b>95 % range:</b> 95 out of 100 averages fall inside it. For k = 1 it is almost the whole range 1 to 6. For k = 25 it is roughly 2.8 to 4.2.</p>
     </div>
   </div>
 </section>
 
-<!-- ============ PANEL C ============ -->
+<!-- ============ PANEL D: THE TREE ============ -->
 <section class="panel" id="pC">
-  <div class="eyebrow">Panel C</div>
-  <h2>The bootstrap: pull from the bag, with replacement</h2>
-  <p class="lead">Twenty-four students each measured the height of tree #406. Their 24 readings sit in the bag. The average is 6.14 m. How sure can we be of that average? We cannot re-measure 10,000 times. So we <b>pretend</b>: draw 24 chips from the bag <b>with replacement</b> (put each chip back before the next draw), compute the mean of this pretend sample, and repeat. The spread of all those pretend means tells us the uncertainty of the real mean.</p>
+  <div class="eyebrow">Panel D · revision</div>
+  <h2>Everything so far, applied to one tree</h2>
+  <p class="lead">Let us assume that all 250 of us measured the same tree, tree #406: one height reading and one DBH reading per student. <b>The 250 numbers in the bag below are made up for this page.</b> They are not real measurements. They are the kind of numbers a class would get, and they let us practise every idea from the dice on a tree.</p>
+  <p class="lead">Nothing new is introduced in this panel. The tree is the mystery die of Panel B. Its true height is the hidden thing. Each student's reading is one roll. The table shows the analogy line by line.</p>
+  <div class="tablewrap">
+  <table class="calc">
+    <tr><th>With a die</th><th>With the tree</th></tr>
+    <tr><td>The hidden thing: the faces and their probabilities</td><td>The hidden thing: the true height (or DBH) of the tree</td></tr>
+    <tr><td>One roll</td><td>One student's reading</td></tr>
+    <tr><td>Many rolls</td><td>250 readings</td></tr>
+    <tr><td>Expected value, calculated from the faces (3.5 for an ordinary die)</td><td>The true height. It cannot be calculated, because we do not know the "faces". It can only be estimated.</td></tr>
+    <tr><td>The running mean settles at the expected value</td><td>The mean of the readings settles at the true height, if the measuring is fair (no instrument that reads too high or too low for everyone)</td></tr>
+    <tr><td>SD of one roll, 1.71 for an ordinary die, calculated from the faces</td><td>SD of the readings, calculated from the data: how far one reading typically is from the mean</td></tr>
+    <tr><td>SE of the average of k dice = 1.71 ÷ √k (Panel C)</td><td>SE of the mean of n readings = SD ÷ √n</td></tr>
+    <tr><td>95 % range of the averages (Panel C)</td><td>95 % confidence interval for the true height: mean ± 2 × SE</td></tr>
+  </table>
+  </div>
+
+  <h4 class="grp">"Roll the tree": take the readings out of the bag one by one</h4>
+  <p class="lead">Press Play to take the 250 readings out of the bag in the order the students handed them in. Watch the running mean and the 95 % confidence interval settle, exactly as the running mean of the die settled in Panel A.</p>
   <div class="controls">
+    <label class="ctl">Readings:</label>
     <span class="toggle" role="group" aria-label="Which readings">
-      <button id="cH" aria-pressed="true">Height, m</button><button id="cD" aria-pressed="false">Diameter, cm</button></span>
+      <button id="cH" aria-pressed="true">Height, m</button><button id="cD" aria-pressed="false">DBH, cm</button></span>
     <button id="cPlay" class="primary">Play</button>
-    <button id="cStep">Step (one draw)</button>
-    <button id="cFF">Fast-forward to 10,000</button>
+    <button id="cStep">Step (one reading)</button>
+    <button id="cFF">Fast-forward to 250</button>
     <button id="cReset">Reset</button>
     <label class="ctl">Speed <input type="range" id="cSpeed" min="1" max="100" value="25"></label>
-    <span class="counter" id="cCount">resamples: 0</span>
+    <span class="counter" id="cCount">readings: 0 of 250</span>
   </div>
   <div class="grid">
     <div>
       <div class="bag">
-        <div class="lbl" id="cBagLbl">The bag: 24 real height readings of tree #406 (m)</div>
-        <div class="chips" id="cChips"></div>
-        <p class="small" style="margin:10px 0 0">A lit chip is being drawn now. A small orange number counts how many times a chip was drawn in this resample. Dashed, faded chips were never drawn this time.</p>
-      </div>
-      <div class="row">
-        <div class="lbl">Pretend sample (24 draws, with replacement)</div>
-        <div class="sample" id="cSample"></div>
-        <div class="meanline" id="cMeanLine">mean of pretend sample = –</div>
+        <div class="lbl" id="cBagLbl">The bag: 250 hypothetical height readings of tree #406 (m)</div>
+        <div class="chips big" id="cChips"></div>
+        <p class="small" style="margin:10px 0 0">A chip turns orange once its reading has been taken out and counted. The chip being read now is highlighted.</p>
       </div>
     </div>
     <div>
-      <figure><svg id="cHist" viewBox="0 0 420 300" role="img" aria-label="Histogram of bootstrap means"></svg>
-        <figcaption>Each dot/bar is the mean of one pretend sample. Dashed green line: mean of the real 24 readings. Orange brackets: 2.5th and 97.5th percentiles of the pretend means.</figcaption></figure>
+      <figure><svg id="cHist" viewBox="0 0 420 300" role="img" aria-label="Histogram of the readings taken so far"></svg>
+        <figcaption>Histogram of the readings taken so far. Dashed green line: the running mean. Green band: mean ± 1 SD, where about two thirds of the readings fall. Orange bracket: the 95 % confidence interval for the true height, mean ± 2 × SE. It is much narrower than the spread of the readings.</figcaption></figure>
+      <figure><svg id="cRun" viewBox="0 0 420 220" role="img" aria-label="Running mean with its 95 % confidence interval"></svg>
+        <figcaption>Running mean after n readings (orange line), with the 95 % confidence interval around it (orange band). The band narrows as n grows, like the band in the running-mean chart of Panel A.</figcaption></figure>
       <div class="stats">
-        <div class="stat"><div class="k">Mean of the 24 readings</div><div class="v" id="cM">–</div></div>
-        <div class="stat"><div class="k">SD of the 24 readings, s</div><div class="v" id="cS">–</div></div>
-        <div class="stat hi"><div class="k">SD of the bootstrap means</div><div class="v" id="cBSD">–</div></div>
-        <div class="stat hi"><div class="k">Formula SE = s/√24</div><div class="v" id="cSE">–</div></div>
-        <div class="stat or"><div class="k">95 % interval of the mean (2.5th–97.5th pct)</div><div class="v" id="cPI">–</div></div>
-        <div class="stat"><div class="k">CV of the mean</div><div class="v" id="cCV">–</div></div>
+        <div class="stat"><div class="k">Readings so far, n</div><div class="v" id="cN">0</div></div>
+        <div class="stat"><div class="k">Mean so far</div><div class="v" id="cM">–</div></div>
+        <div class="stat"><div class="k">SD of the readings so far</div><div class="v" id="cS">–</div></div>
+        <div class="stat"><div class="k">CV = SD ÷ mean</div><div class="v" id="cCV">–</div></div>
+        <div class="stat hi"><div class="k">SE = SD ÷ √n</div><div class="v" id="cSE">–</div></div>
+        <div class="stat or"><div class="k">95 % confidence interval = mean ± 2 × SE</div><div class="v" id="cPI">–</div></div>
       </div>
-      <p class="small">The SD of the bootstrap means is called the <b>standard error</b> (SE) of the mean. It says how much the average of 24 readings would move if 24 other students measured the same tree. After a few thousand resamples it matches the textbook formula s/√24 closely.</p>
     </div>
   </div>
+
+  <h4 class="grp">The recipe from "Simple calculations", with all 250 readings</h4>
+  <div class="stepbox" id="cRecipe"></div>
+
   <div class="why">
-    <h4>Why with replacement?</h4>
-    <p>In Panel A the die has six faces and we rolled it as often as we liked. In the bootstrap the 24 chips stand in for the die: they are our best picture of "what a height reading of this tree can be". A die can show the same face twice in a row, so a chip must be allowed to come out twice too. Putting each chip back keeps all 24 faces available for every draw. Without replacement, every pretend sample would be exactly the original 24 readings in a different order, with exactly the same mean, and the histogram would be one single bar: no information about uncertainty at all.</p>
+    <h4>What "95 % confident" means</h4>
+    <p id="cAnswer"></p>
+    <p><b>The interval is for the true height, not for one reading.</b> It answers "where is the hidden value?", not "what will the next student write down?".</p>
+    <p><b>"95 %" describes the method, not this one interval.</b> Imagine many classes, each of 250 students, each measuring this tree and each calculating its own interval. The intervals would differ a little, because the readings differ. About 95 out of 100 of those intervals would contain the true height; about 5 would miss it. We have one class and one interval. We cannot know whether ours is one of the 95 or one of the 5. That is why we say "95 % confident", not "certain".</p>
+    <p id="cTwo"></p>
+    <p id="cFewer"></p>
+  </div>
+  <div class="why">
+    <h4>Height is harder to measure than DBH</h4>
+    <p id="cHD"></p>
+    <p>Height is measured from a distance with an angle reader (a clinometer) and some trigonometry. DBH is measured with a tape touching the trunk. The CV lets us compare the two even though one is in metres and the other in centimetres.</p>
+  </div>
+  <p class="small" style="margin-top:10px">One thing the dice cannot show, and 250 readings cannot fix: if every student's instrument reads 0.5 m too high, the mean is also 0.5 m too high. All the readings would be "rolls" of a die whose faces are shifted. More readings make the interval narrower, but around the wrong value. Only a better instrument, or a check against a tree of known height, can find this kind of error. It is called a systematic error, and we will come back to it when we look at biomass equations.</p>
+</section>
+
+<!-- ============ PANEL E: BOOTSTRAP ============ -->
+<section class="panel" id="pS">
+  <div class="eyebrow">Panel E</div>
+  <h2>The bootstrap: the 95 % interval without the formula</h2>
+  <p class="lead">In Panel D we used a formula: SE = SD ÷ √n, then interval = mean ± 2 × SE. In Panel C we found the SE a different way: by <b>experiment</b>. We rolled the dice thousands of times, made a histogram of the averages, and measured their spread. Can we do the same for the tree? Not directly: we cannot send 2,000 new classes to measure tree #406. We have one bag of 250 readings and nothing else.</p>
+  <p class="lead"><b>The trick.</b> Treat the bag of 250 chips as if it were the tree itself. Drawing one chip from the bag plays the role of measuring the tree once. This is the same idea as in Panel B, where many rolls were a good picture of the die: here, 250 readings are a good picture of what a reading of this tree can look like. So we can "measure the tree" as often as we like, by drawing chips from the bag:</p>
+  <ol class="lead" style="padding-left:20px">
+    <li>Draw one chip from the bag. Write down its value. <b>Put the chip back.</b></li>
+    <li>Repeat 250 times. This is one <b>pretend class</b> of 250 readings. Some chips come out two or three times. Some never come out.</li>
+    <li>Calculate the mean of the pretend class. Drop it into the histogram.</li>
+    <li>Repeat steps 1 to 3 thousands of times. The spread of the pretend means is the SE, found by experiment. Sort the pretend means and cut off the lowest 2.5 % and the highest 2.5 %: what remains is the 95 % interval.</li>
+  </ol>
+  <div class="words">
+    <h3>Two new words</h3>
+    <dl>
+      <dt>Bootstrap</dt><dd>The method above: draw chips from the bag of readings you already have, again and again, to make many pretend classes, and measure the spread of their results.</dd>
+      <dt>With replacement</dt><dd>Putting the chip back before the next draw, so that the same chip can come out again in the same pretend class. The tree can give the same reading to two students, so the bag must be able to give the same chip twice.</dd>
+    </dl>
+  </div>
+  <div class="controls">
+    <label class="ctl">Readings:</label>
+    <span class="toggle" role="group" aria-label="Which readings"><button id="sH" aria-pressed="true">Height, m</button><button id="sD" aria-pressed="false">DBH, cm</button></span>
+    <label class="ctl">Quantity:</label>
+    <span class="toggle" role="group" aria-label="Which quantity"><button id="sQm" aria-pressed="true">Mean</button><button id="sQs" aria-pressed="false">SD</button></span>
+    <button id="sPlay" class="primary">Play</button>
+    <button id="sStep">Step (one pretend class)</button>
+    <button id="sFF">Fast-forward to 2,000</button>
+    <button id="sReset">Reset</button>
+    <label class="ctl">Speed <input type="range" id="sSpeed" min="1" max="100" value="30"></label>
+    <span class="counter" id="sCount">pretend classes: 0</span>
+  </div>
+  <div class="grid">
+    <div>
+      <div class="row" style="margin-top:0">
+        <div class="lbl">The latest pretend class: the first 15 of its 250 draws</div>
+        <div class="sample" id="sStrip"></div>
+        <div class="meanline" id="sLine">Press Step to draw one pretend class.</div>
+      </div>
+      <div class="stats" style="margin-top:12px">
+        <div class="stat"><div class="k" id="sRealK">Mean of the real 250 readings</div><div class="v" id="sReal">–</div></div>
+        <div class="stat hi"><div class="k">SE by bootstrap: SD of the pretend values</div><div class="v" id="sBSE">–</div></div>
+        <div class="stat hi"><div class="k" id="sFSEK">SE by formula: SD ÷ √250</div><div class="v" id="sFSE">–</div></div>
+        <div class="stat or"><div class="k">95 % interval by bootstrap (sort and cut 2.5 % each end)</div><div class="v" id="sBPI">–</div></div>
+        <div class="stat or"><div class="k" id="sFPIK">95 % interval by formula: mean ± 2 × SE</div><div class="v" id="sFPI">–</div></div>
+      </div>
+    </div>
+    <figure><svg id="sHist" viewBox="0 0 420 300" role="img" aria-label="Histogram of the pretend-class values"></svg>
+      <figcaption>Each pretend class gives one value, dropped into this histogram. Green dashed line: the value from the real 250 readings. Orange bracket: the bootstrap 95 % interval. Green bracket (for the mean only): the formula interval from Panel D. The two brackets almost coincide.</figcaption></figure>
+  </div>
+  <div class="why">
+    <h4>Why bother, if the formula gives the same answer?</h4>
+    <p><b>1. The formula only works for the mean.</b> Press "SD" above. We often want to know how sure we are about the SD, or the CV, or the median, or a biomass calculated from the readings. There is no simple "÷ √n" rule for those. The bootstrap uses the same four steps for any quantity: calculate it for each pretend class and look at the spread.</p>
+    <p><b>2. The formula makes an assumption.</b> "Mean ± 2 × SE" assumes that the means of many classes would pile up in a bell shape. Panel C showed that averages do this when readings are well behaved. But if the readings are lopsided, for example a few students made very large mistakes, the bell shape is only approximate. The bootstrap makes no such assumption. It uses the actual shape of the readings in the bag.</p>
+    <p><b>3. It is one recipe for everything.</b> Draw with replacement, calculate, repeat, sort, cut 2.5 % at each end. The computer does the repeating. We will use exactly this recipe again for the biomass of a whole plot.</p>
+    <p><b>What if we did not put the chips back?</b> Then every pretend class would contain exactly the same 250 chips, only in a different order. Every pretend mean would be identical. The histogram would be one single bar, and it would tell us nothing. Putting the chip back is what lets the bag behave like the tree: it can give the same reading twice.</p>
+  </div>
+</section>
+
+<!-- ============ PANEL F: MONTE CARLO ============ -->
+<section class="panel" id="pM">
+  <div class="eyebrow">Panel F</div>
+  <h2>Monte Carlo: when a tree has only one reading</h2>
+  <p class="lead">In our real project nobody measures one tree 250 times. Each tree is measured <b>once</b>: one height, one DBH. So for a single tree there is no bag of readings to roll. The bootstrap cannot start. A bag with one chip always gives the same answer.</p>
+  <div class="grid3">
+    <div>
+      <p class="lead"><b>The idea.</b> If we cannot fill the bag with readings, we fill it with an <b>assumption</b>. From Panel D we know how far a height reading can be from the truth: the CV of height readings was about 10 %. So we say: "the true height is somewhere between the reading − 10 % and the reading + 10 %, and we have no reason to prefer any value in that range." That is a die with very many faces, all equally likely, spread evenly from 5.4 m to 6.6 m for a reading of 6.0 m. This shape is called the <b>uniform distribution</b>: drawn as a picture, it has a flat top. Then we roll it, exactly as before. This is the <b>Monte Carlo</b> method, named after the casino town, because it works by rolling dice.</p>
+    </div>
+    <figure><svg id="uSvg" viewBox="0 0 420 210" role="img" aria-label="two uniform distributions: an ordinary die and the height die"></svg>
+      <figcaption>Two uniform distributions. Left: an ordinary die. Six values, each with probability 1/6. Right: the height die for a reading of 6.0 m. Every value from 5.4 m to 6.6 m is equally likely, and nothing outside is possible. Both pictures have a flat top: that is what "uniform" means. Compare the bell shape of the real readings in Panel D, where values near the middle were more common.</figcaption></figure>
+  </div>
+  <div class="words">
+    <h3>Two new words</h3>
+    <dl>
+      <dt>Uniform distribution</dt><dd>Every value between a low limit and a high limit is equally likely. An ordinary die is uniform on 1 to 6. Here the die is uniform on "reading − 10 %" to "reading + 10 %".</dd>
+      <dt>Monte Carlo</dt><dd>The bootstrap with a bag that we build ourselves from an assumed shape (here uniform) and an assumed size of error (here ± 10 %). Draw, calculate, repeat, sort, cut 2.5 % at each end: the same four steps.</dd>
+    </dl>
+  </div>
+  <div class="tablewrap">
+  <table class="calc">
+    <tr><th></th><th>Bootstrap (Panel E)</th><th>Monte Carlo (this panel)</th></tr>
+    <tr><td>What is in the bag</td><td>Real readings</td><td>Values made from an assumption: a shape and an error size</td></tr>
+    <tr><td>Where the spread comes from</td><td>The data itself</td><td>The assumed error, for example ± 10 %</td></tr>
+    <tr><td>Needs</td><td>Many readings of the same thing</td><td>One reading plus a known or assumed error</td></tr>
+    <tr><td>The rolling and counting</td><td colspan="2">Identical: draw, calculate, repeat thousands of times, sort, cut 2.5 % at each end</td></tr>
+  </table>
+  </div>
+
+  <h4 class="grp">A worked example by hand: the volume of a trunk</h4>
+  <p class="lead">For one tree alone, Monte Carlo on the height gives nothing new: the mean is the reading and the range is ± 10 %. It becomes useful when the reading goes into a <b>formula</b>. Take the simplest tree formula: treat the trunk as a cylinder. Its volume is V = π × r² × H, where r is the radius, half the DBH.</p>
+  <p class="lead">One tree was measured once: H = 6.0 m and DBH = 8.0 cm, so r = 4.0 cm = 0.04 m. From the readings alone: V = 3.1416 × 0.04 × 0.04 × 6.0 = 0.0302 m³ = <b>30.2 litres</b> (1 m³ = 1,000 litres). But how sure are we of 30.2? Height can be off by ± 10 %, DBH by ± 3 % (its CV in Panel D). Two errors go into one formula, and the DBH is squared. Working this out with algebra is messy. Rolling is easy.</p>
+  <p class="lead">For a hand calculation, make the two dice with coarse faces. <b>Height die:</b> 13 faces, 5.4, 5.5, 5.6, …, 6.6 m (6.0 ± 10 %). <b>DBH die:</b> 5 faces, 7.8, 7.9, 8.0, 8.1, 8.2 cm (8.0 ± 3 %, rounded to 0.1 cm). Roll both, calculate V, repeat:</p>
+  <div class="tablewrap">
+  <table class="calc">
+    <tr><th>Roll</th><th>Height die, m</th><th>DBH die, cm</th><th>r = DBH ÷ 2, m</th><th>V = 3.1416 × r² × H</th><th>V, litres</th></tr>
+    <tr><td>1</td><td>5.7</td><td>8.1</td><td>0.0405</td><td>3.1416 × 0.00164 × 5.7 = 0.0294 m³</td><td><b>29.4</b></td></tr>
+    <tr><td>2</td><td>6.5</td><td>7.9</td><td>0.0395</td><td>3.1416 × 0.00156 × 6.5 = 0.0319 m³</td><td><b>31.9</b></td></tr>
+    <tr><td>3</td><td>5.5</td><td>8.2</td><td>0.0410</td><td>3.1416 × 0.00168 × 5.5 = 0.0290 m³</td><td><b>29.0</b></td></tr>
+    <tr><td>4</td><td>6.2</td><td>8.0</td><td>0.0400</td><td>3.1416 × 0.00160 × 6.2 = 0.0312 m³</td><td><b>31.2</b></td></tr>
+    <tr><td>5</td><td>5.9</td><td>7.8</td><td>0.0390</td><td>3.1416 × 0.00152 × 5.9 = 0.0282 m³</td><td><b>28.2</b></td></tr>
+  </table>
+  </div>
+  <p class="lead">After 5 rolls the mean is (29.4 + 31.9 + 29.0 + 31.2 + 28.2) ÷ 5 = 29.9 litres. Five rolls are too few, just as 5 rolls of a die were too few in Panel A. Let the computer roll 2,000 times below. The pile of 2,000 volumes gives the mean, the SD and the 95 % interval of V. You will find: mean about 30.2 litres, SD about 2.0 litres, 95 % interval about 26.5 to 34.1 litres. So we report: <b>V = 30.2 litres, 95 % interval 26.5 to 34.1 litres</b>, or "30 litres, give or take about 13 %".</p>
+  <div class="controls">
+    <label class="ctl">Height reading <input type="number" id="mH" value="6.0" step="0.1" min="1" max="60" style="width:70px"> m, error ± <input type="number" id="mHe" value="10" step="1" min="0" max="50" style="width:55px"> %</label>
+    <label class="ctl">DBH reading <input type="number" id="mD" value="8.0" step="0.1" min="1" max="200" style="width:70px"> cm, error ± <input type="number" id="mDe" value="3" step="1" min="0" max="50" style="width:55px"> %</label>
+  </div>
+  <div class="controls">
+    <button id="mPlay" class="primary">Play</button>
+    <button id="mStep">Step (one roll)</button>
+    <button id="mFF">Fast-forward to 2,000</button>
+    <button id="mReset">Reset</button>
+    <label class="ctl">Speed <input type="range" id="mSpeed" min="1" max="100" value="25"></label>
+    <span class="counter" id="mCount">rolls: 0</span>
+  </div>
+  <div class="grid">
+    <div>
+      <div class="row" style="margin-top:0">
+        <div class="lbl">The latest roll</div>
+        <div class="meanline" id="mLine">Press Step to roll the two dice once.</div>
+      </div>
+      <div class="row">
+        <div class="lbl">The first five rolls of the computer</div>
+        <table class="calc" id="mTable"><tr><th>Roll</th><th>H, m</th><th>DBH, cm</th><th>V, litres</th></tr></table>
+      </div>
+      <div class="stats" style="margin-top:12px">
+        <div class="stat"><div class="k">V from the readings alone</div><div class="v" id="mPoint">–</div></div>
+        <div class="stat"><div class="k">Mean of the rolled V</div><div class="v" id="mM">–</div></div>
+        <div class="stat hi"><div class="k">SD of the rolled V</div><div class="v" id="mSD">–</div></div>
+        <div class="stat"><div class="k">CV = SD ÷ mean</div><div class="v" id="mCV">–</div></div>
+        <div class="stat or"><div class="k">95 % interval of V (sort and cut 2.5 % each end)</div><div class="v" id="mPI">–</div></div>
+      </div>
+    </div>
+    <figure><svg id="mHist" viewBox="0 0 420 300" role="img" aria-label="Histogram of the rolled volumes"></svg>
+      <figcaption>Each roll gives one possible volume, dropped into this histogram. Dashed green line: the mean of the rolls. Small orange triangle: V from the readings alone. Orange bracket: the 95 % interval. Change the readings or the error sizes above and roll again.</figcaption></figure>
+  </div>
+  <div class="why">
+    <h4>Three things to remember about Monte Carlo</h4>
+    <p><b>The answer is only as good as the assumption.</b> The bootstrap gets its spread from real readings. Monte Carlo gets it from the ± 10 % we put in. Where does the 10 % come from? From an exercise like Panel D, where many people measure one tree; from the instrument's manual; or from a small test. If we assume ± 5 % instead, the interval for V becomes narrower, but not because we measured better. Try it above.</p>
+    <p><b>Uniform is the honest choice when you only know the limits.</b> In Panel D the readings piled up in a bell shape, with most readings near the middle. A uniform die says "anywhere between the limits, equally likely". It is the simplest shape, and it is a safe choice when all you know is "about ± 10 %". When more is known, other shapes can be used, for example the bell shape. One care is needed: a flat die with limits ± 10 % is not the same as a bell die with CV 10 %. The flat die from 5.4 m to 6.6 m has an SD of only 0.35 m, a CV of about 6 %, because its values never go beyond the limits. A bell die with CV 10 % has SD = 0.6 m, and about 1 draw in 20 lands more than 1.2 m from the reading. Panel D showed a bell shape with CV about 10 %, so the later pages use the bell die with CV 10 %. This page uses the flat die only because it is easy to roll by hand.</p>
+    <p><b>The same dice, a bigger formula.</b> Here the formula was a cylinder with two inputs. For the project, the formula will be the real biomass equation, which has five uncertain inputs instead of two. The method does not change: build a die for each uncertain input, roll them all, calculate, repeat, sort, cut.</p>
   </div>
 </section>
 
 <div class="notice">
   <h3>What to notice</h3>
   <ol>
-    <li><b>Probability needs many trials.</b> After 10 rolls the bars in Panel A are a mess. After 10,000 they are flat. "1/6" describes the long run, not the next roll.</li>
-    <li><b>The 1/√n rule.</b> In Panel A the running mean wobbles by about 1.71/√n. In Panel B the SD of an average of k dice is 1.71/√k. In Panel C the SE of the mean of 24 readings is s/√24. Same rule, three disguises.</li>
-    <li><b>The bootstrap gives the SE without any formula.</b> It works for means, for medians, for a biomass equation, for anything. We will use it for the whole tree in later pages.</li>
-    <li><b>Height vs diameter.</b> Switch the bag. The 24 diameter readings agree much better (CV of the mean below 1 %) than the heights (about 2 %). Measuring height with a clinometer is the shakier job.</li>
+    <li><b>Probability needs many trials.</b> After 10 rolls, the bars in Panel A are uneven. After 10,000 rolls they are almost flat. "1/6" describes the long run, not the next roll.</li>
+    <li><b>Readings let you guess a hidden thing.</b> In Panel B, a few hundred rolls were enough to tell an ordinary die from a die with two fives or from an eight-faced die. In Panel D, 250 readings tell us the height of a tree to within about ± 0.08 m, even though a single reading can be off by more than half a metre.</li>
+    <li><b>The same √n rule appears three times.</b> In Panel A, one roll has SD 1.71, so after n rolls the running mean is usually no further than 1.71 ÷ √n from 3.5. For example, after 100 rolls: 1.71 ÷ √100 = 1.71 ÷ 10 = 0.17, so the running mean is usually between 3.33 and 3.67. In Panel C, the SE of the average of k dice is 1.71 ÷ √k. In Panel D, the SE of the mean of 250 readings is SD ÷ √250. It is one rule in three places: averaging n values divides the spread by √n.</li>
+    <li><b>Two different 95 % ranges.</b> Mean ± 2 × SD is where 95 % of the single readings fall. Mean ± 2 × SE is where the true value very probably lies. The first is for one roll, the second for the average of many rolls. Do not mix them up.</li>
+    <li><b>Two ways to the same interval.</b> Panel D used the formula mean ± 2 × SE. Panel E rolled the bag of readings 2,000 times and got the same interval without any formula. The bootstrap also works for the SD, the median, or anything calculated from the readings, where no formula exists.</li>
+    <li><b>Monte Carlo is the bootstrap with a bag you build yourself.</b> When a tree has only one reading, assume the error (for example ± 10 %, uniform), build the die from it, and roll. Panel F turned one height and one DBH into a volume of 30.2 litres with a 95 % interval of about 26.5 to 34.1 litres.</li>
+    <li><b>Height is harder to measure than DBH.</b> Press the "DBH, cm" button in Panel D. The DBH readings agree with each other much better (CV about 3 %) than the height readings (CV about 11 %).</li>
   </ol>
 </div>
 <footer>Ecology &amp; Environment 2026 · Quantifying uncertainty in tree biomass · built for teaching; numbers are illustrative</footer>
@@ -261,15 +779,16 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 (function(){
 'use strict';
 // ---------- data ----------
+// 250 hypothetical readings of one tree, made up for this page (not real measurements)
 const DATA={
-  H:{vals:[7.0,5.3,5.5,5.0,5.1,7.0,6.6,6.1,5.6,6.4,6.5,5.2,6.1,5.5,7.0,7.0,5.9,6.4,6.5,5.6,7.3,6.6,6.0,6.2],unit:'m',name:'height',dec:2,lo:5.6,hi:6.7},
-  D:{vals:[7.5,8.0,7.8,7.9,7.9,8.1,8.5,7.8,7.9,7.7,8.0,8.0,7.5,8.1,8.0,8.1,8.0,8.1,8.5,8.1,7.6,7.9,8.1,8.3],unit:'cm',name:'diameter',dec:3,lo:7.78,hi:8.18}
+  H:{vals:[5.9,6.5,6.2,6.2,6.6,5.9,5.5,6.5,7.4,5,5.8,6.1,6.5,5.5,5.5,4.9,6,6.6,7.9,5.6,6.5,4.8,4.8,5.3,6.7,5.2,5.3,5.5,6.6,6.6,6.9,6,5.6,6.2,5.3,6.4,6.3,6.6,7.6,5.9,5.6,4.8,6.3,6.7,5.7,6.2,6,5.4,7.1,6,6,5.2,5.4,6.4,7.2,7.7,5.9,5.6,5.9,6.3,6.1,5.5,5.9,4.8,5.8,6,7,6,5.5,6.3,5.8,5.4,6.3,6,5.1,6.1,5.7,7,6.1,5.8,6.9,6.2,6.5,5.1,6.7,6.7,6.2,6.5,7.6,7,4.8,7,4.9,7.7,5.9,6.4,6.6,6.1,6.4,5.2,6.9,6.3,5.7,5.8,5.6,5.1,5.8,6.3,6.8,5.7,4.9,5.5,5.7,6.7,6.1,6.4,5.7,5.5,6.3,6.4,6.2,4.7,5.9,6,5.4,5.7,7.1,6,6.5,6.9,5.7,6.4,6.3,6,5.7,5.3,5.4,6.5,6.1,5.9,5.6,6.2,6.7,6.8,6.1,5.5,7.1,6.4,5.9,7.4,6.1,6.4,5.9,6.2,6.5,6,6.1,6.4,5.4,5.5,6.7,4.5,6.1,6.8,6,5.7,6.7,5.8,6.3,6.1,6.7,5.9,6.2,6.1,5.9,6.3,5.2,5.9,6.7,5,6.2,6.8,5.1,5.3,6.1,5.9,6.1,6.6,7,6.6,5.9,6.1,5.1,6.1,7.1,7.4,5.5,6,6.1,5.4,6.5,6.2,6.5,5.8,5.1,7.6,6.7,5.8,5.8,5.6,5.4,6.8,6.1,4.9,5.9,6.7,6.1,5.6,5.6,5.8,5.7,5.9,6.3,6.2,5.7,6.7,5.8,6.3,5.4,6.4,5.2,6.5,6.2,5,6.5,6.9,6.2,6.2,4.9,5.1,5.8,5.2,6.8,6.6,5.6,6.2,5.5,7.5,6.6,5.4],unit:'m',name:'height',dec:2,lo:4.5,hi:8.0,ylo:5.3,yhi:6.9},
+  D:{vals:[7.9,8.2,8.3,7.7,8.2,8.1,7.9,7.9,7.5,8,7.7,7.4,8.1,8.2,8.4,8,7.9,8.2,8.1,7.8,7.6,8.1,7.7,7.8,7.9,8.2,7.7,8.3,8.1,8.3,8.2,7.8,8.3,8.1,8.8,8.1,8.2,7.8,8.3,7.7,8.4,7.6,8.2,8.1,8,8.3,8.1,8,8.2,8.2,7.8,8.4,8.1,7.8,8.1,8.2,7.8,8.2,8,8,7.7,8.2,7.9,8.2,8.2,7.9,8.1,7.6,8.2,8.1,7.9,8,7.7,8.2,7.5,8,7.9,7.6,7.8,8.3,8,8.2,7.8,8.1,8.1,8,8.1,8.1,8.5,7.8,8,7.9,7.9,8.2,8.2,8,8.1,7.9,8.1,8.1,8.4,7.9,8.1,8.2,8.1,7.9,8.1,7.9,8.4,8.2,7.8,8.3,8.6,7.7,8,7.8,8,7.6,7.7,7.9,8,8.5,7.8,8,8.2,8.2,7.8,8.3,8,8,7.7,8.7,8.4,8.3,7.9,7.8,8,7.7,8.1,8.1,7.8,8.2,8,8.4,7.7,8.1,8.4,8.3,7.9,7.7,8.2,7.9,8,7.7,7.8,8.4,7.8,8,8.2,7.7,8.2,7.9,8.1,8,8.3,7.8,7.5,7.6,7.8,7.7,8,8.2,8,8.5,7.9,8.5,8.5,7.9,8.5,7.7,8,8,8.3,7.9,8,7.8,7.6,8.1,8,8,7.7,8.1,8,7.9,8.4,7.9,7.7,8,7.5,8,7.9,7.9,7.6,7.8,8.4,8.5,8.2,8.4,8.2,7.8,8,8.2,8,8.1,7.9,8.4,8,7.5,8.1,8.4,7.9,8.2,7.9,8,8.1,8.4,8.1,8.1,8,7.9,7.8,7.8,8.1,7.8,8.3,8.2,7.7,8.1,7.8,7.8,8.1,8.1,8,7.9,7.9,7.7,8.4,8,8.1,7.6],unit:'cm',name:'DBH',dec:2,lo:7.2,hi:8.9,ylo:7.7,yhi:8.3}
 };
 // ---------- PRNG ----------
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
 let seed=2026;
-const rngs={a:null,b:null,c:null};
-function reseed(){rngs.a=mulberry32(seed);rngs.b=mulberry32(seed+1);rngs.c=mulberry32(seed+2);}
+const rngs={a:null,b:null,c:null,i:null,g:null,s:null,m:null};
+function reseed(){rngs.a=mulberry32(seed);rngs.b=mulberry32(seed+1);rngs.c=mulberry32(seed+2);rngs.i=mulberry32(seed+3);rngs.g=mulberry32(seed+4);rngs.s=mulberry32(seed+5);rngs.m=mulberry32(seed+6);}
 reseed();
 const $=id=>document.getElementById(id);
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -294,6 +813,231 @@ function makeLoop(tickFn,speedEl){ // tickFn(n) performs n events; returns false
   return {start,stop,get playing(){return playing;}};
 }
 function setPlayLabel(btn,loop){btn.textContent=loop.playing?'Pause':'Play';}
+
+// ============================ INTRO: PROBABILITY (die and coin) ============================
+const I={dieOn:!reduce,coinOn:!reduce,dieTimer:null,coinTimer:null,dieBusy:false,coinBusy:false,coinAngle:0};
+const iDie=$('iDie'),iCoin=$('iCoin');
+const canAnimate=!reduce&&typeof iDie.animate==='function';
+function iSetFace(n){iDie.className='die big f'+n;}
+function iFinishDie(face){
+  iSetFace(face);
+  for(let k=1;k<=6;k++)$('iFace'+k).classList.toggle('hit',k===face);
+  $('iDieSay').innerHTML='The die shows <b>'+face+'</b>. Before the roll, the chance of getting '+face+' was 1/6. The chance of each other number was also 1/6.';
+  I.dieBusy=false;
+}
+function iRollDie(){
+  if(I.dieBusy)return; I.dieBusy=true;
+  const face=1+Math.floor(rngs.i()*6);
+  $('iDieSay').textContent='Rolling…';
+  for(let k=1;k<=6;k++)$('iFace'+k).classList.remove('hit');
+  if(!canAnimate){iFinishDie(face);return;}
+  const anim=iDie.animate([
+    {transform:'translateY(0) rotate(0deg)'},
+    {transform:'translateY(-40px) rotate(250deg) scale(1.1)',offset:.3},
+    {transform:'translateY(0) rotate(520deg)',offset:.62},
+    {transform:'translateY(-12px) rotate(660deg)',offset:.82},
+    {transform:'translateY(0) rotate(720deg)'}],{duration:1400,easing:'cubic-bezier(.3,.7,.3,1)'});
+  const flick=setInterval(()=>iSetFace(1+Math.floor(Math.random()*6)),90); // visual only
+  let done=false; const finish=()=>{if(done)return;done=true;clearInterval(flick);iFinishDie(face);};
+  anim.onfinish=finish; setTimeout(finish,1700); // the timer is a safety net in case the animation never reports 'finished'
+}
+function iDieLoop(){clearTimeout(I.dieTimer);if(!I.dieOn)return;iRollDie();I.dieTimer=setTimeout(iDieLoop,3400);}
+$('iDiePlay').onclick=()=>{I.dieOn=!I.dieOn;$('iDiePlay').textContent=I.dieOn?'Pause':'Play';if(I.dieOn)iDieLoop();else clearTimeout(I.dieTimer);};
+$('iDieOnce').onclick=()=>{I.dieOn=false;$('iDiePlay').textContent='Play';clearTimeout(I.dieTimer);iRollDie();};
+
+function iFinishCoin(heads){
+  $('iSideH').classList.toggle('hit',heads);$('iSideT').classList.toggle('hit',!heads);
+  $('iCoinSay').innerHTML='The coin shows <b>'+(heads?'head (H)':'tail (T)')+'</b>. Before the flip, the chance of '+(heads?'head':'tail')+' was 1/2. The chance of '+(heads?'tail':'head')+' was also 1/2.';
+  I.coinBusy=false;
+}
+function iFlipCoin(){
+  if(I.coinBusy)return; I.coinBusy=true;
+  const heads=rngs.i()<0.5;
+  $('iCoinSay').textContent='Flipping…';
+  $('iSideH').classList.remove('hit');$('iSideT').classList.remove('hit');
+  if(!canAnimate){I.coinAngle=heads?0:180;iCoin.style.transform='rotateY('+I.coinAngle+'deg)';iFinishCoin(heads);return;}
+  const from=I.coinAngle; let to=from+1800; if(((to%360)===0)!==heads)to+=180;   // end on H (0°) or T (180°)
+  const anim=iCoin.animate([
+    {transform:'translateY(0) rotateY('+from+'deg)'},
+    {transform:'translateY(-48px) rotateY('+((from+to)/2)+'deg)',offset:.5},
+    {transform:'translateY(0) rotateY('+to+'deg)'}],{duration:1500,easing:'cubic-bezier(.35,.6,.35,1)'});
+  let done=false; const finish=()=>{if(done)return;done=true;I.coinAngle=to%360;iCoin.style.transform='rotateY('+I.coinAngle+'deg)';iFinishCoin(heads);};
+  anim.onfinish=finish; setTimeout(finish,1800); // safety net, see the die
+}
+function iCoinLoop(){clearTimeout(I.coinTimer);if(!I.coinOn)return;iFlipCoin();I.coinTimer=setTimeout(iCoinLoop,3400);}
+$('iCoinPlay').onclick=()=>{I.coinOn=!I.coinOn;$('iCoinPlay').textContent=I.coinOn?'Pause':'Play';if(I.coinOn)iCoinLoop();else clearTimeout(I.coinTimer);};
+$('iCoinOnce').onclick=()=>{I.coinOn=false;$('iCoinPlay').textContent='Play';clearTimeout(I.coinTimer);iFlipCoin();};
+if(I.dieOn){iDieLoop();}else{$('iDiePlay').textContent='Play';$('iDieSay').textContent='Press Play or "Roll once".';}
+if(I.coinOn){setTimeout(iCoinLoop,1700);}else{$('iCoinPlay').textContent='Play';$('iCoinSay').textContent='Press Play or "Flip once".';}
+// pause the loops while the page is hidden so the browser does not do work for nothing
+document.addEventListener('visibilitychange',()=>{if(document.hidden){clearTimeout(I.dieTimer);clearTimeout(I.coinTimer);}else{if(I.dieOn)iDieLoop();if(I.coinOn)iCoinLoop();}});
+
+// ============================ WORDS: spread slider ============================
+const W={k:2,playing:false,dir:1,timer:null};
+function wDraw(){
+  const k=W.k,svg=$('wSvg');svg.innerHTML='';
+  const x=v=>26+(v/12)*348,y=72;
+  const g=el('g',{});svg.appendChild(g);
+  g.appendChild(el('line',{x1:x(0),y1:y,x2:x(12),y2:y,stroke:css('--grey'),'stroke-width':1.5}));
+  for(let v=0;v<=12;v+=2){g.appendChild(el('line',{x1:x(v),y1:y-4,x2:x(v),y2:y+4,stroke:css('--grey')}));g.appendChild(el('text',{x:x(v),y:y+20,'text-anchor':'middle','font-size':'12',fill:css('--muted')},v));}
+  g.appendChild(el('line',{x1:x(6),y1:22,x2:x(6),y2:y+6,stroke:css('--accent'),'stroke-width':2,'stroke-dasharray':'5 3'}));
+  g.appendChild(el('text',{x:x(6),y:16,'text-anchor':'middle','font-size':'12','font-weight':'700',fill:css('--accent')},'mean = 6'));
+  [6-k,6,6+k].forEach(v=>{g.appendChild(el('circle',{cx:x(v),cy:y,r:9,fill:css('--orange'),stroke:css('--panel'),'stroke-width':2}));});
+  if(k>0){
+    const yb=108;
+    g.appendChild(el('line',{x1:x(6),y1:yb,x2:x(6+k),y2:yb,stroke:css('--fg'),'stroke-width':2}));
+    g.appendChild(el('line',{x1:x(6),y1:yb-6,x2:x(6),y2:yb+6,stroke:css('--fg'),'stroke-width':2}));
+    g.appendChild(el('line',{x1:x(6+k),y1:yb-6,x2:x(6+k),y2:yb+6,stroke:css('--fg'),'stroke-width':2}));
+    g.appendChild(el('text',{x:x(6+k/2),y:yb+22,'text-anchor':'middle','font-size':'13','font-weight':'700',fill:css('--fg')},'SD = '+f(k,1)));
+  } else {
+    g.appendChild(el('text',{x:x(6),y:130,'text-anchor':'middle','font-size':'13','font-weight':'700',fill:css('--fg')},'SD = 0'));
+  }
+  $('wRead').innerHTML='Readings: '+f(6-k,1)+', 6.0, '+f(6+k,1)+' &nbsp;→&nbsp; mean 6.0, <b>SD '+f(k,1)+'</b>, CV '+(100*k/6).toFixed(0)+' %';
+  $('wWord').textContent=k===0?'No spread at all: all three readings are the same, so SD = 0.':k<=1.5?'Small spread: the readings stay close to the mean, so SD is small.':k<=3?'Medium spread.':'Large spread: the readings are far from the mean, so SD is large.';
+}
+$('wK').oninput=()=>{W.k=+$('wK').value;wDraw();};
+function wTick(){if(!W.playing)return;W.k=Math.round((W.k+0.1*W.dir)*10)/10;if(W.k>=4){W.k=4;W.dir=-1;}if(W.k<=0){W.k=0;W.dir=1;}$('wK').value=W.k;wDraw();W.timer=setTimeout(wTick,90);}
+$('wPlay').onclick=()=>{W.playing=!W.playing;$('wPlay').textContent=W.playing?'Pause':'Play';if(W.playing)wTick();else clearTimeout(W.timer);};
+wDraw();
+
+// ============================ SIMPLE CALCULATIONS: step-through ============================
+const KSETS={
+  s1:{label:'Set 1',vals:[5,6,7],lo:0,hi:12,dec:2,unit:'',toy:true},
+  s2:{label:'Set 2',vals:[2,6,10],lo:0,hi:12,dec:2,unit:'',toy:true},
+  s3:{label:'10 die rolls',vals:[2,5,3,6,1,4,4,2,6,3],lo:0,hi:7,dec:2,unit:'',toy:true,note4:' For comparison: the SD of one roll of an ordinary die, from theory, is 1.71.',note6:' An ordinary die has true mean 3.5. It is inside this range: the ten rolls did not give the exact answer, but they gave a range that contains it.'}
+};
+const K={key:'s1',step:0,auto:false,timer:null};
+function kStats(S){const v=S.vals,n=v.length,m=mean(v);let ss=0;for(const a of v)ss+=(a-m)*(a-m);const s=Math.sqrt(ss/(n-1));return {n,m,ss,sd:s,se:s/Math.sqrt(n),cv:100*s/m};}
+function kSteps(S){
+  const st=kStats(S),v=S.vals,n=st.n,sum=v.reduce((a,b)=>a+b,0),u=S.unit;
+  const fm=x=>Math.abs(x-Math.round(x))<1e-9?String(Math.round(x)):String(parseFloat(x.toFixed(2)));
+  const lo=st.m-2*st.se,hi=st.m+2*st.se;
+  {
+    const dev=v.map(a=>a-st.m),sq=dev.map(d=>d*d);
+    const sign=d=>d>0?'+'+fm(d):(d<0?'\u2212'+fm(-d):fm(d));
+    return [
+      {t:'Step 1 · The readings',x:'n = '+n+' readings: '+v.join(', ')+'. Each dot is one reading on the number line.'+(n>3?' Dots with the same value are stacked.':'')},
+      {t:'Step 2 · The mean',x:'Mean = ('+v.join(' + ')+') ÷ '+n+' = '+fm(sum)+' ÷ '+n+' = '+fm(st.m)+'. The dashed line marks it.'},
+      {t:'Step 3 · Distance from the mean',x:'Each reading minus the mean: '+dev.map(sign).join(', ')+'. The arrows show these distances. Square them, so the minus signs disappear: '+sq.map(fm).join(', ')+'. Add: '+fm(st.ss)+'.'},
+      {t:'Step 4 · The SD',x:'Divide by n − 1 = '+(n-1)+': '+fm(st.ss)+' ÷ '+(n-1)+' = '+fm(st.ss/(n-1))+'. Square root: SD = '+fm(st.sd)+'. The shaded band is mean ± SD, the "typical" distance. CV = SD ÷ mean × 100 = '+fm(st.sd)+' ÷ '+fm(st.m)+' × 100 = '+st.cv.toFixed(1)+' %.'+(S.note4||'')},
+      {t:'Step 5 · The SE',x:'SE = SD ÷ √n = '+fm(st.sd)+' ÷ √'+n+' = '+fm(st.sd)+' ÷ '+Math.sqrt(n).toFixed(2)+' = '+st.se.toFixed(2)+'. If you threw away these '+n+' readings and took '+n+' new ones, the new mean would typically differ from '+fm(st.m)+' by about '+st.se.toFixed(2)+'. The short bracket shows SE. It is smaller than SD.'},
+      {t:'Step 6 · The 95 % range for the mean',x:'Quick rule: mean ± 2 × SE = '+fm(st.m)+' ± '+(2*st.se).toFixed(2)+', so from '+lo.toFixed(2)+' to '+hi.toFixed(2)+'. The true mean very probably lies inside this band.'+(S.note6||'')}
+    ];
+  }
+}
+function kDraw(){
+  const S=KSETS[K.key],st=kStats(S),svg=$('kSvg');svg.innerHTML='';
+  const fb=x=>Math.abs(x-Math.round(x))<1e-9?String(Math.round(x)):x.toFixed(2);
+  const X0=30,X1=420,x=v=>X0+(v-S.lo)/(S.hi-S.lo)*(X1-X0),yax=150;
+  const g=el('g',{});svg.appendChild(g);
+  const r=S.toy?8:5,dy=S.toy?20:11;
+  // bands (behind everything)
+  if(K.step>=3){g.appendChild(el('rect',{x:x(st.m-st.sd),y:30,width:x(st.m+st.sd)-x(st.m-st.sd),height:yax-30,fill:css('--band')}));}
+  if(K.step>=5){g.appendChild(el('rect',{x:x(st.m-2*st.se),y:30,width:x(st.m+2*st.se)-x(st.m-2*st.se),height:yax-30,fill:css('--orange'),opacity:.22}));}
+  // axis
+  g.appendChild(el('line',{x1:X0,y1:yax,x2:X1,y2:yax,stroke:css('--grey'),'stroke-width':1.5}));
+  const tickStep=1;
+  for(let v=S.lo;v<=S.hi+1e-9;v+=tickStep){g.appendChild(el('line',{x1:x(v),y1:yax-4,x2:x(v),y2:yax+4,stroke:css('--grey')}));g.appendChild(el('text',{x:x(v),y:yax+18,'text-anchor':'middle','font-size':'11',fill:css('--muted')},v));}
+  g.appendChild(el('text',{x:X1,y:yax+34,'text-anchor':'end','font-size':'11',fill:css('--muted')},'reading'));
+  // stacked dots
+  const stack={};const pts=[];
+  for(const v of S.vals){const key=v.toFixed(2);stack[key]=(stack[key]||0)+1;pts.push({v,cy:yax-10-(stack[key]-1)*dy});}
+  // arrows (step 3+)
+  if(K.step>=2){for(const p of pts){if(Math.abs(p.v-st.m)<1e-9)continue;g.appendChild(el('line',{x1:x(st.m),y1:p.cy,x2:x(p.v)+(p.v>st.m?-r:r),y2:p.cy,stroke:css('--orange'),'stroke-width':S.toy?2:1,opacity:S.toy?1:.7}));
+    if(S.toy){const d=p.v-st.m;g.appendChild(el('text',{x:(x(st.m)+x(p.v))/2,y:p.cy-10,'text-anchor':'middle','font-size':'12','font-weight':'700',fill:css('--orange')},(d>0?'+':(d<0?'\u2212':''))+Math.abs(d)));}}}
+  for(const p of pts){g.appendChild(el('circle',{cx:x(p.v),cy:p.cy,r,fill:css('--orange'),stroke:css('--panel'),'stroke-width':1.5}));}
+  // mean (step 2+)
+  if(K.step>=1){g.appendChild(el('line',{x1:x(st.m),y1:K.step>=5?50:26,x2:x(st.m),y2:yax+4,stroke:css('--accent'),'stroke-width':2,'stroke-dasharray':'5 3'}));
+    g.appendChild(el('text',{x:x(st.m),y:18,'text-anchor':'middle','font-size':'12','font-weight':'700',fill:css('--accent')},'mean = '+fb(st.m)));}
+  // SD bracket (step 4+)
+  function bracket(a,b,y,label,col){g.appendChild(el('line',{x1:x(a),y1:y,x2:x(b),y2:y,stroke:col,'stroke-width':2}));g.appendChild(el('line',{x1:x(a),y1:y-5,x2:x(a),y2:y+5,stroke:col,'stroke-width':2}));g.appendChild(el('line',{x1:x(b),y1:y-5,x2:x(b),y2:y+5,stroke:col,'stroke-width':2}));g.appendChild(el('text',{x:x(b)+6,y:y+4,'font-size':'12','font-weight':'700',fill:col},label));}
+  if(K.step>=3)bracket(st.m,st.m+st.sd,190,'SD = '+fb(st.sd)+S.unit,css('--fg'));
+  if(K.step>=4)bracket(st.m,st.m+st.se,210,'SE = '+fb(st.se)+S.unit,css('--orange'));
+  if(K.step>=5){g.appendChild(el('text',{x:x(st.m),y:42,'text-anchor':'middle','font-size':'11',fill:css('--fg')},'95 % range for the mean: '+(st.m-2*st.se).toFixed(2)+' to '+(st.m+2*st.se).toFixed(2)+S.unit));}
+  const steps=kSteps(S);$('kTitle').textContent=steps[K.step].t;$('kText').textContent=steps[K.step].x;$('kCount').textContent='step '+(K.step+1)+' of '+steps.length;
+  $('kPrev').disabled=K.step===0;$('kNext').disabled=K.step===steps.length-1;
+}
+function kStopAuto(){K.auto=false;clearTimeout(K.timer);$('kAuto').textContent='Play all';}
+$('kNext').onclick=()=>{kStopAuto();if(K.step<5){K.step++;kDraw();}};
+$('kPrev').onclick=()=>{kStopAuto();if(K.step>0){K.step--;kDraw();}};
+$('kAuto').onclick=()=>{if(K.auto){kStopAuto();return;}K.auto=true;$('kAuto').textContent='Stop';K.step=0;kDraw();const go=()=>{if(!K.auto)return;if(K.step>=5){kStopAuto();return;}K.step++;kDraw();K.timer=setTimeout(go,3500);};K.timer=setTimeout(go,3500);};
+[['kS1','s1'],['kS2','s2'],['kS3','s3']].forEach(([id,key])=>{$(id).onclick=()=>{kStopAuto();K.key=key;K.step=0;['kS1','kS2','kS3'].forEach(i=>$(i).setAttribute('aria-pressed',i===id?'true':'false'));kDraw();};});
+kDraw();
+
+// ============================ EXPECTED VALUE: balance-point charts ============================
+function eChart(id,faces){
+  const svg=$(id);svg.textContent='';
+  const W=230,H=152,L=10,R=10,T=14,B=50,pw=W-L-R,ph=H-T-B;
+  const fg=css('--fg'),mu=css('--muted'),ln=css('--line'),ac=css('--accent'),or=css('--orange');
+  const ymax=0.4,bw=pw/8;
+  const ev=faces.reduce((a,b)=>a+b,0)/faces.length;
+  svg.appendChild(el('line',{x1:L,x2:L+pw,y1:T+ph,y2:T+ph,stroke:ln,'stroke-width':1.5}));
+  for(let v=1;v<=8;v++){const pr=faces.filter(x=>x===v).length/faces.length;const h=(pr/ymax)*ph;
+    if(h>0){svg.appendChild(el('rect',{x:L+(v-1)*bw+4,y:T+ph-h,width:bw-8,height:h,fill:ac,rx:2}));
+      svg.appendChild(el('text',{x:L+(v-1)*bw+bw/2,y:T+ph-h-3,'text-anchor':'middle',fill:fg,'font-size':9},pr===1/6?'1/6':pr===2/6?'2/6':'1/8'));}
+    svg.appendChild(el('text',{x:L+(v-1)*bw+bw/2,y:T+ph+27,'text-anchor':'middle',fill:fg,'font-size':12,'font-weight':700},v));}
+  const xe=L+(ev-0.5)*bw;
+  svg.appendChild(el('path',{d:`M${xe},${T+ph+1} l-7,12 l14,0 Z`,fill:or}));
+  svg.appendChild(el('text',{x:xe,y:H-2,'text-anchor':'middle',fill:or,'font-size':11,'font-weight':700},'balance point '+(Math.round(ev*100)/100)));
+}
+function eDraw(){eChart('eSvg3',[1,2,3,4,5,6]);eChart('eSvg1',[1,2,3,4,5,5]);eChart('eSvg2',[1,2,3,4,5,6,7,8]);}
+const EV={d1:3.33,d2:4.5,d3:3.5},ENAME={d1:'Die 1',d2:'Die 2',d3:'Die 3'};
+function eLive(){
+  const n=G.n,name=ENAME[G.key];
+  $('eLive').innerHTML=n?`Panel B right now: ${name}, ${n.toLocaleString()} rolls, running mean <b>${(G.sum/n).toFixed(3)}</b>. Expected value of ${name} from the table: <b>${EV[G.key]}</b>.`:`Panel B right now: ${name}, no rolls yet. Roll it and watch the running mean move toward ${EV[G.key]}.`;
+}
+eDraw();
+
+// ============================ PANEL B: GUESS THE DIE ============================
+const GDICE={
+  d1:{faces:[1,2,3,4,5,5],truth:'Die 1 has 6 faces: 1, 2, 3, 4, 5, 5. The number 5 is on two faces, so its probability is 2 ÷ 6 = 1/3, about 33 %. The numbers 1 to 4 have 1/6 each. The number 6 is not on this die, so its probability is 0.'},
+  d2:{faces:[1,2,3,4,5,6,7,8],truth:'Die 2 has 8 faces: 1 to 8. Every number has probability 1 ÷ 8 = 1/8 = 12.5 %.'},
+  d3:{faces:[1,2,3,4,5,6],truth:'Die 3 is an ordinary die: 6 faces, 1 to 6, each with probability 1/6, about 16.7 %.'}
+};
+const MAXG=2000;
+const G={key:'d1',counts:new Array(9).fill(0),n:0,sum:0,sumsq:0,last:0,revealed:false};
+function gRoll(){const F=GDICE[G.key].faces;const v=F[Math.floor(rngs.g()*F.length)];G.counts[v]++;G.n++;G.sum+=v;G.sumsq+=v*v;G.last=v;}
+function gDraw(){
+  const box=$('gBox');box.textContent=G.n?G.last:'?';box.classList.toggle('shown',G.n>0);
+  $('gSay').textContent=G.n?`Roll ${G.n.toLocaleString()}: the number ${G.last} came up.`:'Press Play or Step. The number that comes up is shown here.';
+  $('gCount').textContent='rolls: '+G.n.toLocaleString();
+  const seen=[];for(let v=1;v<=8;v++)if(G.counts[v])seen.push(v);
+  $('gSeen').textContent=seen.length?seen.join(', '):'–';
+  const m=G.n?G.sum/G.n:NaN;$('gM').textContent=f(m,3);
+  $('gSD').textContent=G.n>1?f(Math.sqrt((G.sumsq-G.n*m*m)/(G.n-1)),3):'–';
+  if(seen.length>1){let mx=0,mn=Infinity;for(const v of seen){mx=Math.max(mx,G.counts[v]);mn=Math.min(mn,G.counts[v]);}$('gRatio').textContent=(mx/mn).toFixed(2);}else $('gRatio').textContent='–';
+  $('gHint').textContent=G.n===0?'Three questions to answer from the rolls: (1) How many different numbers appear? (2) Do all the bars become equally high? (3) Is one bar about twice as high as the others?':
+    G.n<30?'Too early to say much. With few rolls the bars are uneven even for an ordinary die. Keep rolling.':
+    G.n<300?'A shape is appearing. Count the numbers seen so far. Is one bar clearly higher than the rest? Keep rolling to be sure.':
+    'The shares have settled. Count the numbers seen, compare the bar heights and the ratio "biggest ÷ smallest". Make your guess, then press "Reveal the die".';
+  $('gTruth').textContent=G.revealed?GDICE[G.key].truth:'';
+  // histogram
+  const svg=$('gHist');svg.textContent='';
+  const W=420,H=280,L=62,R=12,T=16,B=48,pw=W-L-R,ph=H-T-B;
+  const fg=css('--fg'),mu=css('--muted'),ln=css('--line'),ac=css('--accent'),or=css('--orange');
+  const ymax=G.n<30?0.6:0.4;
+  for(let y=0;y<=ymax+1e-9;y+=0.1){const yy=T+ph-(y/ymax)*ph;svg.appendChild(el('line',{x1:L,x2:L+pw,y1:yy,y2:yy,stroke:ln,'stroke-width':1}));svg.appendChild(el('text',{x:L-6,y:yy+4,'text-anchor':'end',fill:mu,'font-size':15},Math.round(y*100)+' %'));}
+  const bw=pw/8;
+  for(let v=1;v<=8;v++){const p=G.n?G.counts[v]/G.n:0;const h=Math.min(ph,(p/ymax)*ph);
+    if(h>0)svg.appendChild(el('rect',{x:L+(v-1)*bw+6,y:T+ph-h,width:bw-12,height:h,fill:G.last===v?or:ac,rx:2}));
+    svg.appendChild(el('text',{x:L+(v-1)*bw+bw/2,y:T+ph+18,'text-anchor':'middle',fill:fg,'font-size':16,'font-weight':700},v));
+    if(G.n&&h>26)svg.appendChild(el('text',{x:L+(v-1)*bw+bw/2,y:T+ph-h+17,'text-anchor':'middle',fill:css('--bg'),'font-size':13},G.counts[v]));
+    if(G.revealed){const F=GDICE[G.key].faces;const pr=F.filter(x=>x===v).length/F.length;const yy=T+ph-(pr/ymax)*ph;
+      svg.appendChild(el('line',{x1:L+(v-1)*bw+3,x2:L+v*bw-3,y1:yy,y2:yy,stroke:fg,'stroke-dasharray':'5 4','stroke-width':2}));
+      svg.appendChild(el('text',{x:L+(v-1)*bw+bw/2,y:yy-5,'text-anchor':'middle',fill:fg,'font-size':12,'font-weight':700},pr?Math.round(pr*1000)/10+' %':'0'));}}
+  svg.appendChild(el('text',{x:L+pw/2,y:H-6,'text-anchor':'middle',fill:mu,'font-size':15},'number that came up'));
+  svg.appendChild(el('text',{x:14,y:T+ph/2,transform:`rotate(-90 14 ${T+ph/2})`,'text-anchor':'middle',fill:mu,'font-size':15},'share of rolls'));
+  if(typeof eLive==='function')eLive();
+}
+const gLoop=makeLoop(n=>{for(let i=0;i<n&&G.n<MAXG;i++)gRoll();gDraw();return G.n<MAXG;},$('gSpeed'));
+function gReset(){G.counts.fill(0);G.n=0;G.sum=0;G.sumsq=0;G.last=0;G.revealed=false;gLoop.stop();setPlayLabel($('gPlay'),gLoop);gDraw();}
+$('gPlay').onclick=()=>{if(gLoop.playing)gLoop.stop();else if(G.n<MAXG)gLoop.start();setPlayLabel($('gPlay'),gLoop);};
+$('gStep').onclick=()=>{gLoop.stop();setPlayLabel($('gPlay'),gLoop);if(G.n<MAXG){gRoll();gDraw();}};
+$('gFF').onclick=()=>{gLoop.stop();setPlayLabel($('gPlay'),gLoop);while(G.n<MAXG)gRoll();gDraw();};
+$('gReset').onclick=gReset;
+$('gReveal').onclick=()=>{G.revealed=true;gDraw();};
+[['gD1','d1'],['gD2','d2'],['gD3','d3']].forEach(([id,key])=>{$(id).onclick=()=>{G.key=key;['gD1','gD2','gD3'].forEach(i=>$(i).setAttribute('aria-pressed',i===id?'true':'false'));gReset();};});
+gDraw();
 
 // ============================ PANEL A ============================
 const A={counts:[0,0,0,0,0,0],n:0,sum:0,sumsq:0,hist:[],last:0};
@@ -398,92 +1142,224 @@ $('bStep').onclick=()=>{bLoop.stop();setPlayLabel($('bPlay'),bLoop);if(B.n<10000
 $('bFF').onclick=()=>{bLoop.stop();setPlayLabel($('bPlay'),bLoop);while(B.n<10000)bRoll();bDraw();};
 $('bReset').onclick=bReset;
 
-// ============================ PANEL C ============================
-const C={key:'H',means:[],draws:[],counts:new Array(24).fill(0),lit:-1,n:0,finished:false};
-const MAXC=10000;
+// ============================ PANEL D: THE TREE (250 readings, one by one) ============================
+const NC=250;
+const C={key:'H',n:0,hist:[]};
 function cData(){return DATA[C.key];}
-function cDrawOne(){ // one draw of the current resample; returns true if resample complete
-  if(C.finished){C.draws=[];C.counts.fill(0);C.finished=false;}
-  const i=Math.floor(rngs.c()*24);C.draws.push(i);C.counts[i]++;C.lit=i;
-  if(C.draws.length===24){const d=cData();let s=0;for(const j of C.draws)s+=d.vals[j];C.means.push(s/24);C.n++;C.finished=true;return true;}
-  return false;
-}
-function cFastResample(){const d=cData();let s=0;for(let k=0;k<24;k++)s+=d.vals[Math.floor(rngs.c()*24)];C.means.push(s/24);C.n++;}
+function cStats(n){const d=cData();if(!n)return null;const v=d.vals.slice(0,n);const m=mean(v),s=n>1?sd(v):NaN,se=s/Math.sqrt(n);return {n,m,s,se,cv:100*s/m,lo:m-2*se,hi:m+2*se};}
+function cTake(){C.n++;const st=cStats(C.n);C.hist.push([C.n,st.m,isFinite(st.se)?st.se:0]);}
 function cDrawBag(){
-  const d=cData();const box=$('cChips');box.textContent='';
-  for(let i=0;i<24;i++){const c=document.createElement('div');c.className='chip';c.textContent=d.vals[i].toFixed(1);
-    if(C.lit===i&&!C.finished)c.classList.add('lit');
-    if(C.counts[i]>1)c.classList.add('dup');
-    if(C.finished&&C.counts[i]===0)c.classList.add('never');
-    if(C.counts[i]>0){const n=document.createElement('span');n.className='n';n.textContent='×'+C.counts[i];c.appendChild(n);}
-    box.appendChild(c);}
-  const sm=$('cSample');sm.textContent='';
-  C.draws.forEach((j,idx)=>{const c=document.createElement('div');c.className='chip';c.textContent=d.vals[j].toFixed(1);if(idx===C.draws.length-1&&!C.finished)c.classList.add('lit');sm.appendChild(c);});
-  for(let i=C.draws.length;i<24;i++){const c=document.createElement('div');c.className='chip';c.style.opacity='.25';c.textContent='·';sm.appendChild(c);}
-  const ml=$('cMeanLine');
-  if(C.finished)ml.innerHTML=`mean of pretend sample = <b>${C.means[C.means.length-1].toFixed(d.dec)} ${d.unit}</b> → dropped into the histogram`;
-  else if(C.draws.length){let s=0;for(const j of C.draws)s+=d.vals[j];ml.textContent=`${C.draws.length} of 24 drawn, running mean = ${(s/C.draws.length).toFixed(d.dec)} ${d.unit}`;}
-  else if(C.n)ml.innerHTML=`last pretend mean = <b>${C.means[C.means.length-1].toFixed(d.dec)} ${d.unit}</b> (fast mode skips the chip animation)`;
-  else ml.textContent='mean of pretend sample = –';
+  const d=cData(),box=$('cChips');box.textContent='';
+  const frag=document.createDocumentFragment();
+  for(let i=0;i<NC;i++){const c=document.createElement('div');c.className='chip'+(i<C.n?' done':'')+(i===C.n-1&&C.n?' lit':'');c.textContent=d.vals[i].toFixed(1);frag.appendChild(c);}
+  box.appendChild(frag);
+  $('cBagLbl').textContent=`The bag: 250 hypothetical ${d.name} readings of tree #406 (${d.unit})`;
 }
 function cDrawHist(){
-  const d=cData();const svg=$('cHist');svg.textContent='';
-  const W=420,H=300,L=56,R=12,T=18,Bm=48,pw=W-L-R,ph=H-T-Bm;
+  const d=cData(),svg=$('cHist');svg.textContent='';
+  const W=420,H=300,L=46,R=14,T=22,B=48,pw=W-L-R,ph=H-T-B;
   const fg=css('--fg'),mu=css('--muted'),ln=css('--line'),ac=css('--accent'),or=css('--orange');
-  const lo=d.lo,hi=d.hi,NBc=44,bw=(hi-lo)/NBc;
-  const bins=new Array(NBc).fill(0);for(const v of C.means){let i=Math.floor((v-lo)/bw);if(i<0)i=0;if(i>=NBc)i=NBc-1;bins[i]++;}
-  const mx=Math.max(1,...bins);
-  const dotMode=C.n<=60; // early on, show dots stacking
-  function niceStep(v){const e=Math.pow(10,Math.floor(Math.log10(v/4)));return [1,2,2.5,5,10].map(m=>m*e).find(t=>v/t<=5);}
-  let ymax=dotMode?Math.max(8,mx+2):mx*1.4;const ystep=niceStep(ymax);ymax=Math.ceil(ymax/ystep)*ystep;
-  const X=v=>L+(v-lo)/(hi-lo)*pw,Y=c=>T+ph-c/ymax*ph;
-  const ticks=C.key==='H'?[5.6,5.8,6.0,6.2,6.4,6.6]:[7.8,7.9,8.0,8.1];
-  for(const t of ticks){svg.appendChild(el('line',{x1:X(t),x2:X(t),y1:T,y2:T+ph,stroke:ln}));svg.appendChild(el('text',{x:X(t),y:T+ph+18,'text-anchor':'middle',fill:fg,'font-size':16},t.toFixed(1)));}
-  for(let t=0;t<=ymax+1e-9;t+=ystep){svg.appendChild(el('line',{x1:L,x2:L+pw,y1:Y(t),y2:Y(t),stroke:ln}));svg.appendChild(el('text',{x:L-6,y:Y(t)+4,'text-anchor':'end',fill:mu,'font-size':15},t));}
-  const bwpx=pw/NBc;
-  if(dotMode){const per=new Array(NBc).fill(0);C.means.forEach((v,idx)=>{let i=Math.floor((v-lo)/bw);if(i<0)i=0;if(i>=NBc)i=NBc-1;per[i]++;const r=Math.min(5,bwpx/2-0.5);svg.appendChild(el('circle',{cx:L+i*bwpx+bwpx/2,cy:Y(per[i]-0.5),r,fill:idx===C.means.length-1?or:ac}));});}
-  else for(let i=0;i<NBc;i++){if(!bins[i])continue;svg.appendChild(el('rect',{x:L+i*bwpx+0.5,y:Y(bins[i]),width:bwpx-1,height:ph-(Y(bins[i])-T),fill:ac}));}
-  const m0=mean(d.vals);svg.appendChild(el('line',{x1:X(m0),x2:X(m0),y1:T,y2:T+ph,stroke:ac,'stroke-dasharray':'5 4','stroke-width':2}));
-  svg.appendChild(el('text',{x:X(m0)+4,y:T+12,fill:ac,'font-size':15,'font-weight':700},'real mean '+m0.toFixed(2)));
-  if(C.n>=40){const srt=C.means.slice().sort((a,b)=>a-b);const p1=pct(srt,.025),p2=pct(srt,.975);
-    const yb=T+ph*0.2;
-    for(const p of [p1,p2]){svg.appendChild(el('line',{x1:X(p),x2:X(p),y1:yb,y2:T+ph,stroke:or,'stroke-width':2.5}));}
-    svg.appendChild(el('line',{x1:X(p1),x2:X(p2),y1:yb,y2:yb,stroke:or,'stroke-width':2}));
-    svg.appendChild(el('text',{x:X((p1+p2)/2),y:yb+18,'text-anchor':'middle',fill:or,'font-size':15,'font-weight':700},'95 % of means'));}
-  svg.appendChild(el('text',{x:L+pw/2,y:H-8,'text-anchor':'middle',fill:mu,'font-size':15},`mean of a pretend sample of 24 ${d.name} readings, ${d.unit}`));
-  svg.appendChild(el('text',{x:14,y:T+ph/2,transform:`rotate(-90 14 ${T+ph/2})`,'text-anchor':'middle',fill:mu,'font-size':15},'number of pretend samples'));
+  const nb=Math.round((d.hi-d.lo)/0.1),counts=new Array(nb).fill(0);
+  for(let i=0;i<C.n;i++){const b=Math.min(nb-1,Math.max(0,Math.round((d.vals[i]-d.lo)/0.1)));counts[b]++;}
+  const ymax=Math.max(5,Math.ceil(Math.max(...counts)/5)*5);
+  const X=v=>L+(v-d.lo)/(d.hi-d.lo)*pw,Y=c=>T+ph-(c/ymax)*ph;
+  for(let c=0;c<=ymax;c+=ymax/5){svg.appendChild(el('line',{x1:L,x2:L+pw,y1:Y(c),y2:Y(c),stroke:ln}));svg.appendChild(el('text',{x:L-5,y:Y(c)+4,'text-anchor':'end',fill:mu,'font-size':13},Math.round(c)));}
+  const st=cStats(C.n);
+  if(st&&isFinite(st.s))svg.appendChild(el('rect',{x:X(st.m-st.s),y:T,width:X(st.m+st.s)-X(st.m-st.s),height:ph,fill:css('--band')}));
+  const bw=pw/nb;
+  for(let b=0;b<nb;b++)if(counts[b])svg.appendChild(el('rect',{x:X(d.lo+b*0.1)-bw/2+1,y:Y(counts[b]),width:Math.max(1,bw-2),height:T+ph-Y(counts[b]),fill:ac,rx:1}));
+  const step=C.key==='H'?0.5:0.2;
+  for(let v=Math.ceil(d.lo/step)*step;v<=d.hi+1e-9;v+=step){svg.appendChild(el('line',{x1:X(v),x2:X(v),y1:T+ph,y2:T+ph+5,stroke:mu}));svg.appendChild(el('text',{x:X(v),y:T+ph+19,'text-anchor':'middle',fill:mu,'font-size':13},v.toFixed(1)));}
+  svg.appendChild(el('line',{x1:L,x2:L+pw,y1:T+ph,y2:T+ph,stroke:mu}));
+  svg.appendChild(el('text',{x:L+pw/2,y:H-6,'text-anchor':'middle',fill:mu,'font-size':14},`${d.name} reading, ${d.unit}`));
+  svg.appendChild(el('text',{x:12,y:T+ph/2,transform:`rotate(-90 12 ${T+ph/2})`,'text-anchor':'middle',fill:mu,'font-size':14},'number of readings'));
+  if(st){svg.appendChild(el('line',{x1:X(st.m),x2:X(st.m),y1:T-4,y2:T+ph,stroke:ac,'stroke-width':2,'stroke-dasharray':'5 4'}));
+    svg.appendChild(el('text',{x:X(st.m)+5,y:T+12,fill:ac,'font-size':13,'font-weight':700},'mean '+st.m.toFixed(d.dec)));
+    if(isFinite(st.se)){const y=T+30;svg.appendChild(el('line',{x1:X(st.lo),x2:X(st.hi),y1:y,y2:y,stroke:or,'stroke-width':3}));svg.appendChild(el('line',{x1:X(st.lo),x2:X(st.lo),y1:y-7,y2:y+7,stroke:or,'stroke-width':2}));svg.appendChild(el('line',{x1:X(st.hi),x2:X(st.hi),y1:y-7,y2:y+7,stroke:or,'stroke-width':2}));
+      svg.appendChild(el('text',{x:X(st.hi)+6,y:y+4,fill:or,'font-size':12,'font-weight':700},'95 % CI'));}}
+}
+function cDrawRun(){
+  const d=cData(),svg=$('cRun');svg.textContent='';
+  const W=420,H=220,L=46,R=14,T=14,B=40,pw=W-L-R,ph=H-T-B;
+  const fg=css('--fg'),mu=css('--muted'),ln=css('--line'),or=css('--orange');
+  const X=n=>L+(n/NC)*pw,Y=v=>T+ph-(v-d.ylo)/(d.yhi-d.ylo)*ph,clamp=v=>Math.max(T,Math.min(T+ph,v));
+  const ystep=C.key==='H'?0.4:0.2;
+  for(let v=d.ylo;v<=d.yhi+1e-9;v+=ystep){svg.appendChild(el('line',{x1:L,x2:L+pw,y1:Y(v),y2:Y(v),stroke:ln}));svg.appendChild(el('text',{x:L-5,y:Y(v)+4,'text-anchor':'end',fill:mu,'font-size':13},v.toFixed(1)));}
+  for(const n of [0,50,100,150,200,250]){svg.appendChild(el('line',{x1:X(n),x2:X(n),y1:T+ph,y2:T+ph+5,stroke:mu}));svg.appendChild(el('text',{x:X(n),y:T+ph+19,'text-anchor':'middle',fill:mu,'font-size':13},n));}
+  svg.appendChild(el('text',{x:L+pw/2,y:H-4,'text-anchor':'middle',fill:mu,'font-size':14},'number of readings, n'));
+  svg.appendChild(el('text',{x:12,y:T+ph/2,transform:`rotate(-90 12 ${T+ph/2})`,'text-anchor':'middle',fill:mu,'font-size':14},`running mean, ${d.unit}`));
+  const hs=C.hist.filter(h=>h[0]>=2);
+  if(hs.length){let up='',lo='';hs.forEach((h,i)=>{up+=(i?'L':'M')+X(h[0])+','+clamp(Y(h[1]+2*h[2]))+' ';lo=('L'+X(h[0])+','+clamp(Y(h[1]-2*h[2]))+' ')+lo;});
+    svg.appendChild(el('path',{d:up+lo+'Z',fill:or,opacity:.22}));}
+  if(C.hist.length){let p='';C.hist.forEach((h,i)=>{p+=(i?'L':'M')+X(h[0])+','+clamp(Y(h[1]))+' ';});svg.appendChild(el('path',{d:p,fill:'none',stroke:or,'stroke-width':2}));
+    const h=C.hist[C.hist.length-1];svg.appendChild(el('circle',{cx:X(h[0]),cy:clamp(Y(h[1])),r:4,fill:or}));}
 }
 function cDrawStats(){
-  const d=cData();const m0=mean(d.vals),s0=sd(d.vals);
-  $('cM').innerHTML=f(m0,d.dec)+' <small>'+d.unit+'</small>';$('cS').innerHTML=f(s0,3)+' <small>'+d.unit+'</small>';
-  $('cSE').innerHTML=f(s0/Math.sqrt(24),3)+' <small>'+d.unit+'</small>';
-  const bs=sd(C.means);$('cBSD').innerHTML=(C.n>1?f(bs,3):'–')+' <small>'+(C.n>1?d.unit:'')+'</small>';
-  const srt=C.means.slice().sort((a,b)=>a-b);
-  $('cPI').innerHTML=C.n>=40?f(pct(srt,.025),d.dec)+' – '+f(pct(srt,.975),d.dec)+' <small>'+d.unit+'</small>':'<small>needs ≥ 40 resamples</small>';
-  $('cCV').textContent=C.n>1?(100*bs/m0).toFixed(2)+' %':'–';
-  $('cCount').textContent='resamples: '+C.n.toLocaleString();
-  $('cBagLbl').textContent=`The bag: 24 real ${d.name} readings of tree #406 (${d.unit})`;
+  const d=cData(),st=cStats(C.n),u=' <small>'+d.unit+'</small>';
+  $('cCount').textContent=`readings: ${C.n} of ${NC}`;$('cN').textContent=C.n;
+  $('cM').innerHTML=st?st.m.toFixed(d.dec)+u:'–';$('cS').innerHTML=st&&isFinite(st.s)?st.s.toFixed(d.dec)+u:'–';
+  $('cCV').textContent=st&&isFinite(st.s)?st.cv.toFixed(1)+' %':'–';$('cSE').innerHTML=st&&isFinite(st.se)?st.se.toFixed(d.dec+1)+u:'–';
+  $('cPI').innerHTML=st&&isFinite(st.se)?st.lo.toFixed(d.dec)+' – '+st.hi.toFixed(d.dec)+u:'–';
+  // the recipe and the explanations always use all 250 readings
+  const F=cStats(NC),sum=d.vals.reduce((a,b)=>a+b,0),ss=d.vals.reduce((a,b)=>a+(b-F.m)*(b-F.m),0),un=d.unit,nm=d.name,dec=d.dec;
+  $('cRecipe').innerHTML=`<h4>Tree #406, ${nm}, all 250 readings</h4><p>1. n = 250.<br>2. <b>Mean</b> = sum ÷ n = ${sum.toFixed(1)} ÷ 250 = <b>${F.m.toFixed(dec)} ${un}</b>.<br>3. Distance of each reading from the mean, squared, added up: ${ss.toFixed(2)}. Divide by n − 1 = 249: ${(ss/249).toFixed(4)}. Square root: <b>SD = ${F.s.toFixed(dec)} ${un}</b>.<br>4. <b>CV</b> = SD ÷ mean × 100 = ${F.s.toFixed(dec)} ÷ ${F.m.toFixed(dec)} × 100 = <b>${F.cv.toFixed(1)} %</b>.<br>5. √250 = 15.81, so <b>SE</b> = SD ÷ √n = ${F.s.toFixed(dec)} ÷ 15.81 = <b>${F.se.toFixed(dec+1)} ${un}</b>.<br>6. <b>95 % confidence interval</b> = mean ± 2 × SE = ${F.m.toFixed(dec)} ± ${(2*F.se).toFixed(dec+1)} = <b>${F.lo.toFixed(dec)} to ${F.hi.toFixed(dec)} ${un}</b>.</p>`;
+  $('cAnswer').innerHTML=`Our answer for the ${nm} of tree #406 is: <b>${F.m.toFixed(dec)} ${un}, 95 % confidence interval ${F.lo.toFixed(dec)} to ${F.hi.toFixed(dec)} ${un}</b>. Read it like this.`;
+  $('cTwo').innerHTML=`<b>Two different 95 % ranges, do not mix them up.</b> About 95 % of the <i>single readings</i> lie within mean ± 2 × SD, that is ${(F.m-2*F.s).toFixed(dec)} to ${(F.m+2*F.s).toFixed(dec)} ${un}: one reading is rough. The <i>true ${nm}</i> lies, with 95 % confidence, within mean ± 2 × SE, that is ${F.lo.toFixed(dec)} to ${F.hi.toFixed(dec)} ${un}: 250 readings together are precise. This is the same difference as between one die and the average of 25 dice in Panel C.`;
+  $('cFewer').innerHTML=`<b>Why 250 readings help.</b> √250 = 15.8, so the interval is 15.8 times narrower than the spread of single readings. With 25 readings it would be only 5 times narrower: about ± ${(2*F.s/5).toFixed(dec)} ${un} instead of ± ${(2*F.se).toFixed(dec)} ${un}. With one reading there is no interval at all: a single roll tells you almost nothing about the die.`;
+  const FH=(()=>{const v=DATA.H.vals,m=mean(v),s=sd(v);return {m,s,cv:100*s/m};})(),FD=(()=>{const v=DATA.D.vals,m=mean(v),s=sd(v);return {m,s,cv:100*s/m};})();
+  $('cHD').innerHTML=`Height: SD ${FH.s.toFixed(2)} m on a mean of ${FH.m.toFixed(2)} m, CV <b>${FH.cv.toFixed(1)} %</b>. DBH: SD ${FD.s.toFixed(2)} cm on a mean of ${FD.m.toFixed(2)} cm, CV <b>${FD.cv.toFixed(1)} %</b>. The DBH readings agree with each other about three times better than the height readings.`;
 }
-function cDrawAll(){cDrawBag();cDrawHist();cDrawStats();}
-// loop: slow speeds animate draws one by one; fast speeds do whole resamples
-const cLoop=makeLoop(n=>{
-  const sp=+$('cSpeed').value;
-  if(sp<=30){cDrawOne();}                      // one chip per tick
-  else if(sp<=70){for(let i=0;i<24&&!cDrawOne();i++);} // one full resample per tick (animated end state)
-  else {for(let i=0;i<n&&C.n<MAXC;i++)cFastResample();C.finished=false;C.draws=[];C.counts.fill(0);C.lit=-1;}
-  cDrawAll();return C.n<MAXC;},$('cSpeed'));
-function cReset(){C.means=[];C.draws=[];C.counts.fill(0);C.lit=-1;C.n=0;C.finished=false;cLoop.stop();setPlayLabel($('cPlay'),cLoop);cDrawAll();}
-$('cPlay').onclick=()=>{if(cLoop.playing)cLoop.stop();else if(C.n<MAXC)cLoop.start();setPlayLabel($('cPlay'),cLoop);};
-$('cStep').onclick=()=>{cLoop.stop();setPlayLabel($('cPlay'),cLoop);if(C.n<MAXC){cDrawOne();cDrawAll();}};
-$('cFF').onclick=()=>{cLoop.stop();setPlayLabel($('cPlay'),cLoop);while(C.n<MAXC)cFastResample();C.finished=false;C.draws=[];C.counts.fill(0);C.lit=-1;cDrawAll();};
+function cDrawAll(){cDrawBag();cDrawHist();cDrawRun();cDrawStats();}
+const cLoop=makeLoop(n=>{for(let i=0;i<n&&C.n<NC;i++)cTake();cDrawAll();return C.n<NC;},$('cSpeed'));
+function cReset(){C.n=0;C.hist=[];cLoop.stop();setPlayLabel($('cPlay'),cLoop);cDrawAll();}
+$('cPlay').onclick=()=>{if(cLoop.playing)cLoop.stop();else if(C.n<NC)cLoop.start();setPlayLabel($('cPlay'),cLoop);};
+$('cStep').onclick=()=>{cLoop.stop();setPlayLabel($('cPlay'),cLoop);if(C.n<NC){cTake();cDrawAll();}};
+$('cFF').onclick=()=>{cLoop.stop();setPlayLabel($('cPlay'),cLoop);while(C.n<NC)cTake();cDrawAll();};
 $('cReset').onclick=cReset;
 $('cH').onclick=()=>{C.key='H';$('cH').setAttribute('aria-pressed','true');$('cD').setAttribute('aria-pressed','false');cReset();};
 $('cD').onclick=()=>{C.key='D';$('cD').setAttribute('aria-pressed','true');$('cH').setAttribute('aria-pressed','false');cReset();};
 
+// ============================ PANEL E: BOOTSTRAP ============================
+const MAXS=2000;
+const SB={key:'H',stat:'mean',means:[],sds:[],n:0,strip:[],distinct:0,lastM:NaN,lastS:NaN};
+function sData(){return DATA[SB.key];}
+function sRealStats(){const v=sData().vals,m=mean(v),s=sd(v),se=s/Math.sqrt(NC);return {m,s,se,lo:m-2*se,hi:m+2*se};}
+function sOne(){
+  const d=sData(),v=d.vals,seen=new Uint8Array(NC);let sum=0,sumsq=0;const strip=[];
+  for(let i=0;i<NC;i++){const j=Math.floor(rngs.s()*NC);const x=v[j];sum+=x;sumsq+=x*x;seen[j]=1;if(i<15)strip.push(x);}
+  const m=sum/NC,sdv=Math.sqrt((sumsq-NC*m*m)/(NC-1));
+  SB.means.push(m);SB.sds.push(sdv);SB.n++;SB.strip=strip;SB.lastM=m;SB.lastS=sdv;let k=0;for(let i=0;i<NC;i++)k+=seen[i];SB.distinct=k;
+}
+function sDraw(){
+  const d=sData(),dec=d.dec,u=' <small>'+d.unit+'</small>',isM=SB.stat==='mean';
+  const real=sRealStats();const realStat=isM?real.m:real.s;
+  const vals=isM?SB.means:SB.sds;
+  // strip
+  const st=$('sStrip');st.textContent='';
+  for(let i=0;i<15;i++){const c=document.createElement('div');c.className='chip';c.textContent=SB.strip.length?SB.strip[i].toFixed(1):'·';if(!SB.strip.length)c.style.opacity='.25';st.appendChild(c);}
+  $('sLine').innerHTML=SB.n?`Pretend class ${SB.n.toLocaleString()}: 250 draws, ${SB.distinct} different chips came out, ${NC-SB.distinct} never did. Its mean = <b>${SB.lastM.toFixed(dec)} ${d.unit}</b>, its SD = <b>${SB.lastS.toFixed(dec)} ${d.unit}</b>.`:'Press Step to draw one pretend class.';
+  $('sCount').textContent='pretend classes: '+SB.n.toLocaleString();
+  $('sRealK').textContent=(isM?'Mean':'SD')+' of the real 250 readings';$('sReal').innerHTML=realStat.toFixed(dec)+u;
+  const bse=vals.length>1?sd(vals):NaN;
+  $('sBSE').innerHTML=isFinite(bse)?bse.toFixed(dec+1)+u:'<small>shown after 2 pretend classes</small>';
+  $('sFSEK').textContent=isM?'SE by formula: SD ÷ √250':'SE by formula';$('sFSE').innerHTML=isM?real.se.toFixed(dec+1)+u:'<small>no simple formula</small>';
+  const srt=vals.slice().sort((a,b)=>a-b);
+  $('sBPI').innerHTML=SB.n>=40?pct(srt,.025).toFixed(dec)+' – '+pct(srt,.975).toFixed(dec)+u:'<small>shown after 40 pretend classes</small>';
+  $('sFPIK').textContent=isM?'95 % interval by formula: mean ± 2 × SE':'95 % interval by formula';$('sFPI').innerHTML=isM?real.lo.toFixed(dec)+' – '+real.hi.toFixed(dec)+u:'<small>no simple formula</small>';
+  // histogram
+  const svg=$('sHist');svg.textContent='';
+  const W=420,H=300,L=46,R=14,T=26,B=48,pw=W-L-R,ph=H-T-B;
+  const fg=css('--fg'),mu=css('--muted'),ln=css('--line'),ac=css('--accent'),or=css('--orange');
+  const half=isM?5*real.se:5*real.s/Math.sqrt(2*NC),lo=realStat-half,hi=realStat+half,nb=30,bw=(hi-lo)/nb,counts=new Array(nb).fill(0);
+  for(const x of vals){const b=Math.floor((x-lo)/bw);if(b>=0&&b<nb)counts[b]++;}
+  const ymax=Math.max(5,Math.ceil(Math.max(...counts)/10)*10);
+  const X=x=>L+(x-lo)/(hi-lo)*pw,Y=c=>T+ph-(c/ymax)*ph;
+  for(let c=0;c<=ymax;c+=ymax/5){svg.appendChild(el('line',{x1:L,x2:L+pw,y1:Y(c),y2:Y(c),stroke:ln}));svg.appendChild(el('text',{x:L-5,y:Y(c)+4,'text-anchor':'end',fill:mu,'font-size':13},Math.round(c)));}
+  for(let b=0;b<nb;b++)if(counts[b])svg.appendChild(el('rect',{x:X(lo+b*bw)+1,y:Y(counts[b]),width:Math.max(1,pw/nb-2),height:T+ph-Y(counts[b]),fill:ac,rx:1}));
+  const tick=isM?(SB.key==='H'?0.05:0.02):(SB.key==='H'?0.05:0.02);
+  for(let v=Math.ceil(lo/tick)*tick;v<=hi+1e-9;v+=tick){svg.appendChild(el('line',{x1:X(v),x2:X(v),y1:T+ph,y2:T+ph+5,stroke:mu}));svg.appendChild(el('text',{x:X(v),y:T+ph+19,'text-anchor':'middle',fill:mu,'font-size':12},v.toFixed(2)));}
+  svg.appendChild(el('line',{x1:L,x2:L+pw,y1:T+ph,y2:T+ph,stroke:mu}));
+  svg.appendChild(el('text',{x:L+pw/2,y:H-6,'text-anchor':'middle',fill:mu,'font-size':14},`${isM?'mean':'SD'} of one pretend class, ${d.unit}`));
+  svg.appendChild(el('text',{x:12,y:T+ph/2,transform:`rotate(-90 12 ${T+ph/2})`,'text-anchor':'middle',fill:mu,'font-size':14},'number of pretend classes'));
+  svg.appendChild(el('line',{x1:X(realStat),x2:X(realStat),y1:T-4,y2:T+ph,stroke:ac,'stroke-width':2,'stroke-dasharray':'5 4'}));
+  svg.appendChild(el('text',{x:X(realStat)+5,y:T+12,fill:ac,'font-size':13,'font-weight':700},'real '+realStat.toFixed(dec)));
+  function bracket(a,b,y,col,label){svg.appendChild(el('line',{x1:X(a),x2:X(b),y1:y,y2:y,stroke:col,'stroke-width':3}));svg.appendChild(el('line',{x1:X(a),x2:X(a),y1:y-7,y2:y+7,stroke:col,'stroke-width':2}));svg.appendChild(el('line',{x1:X(b),x2:X(b),y1:y-7,y2:y+7,stroke:col,'stroke-width':2}));svg.appendChild(el('text',{x:X(b)+6,y:y+4,fill:col,'font-size':12,'font-weight':700},label));}
+  if(SB.n>=40)bracket(pct(srt,.025),pct(srt,.975),T+34,or,'bootstrap 95 %');
+  if(isM)bracket(real.lo,real.hi,T+56,ac,'formula 95 %');
+}
+const sLoop=makeLoop(n=>{for(let i=0;i<n&&SB.n<MAXS;i++)sOne();sDraw();return SB.n<MAXS;},$('sSpeed'));
+function sReset(){SB.means=[];SB.sds=[];SB.n=0;SB.strip=[];SB.distinct=0;sLoop.stop();setPlayLabel($('sPlay'),sLoop);sDraw();}
+$('sPlay').onclick=()=>{if(sLoop.playing)sLoop.stop();else if(SB.n<MAXS)sLoop.start();setPlayLabel($('sPlay'),sLoop);};
+$('sStep').onclick=()=>{sLoop.stop();setPlayLabel($('sPlay'),sLoop);if(SB.n<MAXS){sOne();sDraw();}};
+$('sFF').onclick=()=>{sLoop.stop();setPlayLabel($('sPlay'),sLoop);while(SB.n<MAXS)sOne();sDraw();};
+$('sReset').onclick=sReset;
+$('sH').onclick=()=>{SB.key='H';$('sH').setAttribute('aria-pressed','true');$('sD').setAttribute('aria-pressed','false');sReset();};
+$('sD').onclick=()=>{SB.key='D';$('sD').setAttribute('aria-pressed','true');$('sH').setAttribute('aria-pressed','false');sReset();};
+$('sQm').onclick=()=>{SB.stat='mean';$('sQm').setAttribute('aria-pressed','true');$('sQs').setAttribute('aria-pressed','false');sDraw();};
+$('sQs').onclick=()=>{SB.stat='sd';$('sQs').setAttribute('aria-pressed','true');$('sQm').setAttribute('aria-pressed','false');sDraw();};
+
+// ============================ PANEL F: picture of the uniform distribution ============================
+function uDraw(){
+  const svg=$('uSvg');svg.textContent='';
+  const fg=css('--fg'),mu=css('--muted'),ln=css('--line'),ac=css('--accent'),or=css('--orange');
+  const T=22,B=46,H=210,ph=H-T-B;
+  // left: ordinary die
+  const L1=30,W1=160,bw=W1/6;
+  svg.appendChild(el('text',{x:L1+W1/2,y:14,'text-anchor':'middle',fill:fg,'font-size':12,'font-weight':700},'An ordinary die'));
+  svg.appendChild(el('line',{x1:L1,x2:L1+W1,y1:T+ph,y2:T+ph,stroke:mu}));
+  for(let v=1;v<=6;v++){const h=ph*0.55;svg.appendChild(el('rect',{x:L1+(v-1)*bw+3,y:T+ph-h,width:bw-6,height:h,fill:ac,rx:2}));
+    svg.appendChild(el('text',{x:L1+(v-0.5)*bw,y:T+ph+15,'text-anchor':'middle',fill:fg,'font-size':12,'font-weight':700},v));
+    svg.appendChild(el('text',{x:L1+(v-0.5)*bw,y:T+ph-h-4,'text-anchor':'middle',fill:mu,'font-size':9},'1/6'));}
+  svg.appendChild(el('line',{x1:L1,x2:L1+W1,y1:T+ph-ph*0.55,y2:T+ph-ph*0.55,stroke:or,'stroke-width':1.5,'stroke-dasharray':'4 3'}));
+  svg.appendChild(el('text',{x:L1+W1/2,y:T+ph+32,'text-anchor':'middle',fill:mu,'font-size':11},'6 values, same chance each'));
+  // right: height die
+  const L2=240,W2=165,lo=4.9,hi=7.1,X=v=>L2+(v-lo)/(hi-lo)*W2;
+  svg.appendChild(el('text',{x:L2+W2/2,y:14,'text-anchor':'middle',fill:fg,'font-size':12,'font-weight':700},'The height die, reading 6.0 m'));
+  svg.appendChild(el('line',{x1:L2,x2:L2+W2,y1:T+ph,y2:T+ph,stroke:mu}));
+  const h2=ph*0.55;
+  svg.appendChild(el('rect',{x:X(5.4),y:T+ph-h2,width:X(6.6)-X(5.4),height:h2,fill:ac,rx:2}));
+  svg.appendChild(el('line',{x1:L2,x2:L2+W2,y1:T+ph-h2,y2:T+ph-h2,stroke:or,'stroke-width':1.5,'stroke-dasharray':'4 3'}));
+  svg.appendChild(el('text',{x:X(6.0),y:T+ph-h2-6,'text-anchor':'middle',fill:mu,'font-size':9},'same chance everywhere between the limits'));
+  svg.appendChild(el('line',{x1:X(6.0),x2:X(6.0),y1:T+ph-h2,y2:T+ph,stroke:css('--bg'),'stroke-width':1.5,'stroke-dasharray':'3 3'}));
+  for(const [v,lab] of [[5.4,'5.4'],[6.0,'6.0'],[6.6,'6.6']]){svg.appendChild(el('line',{x1:X(v),x2:X(v),y1:T+ph,y2:T+ph+5,stroke:mu}));svg.appendChild(el('text',{x:X(v),y:T+ph+15,'text-anchor':'middle',fill:fg,'font-size':12,'font-weight':700},lab));}
+  svg.appendChild(el('text',{x:X(5.4),y:T+ph+30,'text-anchor':'middle',fill:or,'font-size':10,'font-weight':700},'− 10 %'));
+  svg.appendChild(el('text',{x:X(6.6),y:T+ph+30,'text-anchor':'middle',fill:or,'font-size':10,'font-weight':700},'+ 10 %'));
+  svg.appendChild(el('text',{x:X(6.0),y:T+ph+30,'text-anchor':'middle',fill:mu,'font-size':10},'reading'));
+  svg.appendChild(el('text',{x:X(5.15),y:T+ph-8,'text-anchor':'middle',fill:mu,'font-size':9},'0 here'));
+  svg.appendChild(el('text',{x:X(6.85),y:T+ph-8,'text-anchor':'middle',fill:mu,'font-size':9},'0 here'));
+  svg.appendChild(el('text',{x:L2+W2/2,y:H-2,'text-anchor':'middle',fill:mu,'font-size':11},'height, m'));
+}
+uDraw();
+
+// ============================ PANEL F: MONTE CARLO ============================
+const MAXM=2000;
+const MC={vals:[],n:0,last:null,first:[]};
+function mInputs(){const H=+$('mH').value||0,He=+$('mHe').value||0,D=+$('mD').value||0,De=+$('mDe').value||0;return {H,He,D,De};}
+function mVol(h,d){return Math.PI*Math.pow(d/200,2)*h*1000;} // h in m, d in cm, result in litres
+function mOne(){const I=mInputs();const h=I.H*(1+I.He/100*(2*rngs.m()-1)),d=I.D*(1+I.De/100*(2*rngs.m()-1)),v=mVol(h,d);MC.vals.push(v);MC.n++;MC.last={h,d,v};if(MC.first.length<5)MC.first.push({h,d,v});}
+function mDraw(){
+  const I=mInputs(),point=mVol(I.H,I.D);
+  $('mCount').textContent='rolls: '+MC.n.toLocaleString();
+  $('mLine').innerHTML=MC.last?`Height die shows <b>${MC.last.h.toFixed(2)} m</b>, DBH die shows <b>${MC.last.d.toFixed(2)} cm</b>. V = 3.1416 × (${(MC.last.d/200).toFixed(4)})² × ${MC.last.h.toFixed(2)} × 1,000 = <b>${MC.last.v.toFixed(1)} litres</b>.`:'Press Step to roll the two dice once.';
+  const tb=$('mTable');while(tb.rows.length>1)tb.deleteRow(1);
+  MC.first.forEach((r,i)=>{const tr=tb.insertRow();[i+1,r.h.toFixed(2),r.d.toFixed(2),r.v.toFixed(1)].forEach(t=>{const td=tr.insertCell();td.textContent=t;});});
+  $('mPoint').innerHTML=point.toFixed(1)+' <small>L</small>';
+  const m=MC.n?mean(MC.vals):NaN,s=MC.n>1?sd(MC.vals):NaN;
+  $('mM').innerHTML=MC.n?m.toFixed(1)+' <small>L</small>':'–';$('mSD').innerHTML=isFinite(s)?s.toFixed(2)+' <small>L</small>':'–';$('mCV').textContent=isFinite(s)?(100*s/m).toFixed(1)+' %':'–';
+  const srt=MC.vals.slice().sort((a,b)=>a-b);
+  $('mPI').innerHTML=MC.n>=40?pct(srt,.025).toFixed(1)+' – '+pct(srt,.975).toFixed(1)+' <small>L</small>':'<small>shown after 40 rolls</small>';
+  // histogram
+  const svg=$('mHist');svg.textContent='';
+  const W=420,H=300,L=46,R=14,T=26,B=48,pw=W-L-R,ph=H-T-B;
+  const fg=css('--fg'),mu=css('--muted'),ln=css('--line'),ac=css('--accent'),or=css('--orange');
+  const lo=mVol(I.H*(1-I.He/100),I.D*(1-I.De/100)),hi=mVol(I.H*(1+I.He/100),I.D*(1+I.De/100));
+  const span=Math.max(hi-lo,1e-6),nb=30,bw=span/nb,counts=new Array(nb).fill(0);
+  for(const x of MC.vals){const b=Math.min(nb-1,Math.max(0,Math.floor((x-lo)/bw)));counts[b]++;}
+  const ymax=Math.max(5,Math.ceil(Math.max(...counts)/10)*10);
+  const X=x=>L+(x-lo)/span*pw,Y=c=>T+ph-(c/ymax)*ph;
+  for(let c=0;c<=ymax;c+=ymax/5){svg.appendChild(el('line',{x1:L,x2:L+pw,y1:Y(c),y2:Y(c),stroke:ln}));svg.appendChild(el('text',{x:L-5,y:Y(c)+4,'text-anchor':'end',fill:mu,'font-size':13},Math.round(c)));}
+  for(let b=0;b<nb;b++)if(counts[b])svg.appendChild(el('rect',{x:X(lo+b*bw)+1,y:Y(counts[b]),width:Math.max(1,pw/nb-2),height:T+ph-Y(counts[b]),fill:ac,rx:1}));
+  const tick=Math.pow(10,Math.floor(Math.log10(span)))*(span/Math.pow(10,Math.floor(Math.log10(span)))>5?1:0.5);
+  for(let v=Math.ceil(lo/tick)*tick;v<=hi+1e-9;v+=tick){svg.appendChild(el('line',{x1:X(v),x2:X(v),y1:T+ph,y2:T+ph+5,stroke:mu}));svg.appendChild(el('text',{x:X(v),y:T+ph+19,'text-anchor':'middle',fill:mu,'font-size':12},+v.toFixed(2)));}
+  svg.appendChild(el('line',{x1:L,x2:L+pw,y1:T+ph,y2:T+ph,stroke:mu}));
+  svg.appendChild(el('text',{x:L+pw/2,y:H-6,'text-anchor':'middle',fill:mu,'font-size':14},'volume of the trunk, litres'));
+  svg.appendChild(el('text',{x:12,y:T+ph/2,transform:`rotate(-90 12 ${T+ph/2})`,'text-anchor':'middle',fill:mu,'font-size':14},'number of rolls'));
+  svg.appendChild(el('path',{d:`M${X(point)},${T+ph+1} l-6,10 l12,0 Z`,fill:or}));
+  if(MC.n){svg.appendChild(el('line',{x1:X(m),x2:X(m),y1:T-4,y2:T+ph,stroke:ac,'stroke-width':2,'stroke-dasharray':'5 4'}));svg.appendChild(el('text',{x:X(m)+5,y:T+12,fill:ac,'font-size':13,'font-weight':700},'mean '+m.toFixed(1)));}
+  if(MC.n>=40){const a=pct(srt,.025),b=pct(srt,.975),y=T+34;svg.appendChild(el('line',{x1:X(a),x2:X(b),y1:y,y2:y,stroke:or,'stroke-width':3}));svg.appendChild(el('line',{x1:X(a),x2:X(a),y1:y-7,y2:y+7,stroke:or,'stroke-width':2}));svg.appendChild(el('line',{x1:X(b),x2:X(b),y1:y-7,y2:y+7,stroke:or,'stroke-width':2}));svg.appendChild(el('text',{x:X(b)+6,y:y+4,fill:or,'font-size':12,'font-weight':700},'95 %'));}
+}
+const mLoop=makeLoop(n=>{for(let i=0;i<n&&MC.n<MAXM;i++)mOne();mDraw();return MC.n<MAXM;},$('mSpeed'));
+function mReset(){MC.vals=[];MC.n=0;MC.last=null;MC.first=[];mLoop.stop();setPlayLabel($('mPlay'),mLoop);mDraw();}
+$('mPlay').onclick=()=>{if(mLoop.playing)mLoop.stop();else if(MC.n<MAXM)mLoop.start();setPlayLabel($('mPlay'),mLoop);};
+$('mStep').onclick=()=>{mLoop.stop();setPlayLabel($('mPlay'),mLoop);if(MC.n<MAXM){mOne();mDraw();}};
+$('mFF').onclick=()=>{mLoop.stop();setPlayLabel($('mPlay'),mLoop);while(MC.n<MAXM)mOne();mDraw();};
+$('mReset').onclick=mReset;
+['mH','mHe','mD','mDe'].forEach(id=>{$(id).addEventListener('input',mReset);});
+
 // ---------- seed ----------
-$('newseed').onclick=()=>{seed=(seed*7919+13)%100000;reseed();$('seedlabel').textContent='seed '+seed+' (press Reset in a panel to restart it with this seed)';aReset();bReset();cReset();};
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{aDraw();bDraw();cDrawAll();});
-aDraw();bDraw();cDrawAll();
+$('newseed').onclick=()=>{seed=(seed*7919+13)%100000;reseed();$('seedlabel').textContent='New random numbers in use (set '+seed+'). All panels have been reset.';aReset();gReset();bReset();cReset();sReset();mReset();};
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{wDraw();kDraw();gDraw();eDraw();aDraw();bDraw();cDrawAll();sDraw();mDraw();uDraw();});
+aDraw();bDraw();cDrawAll();sDraw();mDraw();
 })();
 </script>
 </body>
